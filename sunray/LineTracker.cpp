@@ -21,14 +21,93 @@ float stanleyTrackingSlowK = STANLEY_CONTROL_K_SLOW;
 float stanleyTrackingSlowP = STANLEY_CONTROL_P_SLOW;    
 
 float setSpeed = 0.1; // linear speed (m/s)
-
+float langular = 0;
+Point last_rotation_target;
 bool rotateLeft = false;
 bool rotateRight = false;
 bool angleToTargetFits = false;
+bool langleToTargetFits = false;
 bool targetReached = false;
 float trackerDiffDelta = 0;
 bool stateKidnapped = false;
+bool trackerDiffDelta_positive = false;
 
+int additional_rot_check() {
+  Polygon circle(8);
+  Point target = maps.targetPoint;
+  float targetDelta = pointsAngle(stateX, stateY, target.x(), target.y());
+  float x = stateX;
+  float y = stateY;
+  float circle_size = 0.6;
+  float d1 = circle_size / 2;
+  float d2 = circle_size / 5 * 2;
+
+  circle.points[0].setXY(x-d1, y);
+  circle.points[1].setXY(x+d1, y);
+  circle.points[2].setXY(x, y-d1);
+  circle.points[3].setXY(x, y+d1);
+  circle.points[4].setXY(x-d2, y-d2);
+  circle.points[5].setXY(x+d2, y+d2);
+  circle.points[6].setXY(x+d2, y-d2);
+  circle.points[7].setXY(x-d2, y+d2);
+
+  CONSOLE.print("additional_rot_check: ");
+  CONSOLE.print(" pos: ");
+  CONSOLE.print(stateX);
+  CONSOLE.print("/");
+  CONSOLE.print(stateY);
+  CONSOLE.print(" stateDelta: ");
+  CONSOLE.print(stateDelta);
+  CONSOLE.print(" targetDelta: ");
+  CONSOLE.println(targetDelta);
+  int right = 0;
+  int left = 0;
+  for(int i = 0; i < circle.numPoints; ++i) {
+    float angle = pointsAngle(stateX, stateY, circle.points[i].x(), circle.points[i].y());
+    CONSOLE.print(angle);
+    CONSOLE.print(" ");
+    CONSOLE.print(i);
+    CONSOLE.print(": ");
+    CONSOLE.print(circle.points[i].x());
+    CONSOLE.print("/");
+    CONSOLE.println(circle.points[i].y());
+    if (maps.checkpoint(circle.points[i].x(), circle.points[i].y())) {
+
+            // skip points in front of us
+	    if (fabs(angle-stateDelta) < 0.05) {
+		    continue;
+	    }
+
+            if (stateDelta < targetDelta) {
+	        if (angle >= stateDelta && angle <= targetDelta) {
+		    left++;
+	        } else {
+		    right++;
+	        }
+	    } else {
+   	        if (angle <= stateDelta && angle >= targetDelta) {
+		    right++;
+		} else {
+		    left++;
+	        }
+	    }
+    }
+  }
+  CONSOLE.print("left/right: ");
+  CONSOLE.print(left);
+  CONSOLE.print("/");
+  CONSOLE.println(right);
+
+  if (right == left) {
+	  return 0;
+  }
+
+  if (right < left) {
+	  return 1;
+  }
+
+  return -1;
+}
 
 // control robot velocity (linear,angular) to track line to next waypoint (target)
 // uses a stanley controller for line tracking
@@ -54,38 +133,77 @@ void trackLine(bool runControl){
   else 
     targetReached = (targetDist < TARGET_REACHED_TOLERANCE);    
   
-  
-  if ( (motor.motorLeftOverload) || (motor.motorRightOverload) || (motor.motorMowOverload) ){
-    linear = 0.1;  
-  }   
-          
-  // allow rotations only near last or next waypoint or if too far away from path
-  if ( (targetDist < 0.5) || (lastTargetDist < 0.5) ||  (fabs(distToPath) > 0.5) ) {
-    if (SMOOTH_CURVES)
-      angleToTargetFits = (fabs(trackerDiffDelta)/PI*180.0 < 120);          
-    else     
-      angleToTargetFits = (fabs(trackerDiffDelta)/PI*180.0 < 20);   
-  } else angleToTargetFits = true;
+  if ( (last_rotation_target.x() != target.x() || last_rotation_target.y() != target.y()) &&
+	(rotateLeft || rotateRight ) ) {
+    CONSOLE.println("STEFAN: reset left / right rot (target point changed)");
+    rotateLeft = false;  // reset rotate direction
+    rotateRight = false;
+  }
 
-               
+  // allow rotations only near last or next waypoint or if too far away from path
+  // it might race between rotating mower and targetDist check below
+  // if we race we still have rotateLeft or rotateRight true
+  if ( (targetDist < 0.5) || (lastTargetDist < 0.5) || (fabs(distToPath) > 0.5) ||
+       rotateLeft || rotateRight ) {
+    if (SMOOTH_CURVES)
+      angleToTargetFits = (fabs(trackerDiffDelta)/PI*180.0 < 120);
+    else     
+      angleToTargetFits = (fabs(trackerDiffDelta)/PI*180.0 < 20);
+  } else {
+     angleToTargetFits = true;
+  }
+
   if (!angleToTargetFits){
     // angular control (if angle to far away, rotate to next waypoint)
     linear = 0;
     angular = 29.0 / 180.0 * PI; //  29 degree/s (0.5 rad/s);               
     if ((!rotateLeft) && (!rotateRight)){ // decide for one rotation direction (and keep it)
-      if (trackerDiffDelta < 0) rotateLeft = true;
-        else rotateRight = true;
+      int r = 0;
+      // no idea but don't work in reverse mode...
+      if (!maps.trackReverse) {
+	r = additional_rot_check();
+      }
+      // store last_rotation_target point
+      last_rotation_target.setXY(target.x(), target.y());
+      
+      if (r == 1) {
+        CONSOLE.println("STEFAN: force turn right");
+        rotateLeft = false;
+        rotateRight = true;
+      }
+      else if (r == -1) {
+        CONSOLE.println("STEFAN: force turn left");
+        rotateLeft = true;
+        rotateRight = false;
+      }
+      else if (trackerDiffDelta < 0) {
+	rotateRight = true;
+      } else {
+	rotateLeft = true;
+      }
+
+      trackerDiffDelta_positive = (trackerDiffDelta >= 0);
     }        
-    if (rotateLeft) angular *= -1;            
-    if (fabs(trackerDiffDelta)/PI*180.0 < 90){
+    if (rotateRight) angular *= -1;
+    if (trackerDiffDelta_positive != (trackerDiffDelta >= 0)) {
+      CONSOLE.println("STEFAN: reset left / right rot");
       rotateLeft = false;  // reset rotate direction
       rotateRight = false;
-    }    
+      angular = 0;
+    }
+    // if (fabs(trackerDiffDelta)/PI*180.0 < 90){
+    //   // CONSOLE.println("reset left / right rot");
+    //   rotateLeft = false;  // reset rotate direction
+    //   rotateRight = false;
+    // }
   } 
   else {
     // line control (stanley)    
     bool straight = maps.nextPointIsStraight();
     bool trackslow_allowed = true;
+
+    rotateLeft = false;
+    rotateRight = false;
 
     // in case of docking or undocking - check if trackslow is allowed
     if ( maps.isUndocking() || maps.isDocking() ) {
@@ -180,6 +298,8 @@ void trackLine(bool runControl){
 	}
     }
     if (fabs(distToPath) > allowedPathTolerance){ // actually, this should not happen (except on false GPS fixes or robot being kidnapped...)
+      rotateLeft = false;
+      rotateRight = false;
       if (!stateKidnapped){
         stateKidnapped = true;
         activeOp->onKidnapped(stateKidnapped);
@@ -197,16 +317,34 @@ void trackLine(bool runControl){
       if (!buzzer.isPlaying()) buzzer.sound(SND_WARNING, true);
       linear = 0;
       angular = 0;   
+      rotateLeft = false;
+      rotateRight = false;
     }
   }
 
   if (runControl){
+    if (angleToTargetFits != langleToTargetFits) {
+        CONSOLE.print("angleToTargetFits: ");
+        CONSOLE.print(angleToTargetFits);
+        CONSOLE.print("trackerDiffDelta: ");
+        CONSOLE.println(trackerDiffDelta);
+        langleToTargetFits = angleToTargetFits;
+    }
+    // if (angular != langular) {
+    //     CONSOLE.print("motor.setLinearAngularSpeed: ");
+    //     CONSOLE.print(angular);
+    //     CONSOLE.println(angleToTargetFits);
+    //     langular = angular;
+    // }
+
     motor.setLinearAngularSpeed(linear, angular);      
     if (detectLift()) mow = false; // in any case, turn off mower motor if lifted 
     motor.setMowState(mow);    
   }
 
   if (targetReached){
+    rotateLeft = false;
+    rotateRight = false;
     activeOp->onTargetReached();
     bool straight = maps.nextPointIsStraight();
     if (!maps.nextPoint(false)){
