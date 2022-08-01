@@ -272,7 +272,7 @@ void trackLine(bool runControl){
     if (millis() > lastFixTime + fixTimeout * 1000.0){
       activeOp->onGpsFixTimeout();        
     }       
-  }     
+  }
 
   if ((gps.solution == SOL_FIXED) || (gps.solution == SOL_FLOAT)){        
     if (abs(linear) > 0.06) {
@@ -293,6 +293,19 @@ void trackLine(bool runControl){
       activeOp->onGpsNoSignal();
     }
   }
+
+  if ( maps.isUndocking() && gps.solution != SOL_FIXED ) {
+    float dockX = 0;
+    float dockY = 0;
+    float dockDelta = 0;
+    maps.getDockingPos(dockX, dockY, dockDelta);
+    float dist = distance(dockX, dockY, stateX, stateY);
+    // enforce fix while undocking and 1m and 3m
+    if (millis() > lastFixTime && dist > 2 && dist < 3) {
+      activeOp->onGpsFixTimeout();
+    }
+  }
+
 
   // gps-jump/false fix check
   if (KIDNAP_DETECT){
