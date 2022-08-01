@@ -10,6 +10,7 @@
 #include "Arduino.h"
 
 
+int rpm_fault_detection = 0;  
 
 
 void Motor::begin() {
@@ -91,6 +92,7 @@ void Motor::begin() {
 
   lastControlTime = 0;
   nextSenseTime = 0;
+  nextMotorRPMTime = 0;
   motorLeftTicks =0;  
   motorRightTicks =0;
   motorMowTicks = 0;
@@ -543,23 +545,32 @@ void Motor::checkOverload(){
 
 // check mow rpm fault
 bool Motor::checkMowRpmFault(){
+  if (millis() < nextMotorRPMTime) return false;
+  nextMotorRPMTime = millis() + 2000;
   //CONSOLE.print(motorMowPWMCurr);
   //CONSOLE.print(",");
   //CONSOLE.print(motorMowPWMCurrLP);  
   //CONSOLE.print(",");
   //CONSOLE.println(motorMowRpmCurrLP);
   if (ENABLE_RPM_FAULT_DETECTION){
-    if  ( (abs(motorMowPWMCurr) > 100) && (abs(motorMowPWMCurrLP) > 100) && (abs(motorMowRpmCurrLP) < 10.0)) {        
-      CONSOLE.print("ERROR: mow motor, average rpm too low: pwm=");
-      CONSOLE.print(motorMowPWMCurr);
-      CONSOLE.print("  pwmLP=");      
-      CONSOLE.print(motorMowPWMCurrLP);      
-      CONSOLE.print("  rpmLP=");
-      CONSOLE.print(motorMowRpmCurrLP);
-      CONSOLE.println("  (NOTE: choose ENABLE_RPM_FAULT_DETECTION=false in config.h, if your mowing motor has no rpm sensor!)");
-      return true;
+    if  ( (abs(motorMowPWMCurr) > 100) && (abs(motorMowPWMCurrLP) > 100) && (abs(motorMowRpmCurrLP) < 10.0) ) { 
+      rpm_fault_detection = rpm_fault_detection + 1;
+      CONSOLE.print("WARN: mow motor, average rpm too low: ");
+      CONSOLE.println(rpm_fault_detection);
+      if ((rpm_fault_detection > 5)) {
+          CONSOLE.print("ERROR: mow motor, average rpm too low: pwm=");
+          CONSOLE.print(motorMowPWMCurr);
+          CONSOLE.print("  pwmLP=");      
+          CONSOLE.print(motorMowPWMCurrLP);      
+          CONSOLE.print("  rpmLP=");
+          CONSOLE.print(motorMowRpmCurrLP);
+          CONSOLE.println("  (NOTE: choose ENABLE_RPM_FAULT_DETECTION=false in config.h, if your mowing motor has no rpm sensor!)");
+          return true;
+      }
     }
-  }  
+    return false;
+  }
+  rpm_fault_detection = 0;  
   return false;
 }
 
