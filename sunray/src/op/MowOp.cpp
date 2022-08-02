@@ -28,7 +28,8 @@ void MowOp::begin(){
     CONSOLE.println("OP_MOW");      
     motor.enableTractionMotors(true); // allow traction motors to operate         
     motor.setLinearAngularSpeed(0,0);      
-    motor.setMowState(false);                
+    // why to disable motor if we want to mow?
+    // motor.setMowState(false);                
 
     // plan route to next target point 
 
