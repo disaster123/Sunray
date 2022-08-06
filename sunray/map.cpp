@@ -1084,10 +1084,10 @@ bool Map::addObstacle(float stateX, float stateY, float stateDelta, MotType moti
   CONSOLE.print(center_x);
   CONSOLE.print("/");
   CONSOLE.println(center_y);
-  if (obstacles.numPolygons > 50){
-    CONSOLE.println("error: too many obstacles");
-    return false;
-  }
+  // if (obstacles.numPolygons > 50){
+  //   CONSOLE.println("error: too many obstacles");
+  //   return false;
+  // }
   int idx = obstacles.numPolygons;
   if (!obstacles.alloc(idx+1)) return false;
   if (!obstacles.polygons[idx].alloc(12)) return false;
