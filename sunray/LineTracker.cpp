@@ -157,6 +157,9 @@ void trackLine(bool runControl){
     // angular control (if angle to far away, rotate to next waypoint)
     linear = 0;
     angular = 29.0 / 180.0 * PI; //  29 degree/s (0.5 rad/s);               
+    if (fabs(trackerDiffDelta) <= 0.6) {
+    	angular = 15.0 / 180.0 * PI; //  29 degree/s (0.5 rad/s);               
+    }
     if ((!rotateLeft) && (!rotateRight)){ // decide for one rotation direction (and keep it)
       int r = 0;
       // no idea but don't work in reverse mode...
