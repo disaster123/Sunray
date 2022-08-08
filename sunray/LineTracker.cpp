@@ -51,26 +51,26 @@ int additional_rot_check() {
   circle.points[6].setXY(x+d2, y-d2);
   circle.points[7].setXY(x-d2, y+d2);
 
-  CONSOLE.print("additional_rot_check: ");
-  CONSOLE.print(" pos: ");
-  CONSOLE.print(stateX);
-  CONSOLE.print("/");
-  CONSOLE.print(stateY);
-  CONSOLE.print(" stateDelta: ");
-  CONSOLE.print(stateDelta);
-  CONSOLE.print(" targetDelta: ");
-  CONSOLE.println(targetDelta);
+  // CONSOLE.print("additional_rot_check: ");
+  // CONSOLE.print(" pos: ");
+  // CONSOLE.print(stateX);
+  // CONSOLE.print("/");
+  // CONSOLE.print(stateY);
+  // CONSOLE.print(" stateDelta: ");
+  // CONSOLE.print(stateDelta);
+  // CONSOLE.print(" targetDelta: ");
+  // CONSOLE.println(targetDelta);
   int right = 0;
   int left = 0;
   for(int i = 0; i < circle.numPoints; ++i) {
     float angle = pointsAngle(stateX, stateY, circle.points[i].x(), circle.points[i].y());
-    CONSOLE.print(angle);
-    CONSOLE.print(" ");
-    CONSOLE.print(i);
-    CONSOLE.print(": ");
-    CONSOLE.print(circle.points[i].x());
-    CONSOLE.print("/");
-    CONSOLE.println(circle.points[i].y());
+    // CONSOLE.print(angle);
+    // CONSOLE.print(" ");
+    // CONSOLE.print(i);
+    // CONSOLE.print(": ");
+    // CONSOLE.print(circle.points[i].x());
+    // CONSOLE.print("/");
+    // CONSOLE.println(circle.points[i].y());
     if (maps.checkpoint(circle.points[i].x(), circle.points[i].y())) {
 
             // skip points in front of us
@@ -93,10 +93,10 @@ int additional_rot_check() {
 	    }
     }
   }
-  CONSOLE.print("left/right: ");
-  CONSOLE.print(left);
-  CONSOLE.print("/");
-  CONSOLE.println(right);
+  // CONSOLE.print("left/right: ");
+  // CONSOLE.print(left);
+  // CONSOLE.print("/");
+  // CONSOLE.println(right);
 
   if (right == left) {
 	  return 0;
@@ -170,12 +170,12 @@ void trackLine(bool runControl){
       last_rotation_target.setXY(target.x(), target.y());
       
       if (r == 1) {
-        CONSOLE.println("STEFAN: force turn right");
+        CONSOLE.println("force turn right");
         rotateLeft = false;
         rotateRight = true;
       }
       else if (r == -1) {
-        CONSOLE.println("STEFAN: force turn left");
+        CONSOLE.println("force turn left");
         rotateLeft = true;
         rotateRight = false;
       }
@@ -326,13 +326,13 @@ void trackLine(bool runControl){
   }
 
   if (runControl){
-    if (angleToTargetFits != langleToTargetFits) {
-        CONSOLE.print("angleToTargetFits: ");
-        CONSOLE.print(angleToTargetFits);
-        CONSOLE.print("trackerDiffDelta: ");
-        CONSOLE.println(trackerDiffDelta);
-        langleToTargetFits = angleToTargetFits;
-    }
+    // if (angleToTargetFits != langleToTargetFits) {
+    //     CONSOLE.print("angleToTargetFits: ");
+    //     CONSOLE.print(angleToTargetFits);
+    //     CONSOLE.print("trackerDiffDelta: ");
+    //     CONSOLE.println(trackerDiffDelta);
+    //     langleToTargetFits = angleToTargetFits;
+    // }
     // if (angular != langular) {
     //     CONSOLE.print("motor.setLinearAngularSpeed: ");
     //     CONSOLE.print(angular);

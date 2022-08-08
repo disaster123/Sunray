@@ -1077,18 +1077,15 @@ bool Map::checkpoint(float x, float y){
   Point src;
   src.setXY(x, y);
   if (!maps.pointIsInsidePolygon( maps.perimeterPoints, src)){
-    CONSOLE.println("STEFAN: point not inside perimeter");
     return true;
   }
   for (int i=0; i < maps.exclusions.numPolygons; i++){
     if (maps.pointIsInsidePolygon( maps.exclusions.polygons[i], src)){
-       CONSOLE.println("STEFAN: point is inside exclusion");
        return true;
     }
   } 
   for (int i=0; i < obstacles.numPolygons; i++){
     if (maps.pointIsInsidePolygon( maps.obstacles.polygons[i], src)){
-       CONSOLE.println("STEFAN: point is inside obstacle");
        return true;
     }
   }  
