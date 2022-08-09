@@ -320,8 +320,6 @@ void trackLine(bool runControl){
       if (!buzzer.isPlaying()) buzzer.sound(SND_WARNING, true);
       linear = 0;
       angular = 0;   
-      rotateLeft = false;
-      rotateRight = false;
     }
   }
 
