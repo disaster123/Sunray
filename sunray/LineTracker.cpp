@@ -301,8 +301,6 @@ void trackLine(bool runControl){
 	}
     }
     if (fabs(distToPath) > allowedPathTolerance){ // actually, this should not happen (except on false GPS fixes or robot being kidnapped...)
-      rotateLeft = false;
-      rotateRight = false;
       if (!stateKidnapped){
         stateKidnapped = true;
         activeOp->onKidnapped(stateKidnapped);
