@@ -322,19 +322,20 @@ void trackLine(bool runControl){
   }
 
   if (runControl){
-    // if (angleToTargetFits != langleToTargetFits) {
-    //     CONSOLE.print("angleToTargetFits: ");
-    //     CONSOLE.print(angleToTargetFits);
-    //     CONSOLE.print("trackerDiffDelta: ");
-    //     CONSOLE.println(trackerDiffDelta);
-    //     langleToTargetFits = angleToTargetFits;
-    // }
-    // if (angular != langular) {
-    //     CONSOLE.print("motor.setLinearAngularSpeed: ");
-    //     CONSOLE.print(angular);
-    //     CONSOLE.println(angleToTargetFits);
-    //     langular = angular;
-    // }
+    if (angleToTargetFits != langleToTargetFits) {
+        CONSOLE.print("angleToTargetFits: ");
+        CONSOLE.print(angleToTargetFits);
+        CONSOLE.print(" trackerDiffDelta: ");
+        CONSOLE.println(trackerDiffDelta);
+        langleToTargetFits = angleToTargetFits;
+    }
+    if (angular != langular) {
+	if (rotateLeft || rotateRight) {
+          CONSOLE.print("motor.AngularSpeed: ");
+          CONSOLE.println(angular);
+	}
+        langular = angular;
+    }
 
     motor.setLinearAngularSpeed(linear, angular);      
     if (detectLift()) mow = false; // in any case, turn off mower motor if lifted 
