@@ -15,6 +15,7 @@ String GpsWaitFixOp::name(){
 void GpsWaitFixOp::begin(){
     CONSOLE.println("WARN: no gps solution!");
     stateSensor = SENS_GPS_INVALID;
+    gps.reboot();   // try to recover from false GPS fix
     //setOperation(OP_ERROR);
     //buzzer.sound(SND_STUCK, true);          
     
