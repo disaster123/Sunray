@@ -189,6 +189,7 @@ class GpsRebootRecoveryOp: public Op {
 // wait for gps fix
 class GpsWaitFixOp: public Op {
   public:
+    unsigned long retryOperationTime;
     virtual String name() override;
     virtual void begin() override;
     virtual void end() override;
@@ -198,6 +199,7 @@ class GpsWaitFixOp: public Op {
 // wait for gps signal (float or fix)
 class GpsWaitFloatOp: public Op {
   public:
+    unsigned long retryOperationTime;
     virtual String name() override;
     virtual void begin() override;
     virtual void end() override;

@@ -24,7 +24,9 @@ void GpsWaitFloatOp::begin(){
     //angular = 0;      
     //mow = false;
     motor.setLinearAngularSpeed(0,0, false); 
-    motor.setMowState(false);     
+    motor.setMowState(false);    
+
+    retryOperationTime = millis() + 45000; // wait max 45 secs after reboot, then try gpsRebootRecoveryOp
 }
 
 
@@ -36,6 +38,11 @@ void GpsWaitFloatOp::run(){
     if ((gps.solution == SOL_FIXED) || (gps.solution == SOL_FLOAT)){        
         changeOp(*nextOp);
     }     
+    if (millis() > retryOperationTime){
+        CONSOLE.println("GpsWaitFloatOp timed out - try reboot recovery");
+        retryOperationTime = 0;
+	changeOp(gpsRebootRecoveryOp, true);
+    }
 }
 
 
