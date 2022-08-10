@@ -23,7 +23,9 @@ void GpsWaitFixOp::begin(){
     //angular = 0;      
     //mow = false;
     motor.setLinearAngularSpeed(0,0, false); 
-    motor.setMowState(false);     
+    motor.setMowState(false);
+
+    retryOperationTime = millis() + 180000;
 }
 
 
@@ -35,6 +37,12 @@ void GpsWaitFixOp::run(){
     if (gps.solution == SOL_FIXED){
         changeOp(*nextOp);
     }     
+    if (millis() > retryOperationTime){
+        CONSOLE.println("GpsWaitFixOp timed out - try reboot recovery");
+        retryOperationTime = millis() + 180000;
+        stateSensor = SENS_GPS_INVALID;
+        gps.reboot();   // try to recover from false GPS fix
+    }
 }
 
 
