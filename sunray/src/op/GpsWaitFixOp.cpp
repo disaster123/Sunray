@@ -13,6 +13,11 @@ String GpsWaitFixOp::name(){
 }
 
 void GpsWaitFixOp::begin(){
+    if (gps.solution == SOL_FIXED) {
+      // immediatly return if everything is OK - might happen if we come from another state
+      // f.e. gpsrebootrecovery
+      return;
+    }      
     CONSOLE.println("WARN: no gps solution!");
     stateSensor = SENS_GPS_INVALID;
     gps.reboot();   // try to recover from false GPS fix
