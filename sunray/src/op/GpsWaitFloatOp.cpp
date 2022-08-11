@@ -13,6 +13,11 @@ String GpsWaitFloatOp::name(){
 }
 
 void GpsWaitFloatOp::begin(){
+    if ((gps.solution == SOL_FIXED) || (gps.solution == SOL_FLOAT)) {
+      // immediatly return if everything is OK - might happen if we come from another state
+      // f.e. gpsrebootrecovery
+      return;
+    }      
     // no gps solution
     CONSOLE.println("WARN: no gps solution!");
     stateSensor = SENS_GPS_INVALID;
