@@ -15,6 +15,10 @@
 enum WayType {WAY_PERIMETER, WAY_EXCLUSION, WAY_DOCK, WAY_MOW, WAY_FREE};
 typedef enum WayType WayType;
 
+// motion type
+enum MotType {MOT_FORWARD, MOT_BACKWARD, MOT_LEFT, MOT_RIGHT};
+typedef enum MotType MotType;
+
 // a point on the map
 class Point
 {
@@ -213,7 +217,7 @@ class Map
     bool retryDocking(float stateX, float stateY);
     
     // -----virtual obstacles----------------------------------
-    bool addObstacle(float stateX, float stateY, float stateDelta);    
+    bool addObstacle(float stateX, float stateY, float stateDelta, MotType motion);
     void clearObstacles();
     
     // -----misc-----------------------------------------------
