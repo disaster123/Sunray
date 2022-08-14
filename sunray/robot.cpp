@@ -670,10 +670,23 @@ bool robotShouldMoveForward(){
    return ( motor.linearSpeedSet > 0.001 );
 }
 
+bool robotShouldMoveBackward(){
+   return ( motor.linearSpeedSet < -0.001 );
+}
+
 // should robot rotate?
 bool robotShouldRotate(){
   return ( (fabs(motor.linearSpeedSet) < 0.001) &&  (fabs(motor.angularSpeedSet) > 0.001) );
 }
+
+bool robotShouldRotateLeft(){
+  return ( (fabs(motor.linearSpeedSet) < 0.001) &&  (motor.angularSpeedSet > 0.001) );
+}
+
+bool robotShouldRotateRight(){
+  return ( (fabs(motor.linearSpeedSet) < 0.001) &&  (motor.angularSpeedSet < -0.001) );
+}
+
 
 // should robot be in motion? NOTE: function ignores very short motion pauses (with motion low-pass filtering)
 bool robotShouldBeInMotion(){  
