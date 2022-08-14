@@ -168,6 +168,12 @@ void detectSensorMalfunction();
 bool detectLift();
 bool detectObstacle();
 bool detectObstacleRotation();
+bool robotShouldMoveForward();
+bool robotShouldMoveBackward();
+bool robotShouldRotate();
+bool robotShouldRotateLeft();
+bool robotShouldRotateRight();
+
 
 
 
