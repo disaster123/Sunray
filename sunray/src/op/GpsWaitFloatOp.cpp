@@ -45,7 +45,7 @@ void GpsWaitFloatOp::run(){
     }     
     if (millis() > retryOperationTime){
         CONSOLE.println("GpsWaitFloatOp timed out - try reboot recovery");
-        retryOperationTime = 0;
+        retryOperationTime = millis() + 45000;
 	changeOp(gpsRebootRecoveryOp, true);
     }
 }
