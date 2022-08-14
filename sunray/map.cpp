@@ -958,7 +958,8 @@ bool Map::startDocking(float stateX, float stateY){
   }
 }
 
-bool Map::startMowing(float stateX, float stateY){  
+bool Map::startMowing(float stateX, float stateY){ 
+  // here we also go / went through if an obstacle get added
   CONSOLE.println("Map::startMowing");
   //stressTest();
   //testIntegerCalcs();
@@ -1008,20 +1009,25 @@ void Map::clearObstacles(){
   obstacles.dealloc();  
 }
 
+
 // add dynamic octagon obstacle in front of robot on line going from robot to target point
-bool Map::addObstacle(float stateX, float stateY){     
-  float d1 = OBSTACLE_DIAMETER / 6.0;   // distance from center to nearest octagon edges
-  float d2 = OBSTACLE_DIAMETER / 2.0;  // distance from center to farest octagon edges
-  
-  float angleCurr = pointsAngle(stateX, stateY, targetPoint.x(), targetPoint.y());
-  float r = d2 + 0.05;
-  float x = stateX + cos(angleCurr) * r;
-  float y = stateY + sin(angleCurr) * r;
-  
-  CONSOLE.print("addObstacle ");
-  CONSOLE.print(x);
-  CONSOLE.print(",");
-  CONSOLE.println(y);
+bool Map::addObstacle(float stateX, float stateY, float stateDelta){     
+  float r = OBSTACLE_DIAMETER / 2.0; // radius
+
+  // move center of octagon in front of mower 20cm (might be better a config OPTION depends on GPS receiver position)
+  float center_x = stateX + cos(stateDelta) * (0.2 + r);
+  float center_y = stateY + sin(stateDelta) * (0.2 + r);
+
+  CONSOLE.print("addObstacle: state: ");
+  CONSOLE.print(stateX);
+  CONSOLE.print("/");
+  CONSOLE.print(stateY);
+  CONSOLE.print(" stateDelta: ");
+  CONSOLE.print(stateDelta);
+  CONSOLE.print(" Center: ");
+  CONSOLE.print(center_x);
+  CONSOLE.print("/");
+  CONSOLE.println(center_y);
   if (obstacles.numPolygons > 50){
     CONSOLE.println("error: too many obstacles");
     return false;
@@ -1030,17 +1036,17 @@ bool Map::addObstacle(float stateX, float stateY){
   if (!obstacles.alloc(idx+1)) return false;
   if (!obstacles.polygons[idx].alloc(8)) return false;
   
-  obstacles.polygons[idx].points[0].setXY(x-d2, y-d1);
-  obstacles.polygons[idx].points[1].setXY(x-d1, y-d2);
-  obstacles.polygons[idx].points[2].setXY(x+d1, y-d2);
-  obstacles.polygons[idx].points[3].setXY(x+d2, y-d1);
-  obstacles.polygons[idx].points[4].setXY(x+d2, y+d1);
-  obstacles.polygons[idx].points[5].setXY(x+d1, y+d2);
-  obstacles.polygons[idx].points[6].setXY(x-d1, y+d2);
-  obstacles.polygons[idx].points[7].setXY(x-d2, y+d1);         
+  // create circle / octagon around center angle 0 - "360"
+  obstacles.polygons[idx].points[0].setXY(center_x + cos(0) * r, center_y + sin(0) * r);
+  obstacles.polygons[idx].points[1].setXY(center_x + cos(45) * r, center_y + sin(45) * r);
+  obstacles.polygons[idx].points[2].setXY(center_x + cos(90) * r, center_y + sin(90) * r);
+  obstacles.polygons[idx].points[3].setXY(center_x + cos(135) * r, center_y + sin(135) * r);
+  obstacles.polygons[idx].points[4].setXY(center_x + cos(180) * r, center_y + sin(180) * r);
+  obstacles.polygons[idx].points[5].setXY(center_x + cos(225) * r, center_y + sin(225) * r);
+  obstacles.polygons[idx].points[6].setXY(center_x + cos(270) * r, center_y + sin(270) * r);
+  obstacles.polygons[idx].points[7].setXY(center_x + cos(315) * r, center_y + sin(315) * r);
   return true;
 }
-
 
 // check if given point is inside perimeter (and outside exclusions) of current map 
 bool Map::isInsidePerimeterOutsideExclusions(Point &pt){
@@ -2009,7 +2015,7 @@ void Map::stressTest(){
   float d = 30.0;
   for (int i=0 ; i < 10; i++){
     for (int j=0 ; j < 20; j++){
-      addObstacle( ((float)random(d*10))/10.0-d/2, ((float)random(d*10))/10.0-d/2 );
+      addObstacle( ((float)random(d*10))/10.0-d/2, ((float)random(d*10))/10.0-d/2, (float)random(PI*2)-PI );
     }
     src.setXY( ((float)random(d*10))/10.0-d/2, ((float)random(d*10))/10.0-d/2 );
     dst.setXY( ((float)random(d*10))/10.0-d/2, ((float)random(d*10))/10.0-d/2 );

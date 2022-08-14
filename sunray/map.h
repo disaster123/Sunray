@@ -212,7 +212,7 @@ class Map
     bool retryDocking(float stateX, float stateY);
     
     // -----virtual obstacles----------------------------------
-    bool addObstacle(float stateX, float stateY);    
+    bool addObstacle(float stateX, float stateY, float stateDelta);    
     void clearObstacles();
     
     // -----misc-----------------------------------------------
