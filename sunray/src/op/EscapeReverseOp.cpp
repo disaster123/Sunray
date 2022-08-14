@@ -12,18 +12,30 @@
 float orig_stateX;
 float orig_stateY;
 float orig_stateDelta;
+MotType orig_motion;
 
 String EscapeReverseOp::name(){
     return "EscapeReverse";
 }
 
 void EscapeReverseOp::begin(){
+
     // obstacle avoidance
     driveReverseStopTime = millis() + 3000;                           
 
     orig_stateX = stateX;
     orig_stateY = stateY;
     orig_stateDelta = stateDelta;
+
+    if (robotShouldRotateLeft()) {
+      orig_motion = MOT_LEFT;
+    } else if (robotShouldRotateRight()) {
+      orig_motion = MOT_RIGHT;
+    } else if (robotShouldMoveBackward()) {
+      orig_motion = MOT_BACKWARD;
+    } else {
+      orig_motion = MOT_FORWARD;
+    }
 }
 
 
@@ -52,7 +64,7 @@ void EscapeReverseOp::run(){
             changeOp(*nextOp, false);    // continue current operation
         } else {
             CONSOLE.println("continue operation with virtual obstacle");
-            maps.addObstacle(orig_stateX, orig_stateY, orig_stateDelta);              
+            maps.addObstacle(orig_stateX, orig_stateY, orig_stateDelta, orig_motion);
             //Point pt;
             //if (!maps.findObstacleSafeMowPoint(pt)){
             //    changeOp(dockOp); // dock if no more (valid) mowing points

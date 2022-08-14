@@ -7,7 +7,7 @@
 #include "config.h"
 #include "StateEstimator.h"
 #include <Arduino.h>
-
+#include "helper.h"
 
 #ifndef _SAM3XA_                 // not Arduino Due
   #define FLOAT_CALC    1    // comment out line for using integer calculations instead of float  
@@ -1011,16 +1011,38 @@ void Map::clearObstacles(){
 
 
 // add dynamic octagon obstacle in front of robot on line going from robot to target point
-bool Map::addObstacle(float stateX, float stateY, float stateDelta){     
+bool Map::addObstacle(float stateX, float stateY, float stateDelta, MotType motion){
   float r = OBSTACLE_DIAMETER / 2.0; // radius
+  float gps_receiver_to_front = 0.2; // 20cm
+  float move_angle;
 
-  // move center of octagon in front of mower 20cm (might be better a config OPTION depends on GPS receiver position)
-  float center_x = stateX + cos(stateDelta) * (0.2 + r);
-  float center_y = stateY + sin(stateDelta) * (0.2 + r);
+  switch (motion){
+    case MOT_BACKWARD:
+      move_angle = 180;
+      gps_receiver_to_front /= 2; // just an estimate which should be ok
+      break;
+    case MOT_RIGHT:
+      move_angle = 45; // do not use 90 degress only fron wheels turn / move
+      gps_receiver_to_front /= 2; // just an estimate which should be ok
+      break;
+    case MOT_LEFT:
+      move_angle = -45; // do not use 90 degress only fron wheels turn / move
+      gps_receiver_to_front /= 2; // just an estimate which should be ok
+      break;
+    case MOT_FORWARD:
+      move_angle = 0;
+      break;
+  }
+
+  // move center of octagon in the right position of mower
+  float center_x = stateX + cos( scalePI( stateDelta + deg2rad(move_angle) ) ) * (gps_receiver_to_front + r);
+  float center_y = stateY + sin( scalePI( stateDelta + deg2rad(move_angle) ) ) * (gps_receiver_to_front + r);
 
   CONSOLE.print("addObstacle ");
   CONSOLE.print("stateDelta: ");
   CONSOLE.print(stateDelta);
+  CONSOLE.print(" move_angle: ");
+  CONSOLE.print(move_angle);
   CONSOLE.print(" Center: ");
   CONSOLE.print(center_x);
   CONSOLE.print(",");
@@ -1034,14 +1056,14 @@ bool Map::addObstacle(float stateX, float stateY, float stateDelta){
   if (!obstacles.polygons[idx].alloc(8)) return false;
   
   // create circle / octagon around center angle 0 - "360"
-  obstacles.polygons[idx].points[0].setXY(center_x + cos(0) * r, center_y + sin(0) * r);
-  obstacles.polygons[idx].points[1].setXY(center_x + cos(45) * r, center_y + sin(45) * r);
-  obstacles.polygons[idx].points[2].setXY(center_x + cos(90) * r, center_y + sin(90) * r);
-  obstacles.polygons[idx].points[3].setXY(center_x + cos(135) * r, center_y + sin(135) * r);
-  obstacles.polygons[idx].points[4].setXY(center_x + cos(180) * r, center_y + sin(180) * r);
-  obstacles.polygons[idx].points[5].setXY(center_x + cos(225) * r, center_y + sin(225) * r);
-  obstacles.polygons[idx].points[6].setXY(center_x + cos(270) * r, center_y + sin(270) * r);
-  obstacles.polygons[idx].points[7].setXY(center_x + cos(315) * r, center_y + sin(315) * r);
+  obstacles.polygons[idx].points[0].setXY(center_x + cos(deg2rad(0)) * r, center_y + sin(deg2rad(0)) * r);
+  obstacles.polygons[idx].points[1].setXY(center_x + cos(deg2rad(45)) * r, center_y + sin(deg2rad(45)) * r);
+  obstacles.polygons[idx].points[2].setXY(center_x + cos(deg2rad(90)) * r, center_y + sin(deg2rad(90)) * r);
+  obstacles.polygons[idx].points[3].setXY(center_x + cos(deg2rad(135)) * r, center_y + sin(deg2rad(135)) * r);
+  obstacles.polygons[idx].points[4].setXY(center_x + cos(deg2rad(180)) * r, center_y + sin(deg2rad(180)) * r);
+  obstacles.polygons[idx].points[5].setXY(center_x + cos(deg2rad(225)) * r, center_y + sin(deg2rad(225)) * r);
+  obstacles.polygons[idx].points[6].setXY(center_x + cos(deg2rad(270)) * r, center_y + sin(deg2rad(270)) * r);
+  obstacles.polygons[idx].points[7].setXY(center_x + cos(deg2rad(315)) * r, center_y + sin(deg2rad(315)) * r);
   return true;
 }
 
@@ -2000,7 +2022,7 @@ void Map::stressTest(){
   float d = 30.0;
   for (int i=0 ; i < 10; i++){
     for (int j=0 ; j < 20; j++){
-      addObstacle( ((float)random(d*10))/10.0-d/2, ((float)random(d*10))/10.0-d/2, (float)random(PI*2)-PI );
+      addObstacle( ((float)random(d*10))/10.0-d/2, ((float)random(d*10))/10.0-d/2, (float)random(PI*2)-PI, MOT_FORWARD);
     }
     src.setXY( ((float)random(d*10))/10.0-d/2, ((float)random(d*10))/10.0-d/2 );
     dst.setXY( ((float)random(d*10))/10.0-d/2, ((float)random(d*10))/10.0-d/2 );
