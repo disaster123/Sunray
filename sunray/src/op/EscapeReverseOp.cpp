@@ -9,7 +9,9 @@
 #include "../../StateEstimator.h"
 #include "../../map.h"
 
-
+float orig_stateX;
+float orig_stateY;
+float orig_stateDelta;
 
 String EscapeReverseOp::name(){
     return "EscapeReverse";
@@ -18,6 +20,10 @@ String EscapeReverseOp::name(){
 void EscapeReverseOp::begin(){
     // obstacle avoidance
     driveReverseStopTime = millis() + 3000;                           
+
+    orig_stateX = stateX;
+    orig_stateY = stateY;
+    orig_stateDelta = stateDelta;
 }
 
 
@@ -46,7 +52,7 @@ void EscapeReverseOp::run(){
             changeOp(*nextOp, false);    // continue current operation
         } else {
             CONSOLE.println("continue operation with virtual obstacle");
-            maps.addObstacle(stateX, stateY);              
+            maps.addObstacle(orig_stateX, orig_stateY, orig_stateDelta);              
             //Point pt;
             //if (!maps.findObstacleSafeMowPoint(pt)){
             //    changeOp(dockOp); // dock if no more (valid) mowing points
