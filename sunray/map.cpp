@@ -1011,16 +1011,17 @@ void Map::clearObstacles(){
 
 
 // add dynamic octagon obstacle in front of robot on line going from robot to target point
-bool Map::addObstacle(float stateX, float stateY){     
-  float r = ( OBSTACLE_DIAMETER ) / 2.0; // radius
-  // XXX: this is best guess - isn't it? Nobody knows if the robots angle is really towords the target point...
-  float angle_to_target = pointsAngle(stateX, stateY, targetPoint.x(), targetPoint.y());
+bool Map::addObstacle(float stateX, float stateY, float stateDelta){     
+  float r = OBSTACLE_DIAMETER / 2.0; // radius
 
   // move center of octagon in front of mower 20cm (might be better a config OPTION depends on GPS receiver position)
-  float center_x = stateX + cos(angle_to_target) * (0.2 + r);
-  float center_y = stateY + sin(angle_to_target) * (0.2 + r);
+  float center_x = stateX + cos(stateDelta) * (0.2 + r);
+  float center_y = stateY + sin(stateDelta) * (0.2 + r);
 
   CONSOLE.print("addObstacle ");
+  CONSOLE.print("stateDelta: ");
+  CONSOLE.print(stateDelta);
+  CONSOLE.print(" Center: ");
   CONSOLE.print(center_x);
   CONSOLE.print(",");
   CONSOLE.println(center_y);
@@ -2011,7 +2012,7 @@ void Map::stressTest(){
   float d = 30.0;
   for (int i=0 ; i < 10; i++){
     for (int j=0 ; j < 20; j++){
-      addObstacle( ((float)random(d*10))/10.0-d/2, ((float)random(d*10))/10.0-d/2 );
+      addObstacle( ((float)random(d*10))/10.0-d/2, ((float)random(d*10))/10.0-d/2, (float)random(PI*2)-PI );
     }
     src.setXY( ((float)random(d*10))/10.0-d/2, ((float)random(d*10))/10.0-d/2 );
     dst.setXY( ((float)random(d*10))/10.0-d/2, ((float)random(d*10))/10.0-d/2 );
