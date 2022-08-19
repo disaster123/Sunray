@@ -1013,13 +1013,13 @@ void Map::clearObstacles(){
 // add dynamic octagon obstacle in front of robot on line going from robot to target point
 bool Map::addObstacle(float stateX, float stateY, float stateDelta, MotType motion){
   float r = OBSTACLE_DIAMETER / 2.0; // radius
-  float gps_receiver_to_front = 0.2; // 20cm
+  float gps_receiver_to_front = 0.4; // 40cm alfred
   float move_angle;
 
   switch (motion){
     case MOT_BACKWARD:
       move_angle = 180;
-      gps_receiver_to_front /= 2; // just an estimate which should be ok
+      gps_receiver_to_front = 0; // just an estimate which should be ok
       break;
     case MOT_RIGHT:
       move_angle = 45; // do not use 90 degress only fron wheels turn / move
@@ -1035,8 +1035,8 @@ bool Map::addObstacle(float stateX, float stateY, float stateDelta, MotType moti
   }
 
   // move center of octagon in the right position of mower
-  float center_x = stateX + cos( scalePI( stateDelta + scalePI(deg2rad(move_angle)) ) ) * (gps_receiver_to_front + r);
-  float center_y = stateY + sin( scalePI( stateDelta + scalePI(deg2rad(move_angle)) ) ) * (gps_receiver_to_front + r);
+  float center_x = stateX + cos( scalePI( stateDelta + scalePI(deg2rad(move_angle)) ) ) * (gps_receiver_to_front + r/5*4);
+  float center_y = stateY + sin( scalePI( stateDelta + scalePI(deg2rad(move_angle)) ) ) * (gps_receiver_to_front + r/5*4);
 
   CONSOLE.print("addObstacle ");
   CONSOLE.print("stateDelta: ");
