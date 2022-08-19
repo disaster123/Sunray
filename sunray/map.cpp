@@ -1034,9 +1034,14 @@ bool Map::addObstacle(float stateX, float stateY, float stateDelta, MotType moti
       break;
   }
 
+  float angle_to_target = pointsAngle(stateX, stateY, targetPoint.x(), targetPoint.y());
+
   // move center of octagon in the right position of mower
-  float center_x = stateX + cos( scalePI( stateDelta + scalePI(deg2rad(move_angle)) ) ) * (gps_receiver_to_front + r/5*4);
-  float center_y = stateY + sin( scalePI( stateDelta + scalePI(deg2rad(move_angle)) ) ) * (gps_receiver_to_front + r/5*4);
+  float center_x = stateX + cos( scalePI( stateDelta + scalePI(deg2rad(move_angle)) ) ) * ((gps_receiver_to_front + r)*2/3);
+  float center_y = stateY + sin( scalePI( stateDelta + scalePI(deg2rad(move_angle)) ) ) * ((gps_receiver_to_front + r)*2/3);
+
+  float center_x_t = stateX + cos( scalePI( angle_to_target + scalePI(deg2rad(move_angle)) ) ) * ((gps_receiver_to_front + r)*2/3);
+  float center_y_t = stateY + sin( scalePI( angle_to_target + scalePI(deg2rad(move_angle)) ) ) * ((gps_receiver_to_front + r)*2/3);
 
   CONSOLE.print("addObstacle ");
   CONSOLE.print("stateDelta: ");
@@ -1047,6 +1052,10 @@ bool Map::addObstacle(float stateX, float stateY, float stateDelta, MotType moti
   CONSOLE.print(center_x);
   CONSOLE.print(",");
   CONSOLE.println(center_y);
+  CONSOLE.print(" CenterT: ");
+  CONSOLE.print(center_x_t);
+  CONSOLE.print(",");
+  CONSOLE.println(center_y_t);
   // if (obstacles.numPolygons > 50){
   //   CONSOLE.println("error: too many obstacles");
   //   return false;
