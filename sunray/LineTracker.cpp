@@ -29,6 +29,8 @@ bool angleToTargetFits = false;
 bool langleToTargetFits = false;
 bool targetReached = false;
 float trackerDiffDelta = 0;
+float trackerDiffDelta_turn = 0;
+float trackerDiffDelta_turn_millis;
 bool stateKidnapped = false;
 bool printmotoroverload = false;
 bool trackerDiffDelta_positive = false;
@@ -143,6 +145,7 @@ void trackLine(bool runControl){
     // CONSOLE.println("reset left / right rot (target point changed)");
     rotateLeft = false;
     rotateRight = false;
+    trackerDiffDelta_turn = 0;
   }
 
   // allow rotations only near last or next waypoint or if too far away from path
@@ -161,7 +164,8 @@ void trackLine(bool runControl){
   if (!angleToTargetFits){
     // angular control (if angle to far away, rotate to next waypoint)
     linear = 0;
-    angular = 29.0 / 180.0 * PI; //  29 degree/s (0.5 rad/s);               
+    angular = 29.0 / 180.0 * PI; //  29 degree/s (0.5 rad/s);              
+				 //
     if ((!rotateLeft) && (!rotateRight)){ // decide for one rotation direction (and keep it)
       int r = 0;
       // no idea but don't work in reverse mode...
@@ -170,7 +174,7 @@ void trackLine(bool runControl){
       }
       // store last_rotation_target point
       last_rotation_target.setXY(target.x(), target.y());
-      
+
       if (r == 1) {
         //CONSOLE.println("force turn right");
         rotateLeft = false;
@@ -193,10 +197,12 @@ void trackLine(bool runControl){
       CONSOLE.println("reset left / right rotation - DiffDelta overflow");
       rotateLeft = false;
       rotateRight = false;
+      trackerDiffDelta_turn = 0;
       // reverse rotation (*-1) - slowly rotate back
       angular = 10.0 / 180.0 * PI * -1; //  10 degree/s (0.19 rad/s);               
     }
     if (rotateRight) angular *= -1;
+
   } 
   else {
     // line control (stanley)    
@@ -205,6 +211,7 @@ void trackLine(bool runControl){
 
     rotateLeft = false;
     rotateRight = false;
+    trackerDiffDelta_turn = 0;
 
     // in case of docking or undocking - check if trackslow is allowed
     if ( maps.isUndocking() || maps.isDocking() ) {
@@ -344,6 +351,22 @@ void trackLine(bool runControl){
   }
 
   if (runControl){
+
+    if ((angular > 0) && ((rotateLeft || rotateRight) && ((trackerDiffDelta_turn_millis + 2000) < millis() || (trackerDiffDelta_turn == 0)))) {
+      if ((trackerDiffDelta_turn != 0) && (fabs(trackerDiffDelta_turn - trackerDiffDelta) < 0.02)) {
+        CONSOLE.print("STEFAN: NO turn motion: ");
+        CONSOLE.print( fabs(trackerDiffDelta_turn - trackerDiffDelta) );
+        CONSOLE.print(" runControl ");
+        CONSOLE.print(runControl);
+        CONSOLE.println(" => obstacle (CUR DIS)!");
+        //triggerObstacle();
+        //return;
+      }
+      // update only if millis is old
+      trackerDiffDelta_turn = trackerDiffDelta;
+      trackerDiffDelta_turn_millis = millis();
+    }
+
     if (angleToTargetFits != langleToTargetFits) {
         //CONSOLE.print("angleToTargetFits: ");
         //CONSOLE.print(angleToTargetFits);
