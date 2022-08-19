@@ -28,6 +28,8 @@ bool angleToTargetFits = false;
 bool langleToTargetFits = false;
 bool targetReached = false;
 float trackerDiffDelta = 0;
+float trackerDiffDelta_turn = 0;
+float trackerDiffDelta_turn_millis;
 bool stateKidnapped = false;
 bool printmotoroverload = false;
 bool trackerDiffDelta_positive = false;
@@ -156,6 +158,16 @@ void trackLine(bool runControl){
     // angular control (if angle to far away, rotate to next waypoint)
     linear = 0;
     angular = 29.0 / 180.0 * PI; //  29 degree/s (0.5 rad/s);               
+
+    if ((rotateLeft || rotateRight) && (trackerDiffDelta_turn_millis + 1000) < millis()) {
+      if (trackerDiffDelta_turn == trackerDiffDelta) {
+        CONSOLE.println("STEFAN: NO turn motion!!");
+      }
+      // update only if millis is old
+      trackerDiffDelta_turn = trackerDiffDelta;
+      trackerDiffDelta_turn_millis = millis();
+    }
+
     if ((!rotateLeft) && (!rotateRight)){ // decide for one rotation direction (and keep it)
       int r = 0;
       // no idea but don't work in reverse mode...
