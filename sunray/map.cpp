@@ -1035,8 +1035,8 @@ bool Map::addObstacle(float stateX, float stateY, float stateDelta, MotType moti
   }
 
   // move center of octagon in the right position of mower
-  float center_x = stateX + cos( scalePI( stateDelta + deg2rad(move_angle) ) ) * (gps_receiver_to_front + r);
-  float center_y = stateY + sin( scalePI( stateDelta + deg2rad(move_angle) ) ) * (gps_receiver_to_front + r);
+  float center_x = stateX + cos( scalePI( stateDelta + deg2rad(move_angle) ) ) * (gps_receiver_to_front);
+  float center_y = stateY + sin( scalePI( stateDelta + deg2rad(move_angle) ) ) * (gps_receiver_to_front);
 
   CONSOLE.print("addObstacle ");
   CONSOLE.print("stateDelta: ");
