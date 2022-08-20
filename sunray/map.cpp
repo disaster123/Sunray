@@ -1141,6 +1141,10 @@ bool Map::findObstacleSafeMowPoint(Point &findPathToPoint){
         }
       }
       if (minDist < 9999){ // obstacle on path, use last section point on path for path source 
+	CONSOLE.print("STEFAN: findObstacleSafeMowPoint: chanhged dst to: ");
+        CONSOLE.print(minSect.x());
+        CONSOLE.print(",");
+        CONSOLE.println(minSect.y());
         findPathToPoint.assign(minSect);
         return true;
       }
