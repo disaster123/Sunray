@@ -159,8 +159,8 @@ void trackLine(bool runControl){
     linear = 0;
     angular = 29.0 / 180.0 * PI; //  29 degree/s (0.5 rad/s);               
 
-    if ((rotateLeft || rotateRight) && (trackerDiffDelta_turn_millis + 1000) < millis()) {
-      if (fabs(trackerDiffDelta_turn - trackerDiffDelta) < 0.1) {
+    if ((rotateLeft || rotateRight) && ((trackerDiffDelta_turn_millis + 1000) < millis() || (trackerDiffDelta_turn == 0))) {
+      if (trackerDiffDelta_turn != 0 && fabs(trackerDiffDelta_turn - trackerDiffDelta) < 0.04) {
         CONSOLE.print("STEFAN: NO turn motion: ");
         CONSOLE.print( fabs(trackerDiffDelta_turn - trackerDiffDelta) );
         CONSOLE.println("");
@@ -201,6 +201,7 @@ void trackLine(bool runControl){
       CONSOLE.println("reset left / right rotation - DiffDelta overflow");
       rotateLeft = false;
       rotateRight = false;
+      trackerDiffDelta_turn = 0;
       // reverse rotation (*-1) - slowly rotate back
       angular = 10.0 / 180.0 * PI * -1; //  10 degree/s (0.19 rad/s);               
     }
@@ -213,6 +214,7 @@ void trackLine(bool runControl){
 
     rotateLeft = false;
     rotateRight = false;
+    trackerDiffDelta_turn = 0;
 
     // in case of docking or undocking - check if trackslow is allowed
     if ( maps.isUndocking() || maps.isDocking() ) {
