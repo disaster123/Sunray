@@ -1036,14 +1036,17 @@ bool Map::addObstacle(float stateX, float stateY, float stateDelta, MotType moti
   float center_x = stateX + cos( circle_rot ) * r;
   float center_y = stateY + sin( circle_rot ) * r;
 
-  CONSOLE.print("addObstacle ");
-  CONSOLE.print("stateDelta: ");
+  CONSOLE.print("addObstacle: state: ");
+  CONSOLE.print(stateX);
+  CONSOLE.print("/");
+  CONSOLE.print(stateY);
+  CONSOLE.print(" stateDelta: ");
   CONSOLE.print(stateDelta);
   CONSOLE.print(" move_angle: ");
   CONSOLE.print(move_angle);
   CONSOLE.print(" Center: ");
   CONSOLE.print(center_x);
-  CONSOLE.print(",");
+  CONSOLE.print("/");
   CONSOLE.println(center_y);
   if (obstacles.numPolygons > 50){
     CONSOLE.println("error: too many obstacles");
