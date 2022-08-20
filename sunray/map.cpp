@@ -1072,7 +1072,7 @@ bool Map::addObstacle(float stateX, float stateY, float stateDelta, MotType moti
 
   CONSOLE.print("Circle Points: ");
 
-  for (int i=0; i < 7; i++){
+  for (int i=0; i < 8; i++){
     CONSOLE.print(obstacles.polygons[idx].points[i].x());
     CONSOLE.print("/");
     CONSOLE.print(obstacles.polygons[idx].points[i].y());
