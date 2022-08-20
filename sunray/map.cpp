@@ -1069,6 +1069,18 @@ bool Map::addObstacle(float stateX, float stateY, float stateDelta, MotType moti
   obstacles.polygons[idx].points[5].setXY(center_x + cos(deg2rad(225)) * r, center_y + sin(deg2rad(225)) * r);
   obstacles.polygons[idx].points[6].setXY(center_x + cos(deg2rad(270)) * r, center_y + sin(deg2rad(270)) * r);
   obstacles.polygons[idx].points[7].setXY(center_x + cos(deg2rad(315)) * r, center_y + sin(deg2rad(315)) * r);
+
+  CONSOLE.print("Circle Points: ");
+
+  for (int i=0; i < 7; i++){
+    CONSOLE.print(obstacles.polygons[idx].points[i].x());
+    CONSOLE.print("/");
+    CONSOLE.print(obstacles.polygons[idx].points[i].y());
+    CONSOLE.print(", ");
+  }
+
+  CONSOLE.println("");
+
   return true;
 }
 
