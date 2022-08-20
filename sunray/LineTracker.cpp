@@ -139,6 +139,7 @@ void trackLine(bool runControl){
     // CONSOLE.println("reset left / right rot (target point changed)");
     rotateLeft = false;
     rotateRight = false;
+    trackerDiffDelta_turn = 0;
   }
 
   // allow rotations only near last or next waypoint or if too far away from path
@@ -158,17 +159,6 @@ void trackLine(bool runControl){
     // angular control (if angle to far away, rotate to next waypoint)
     linear = 0;
     angular = 29.0 / 180.0 * PI; //  29 degree/s (0.5 rad/s);               
-
-    if ((rotateLeft || rotateRight) && ((trackerDiffDelta_turn_millis + 1000) < millis() || (trackerDiffDelta_turn == 0))) {
-      if (trackerDiffDelta_turn != 0 && fabs(trackerDiffDelta_turn - trackerDiffDelta) < 0.04) {
-        CONSOLE.print("STEFAN: NO turn motion: ");
-        CONSOLE.print( fabs(trackerDiffDelta_turn - trackerDiffDelta) );
-        CONSOLE.println("");
-      }
-      // update only if millis is old
-      trackerDiffDelta_turn = trackerDiffDelta;
-      trackerDiffDelta_turn_millis = millis();
-    }
 
     if ((!rotateLeft) && (!rotateRight)){ // decide for one rotation direction (and keep it)
       int r = 0;
@@ -206,6 +196,20 @@ void trackLine(bool runControl){
       angular = 10.0 / 180.0 * PI * -1; //  10 degree/s (0.19 rad/s);               
     }
     if (rotateRight) angular *= -1;
+
+    if ((rotateLeft || rotateRight) && ((trackerDiffDelta_turn_millis + 2000) < millis() || (trackerDiffDelta_turn == 0))) {
+      if ((trackerDiffDelta_turn != 0) && (fabs(trackerDiffDelta_turn - trackerDiffDelta) < 0.02)) {
+        CONSOLE.print("STEFAN: NO turn motion: ");
+        CONSOLE.print( fabs(trackerDiffDelta_turn - trackerDiffDelta) );
+        CONSOLE.println(" => obstacle!");
+        triggerObstacle();
+	return;
+      }
+      // update only if millis is old
+      trackerDiffDelta_turn = trackerDiffDelta;
+      trackerDiffDelta_turn_millis = millis();
+    }
+
   } 
   else {
     // line control (stanley)    
