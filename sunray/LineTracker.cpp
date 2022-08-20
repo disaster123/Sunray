@@ -160,8 +160,10 @@ void trackLine(bool runControl){
     angular = 29.0 / 180.0 * PI; //  29 degree/s (0.5 rad/s);               
 
     if ((rotateLeft || rotateRight) && (trackerDiffDelta_turn_millis + 1000) < millis()) {
-      if (trackerDiffDelta_turn == trackerDiffDelta) {
-        CONSOLE.println("STEFAN: NO turn motion!!");
+      if (fabs(trackerDiffDelta_turn - trackerDiffDelta) < 0.1) {
+        CONSOLE.print("STEFAN: NO turn motion: ");
+        CONSOLE.print( fabs(trackerDiffDelta_turn - trackerDiffDelta) );
+        CONSOLE.println("");
       }
       // update only if millis is old
       trackerDiffDelta_turn = trackerDiffDelta;
