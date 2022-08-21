@@ -1020,10 +1020,10 @@ bool Map::addObstacle(float stateX, float stateY, float stateDelta, MotType moti
       move_angle = 180;
       break;
     case MOT_RIGHT:
-      move_angle = 45; // do not use 90 degress only fron wheels turn / move
+      move_angle = -45; // do not use 90 degress only fron wheels turn / move
       break;
     case MOT_LEFT:
-      move_angle = -45; // do not use 90 degress only fron wheels turn / move
+      move_angle = 45; // do not use 90 degress only fron wheels turn / move
       break;
     case MOT_FORWARD:
       move_angle = 0;
