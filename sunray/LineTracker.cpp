@@ -160,19 +160,6 @@ void trackLine(bool runControl){
     linear = 0;
     angular = 29.0 / 180.0 * PI; //  29 degree/s (0.5 rad/s);              
 				 //
-    if ((rotateLeft || rotateRight) && ((trackerDiffDelta_turn_millis + 2000) < millis() || (trackerDiffDelta_turn == 0))) {
-      if ((trackerDiffDelta_turn != 0) && (fabs(trackerDiffDelta_turn - trackerDiffDelta) < 0.02)) {
-        CONSOLE.print("STEFAN: NO turn motion: ");
-        CONSOLE.print( fabs(trackerDiffDelta_turn - trackerDiffDelta) );
-        CONSOLE.println(" => obstacle (CUR DIS)!");
-        //triggerObstacle();
-        //return;
-      }
-      // update only if millis is old
-      trackerDiffDelta_turn = trackerDiffDelta;
-      trackerDiffDelta_turn_millis = millis();
-    }
-
     if ((!rotateLeft) && (!rotateRight)){ // decide for one rotation direction (and keep it)
       int r = 0;
       // no idea but don't work in reverse mode...
@@ -358,6 +345,20 @@ void trackLine(bool runControl){
   }
 
   if (runControl){
+
+    if ((angular > 0) && ((rotateLeft || rotateRight) && ((trackerDiffDelta_turn_millis + 2000) < millis() || (trackerDiffDelta_turn == 0)))) {
+      if ((trackerDiffDelta_turn != 0) && (fabs(trackerDiffDelta_turn - trackerDiffDelta) < 0.02)) {
+        CONSOLE.print("STEFAN: NO turn motion: ");
+        CONSOLE.print( fabs(trackerDiffDelta_turn - trackerDiffDelta) );
+        CONSOLE.println(" => obstacle (CUR DIS)!");
+        //triggerObstacle();
+        //return;
+      }
+      // update only if millis is old
+      trackerDiffDelta_turn = trackerDiffDelta;
+      trackerDiffDelta_turn_millis = millis();
+    }
+
     if (angleToTargetFits != langleToTargetFits) {
         CONSOLE.print("angleToTargetFits: ");
         CONSOLE.print(angleToTargetFits);
