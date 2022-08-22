@@ -126,10 +126,10 @@ void trackLine(bool runControl){
   trackerDiffDelta = distancePI(stateDelta, targetDelta);                         
   lateralError = distanceLineInfinite(stateX, stateY, lastTarget.x(), lastTarget.y(), target.x(), target.y());        
 
-  float distToPath = distanceLine(moved_stateX, moved_stateY, lastTarget.x(), lastTarget.y(), target.x(), target.y());        
+  float distToPath = distanceLine(stateX, stateY, lastTarget.x(), lastTarget.y(), target.x(), target.y());        
   float targetDist = maps.distanceToTargetPoint(moved_stateX, moved_stateY);
   
-  float lastTargetDist = maps.distanceToLastTargetPoint(moved_stateX, moved_stateY);  
+  float lastTargetDist = maps.distanceToLastTargetPoint(stateX, stateY);  
   if (SMOOTH_CURVES)
     targetReached = (targetDist < 0.2);    
   else 
@@ -378,7 +378,7 @@ void trackLine(bool runControl){
     rotateRight = false;
     activeOp->onTargetReached();
     bool straight = maps.nextPointIsStraight();
-    if (!maps.nextPoint(false, moved_stateX, moved_stateY)){
+    if (!maps.nextPoint(false, stateX, stateY)){
       // finish        
       activeOp->onNoFurtherWaypoints();      
     } else {      
