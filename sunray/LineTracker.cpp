@@ -40,7 +40,7 @@ int get_turn_direction_preference() {
   float targetDelta = pointsAngle(stateX, stateY, target.x(), target.y());
   float center_x = stateX;
   float center_y = stateY;
-  float r = 0.3;
+  float r = 0.5;
 
   // create circle / octagon around center angle 0 - "360"
   circle.points[0].setXY(center_x + cos(deg2rad(0)) * r, center_y + sin(deg2rad(0)) * r);
@@ -125,10 +125,15 @@ void trackLine(bool runControl){
   targetDelta = scalePIangles(targetDelta, stateDelta);
   trackerDiffDelta = distancePI(stateDelta, targetDelta);                         
   lateralError = distanceLineInfinite(stateX, stateY, lastTarget.x(), lastTarget.y(), target.x(), target.y());        
-  float distToPath = distanceLine(stateX, stateY, lastTarget.x(), lastTarget.y(), target.x(), target.y());        
-  float targetDist = maps.distanceToTargetPoint(stateX, stateY);
+
+  // fix position by moving gps receiver to front of mower
+  float moved_stateX = stateX + 0.5 * cos(stateDelta);
+  float moved_stateY = stateY + 0.5 * sin(stateDelta);
+
+  float distToPath = distanceLine(moved_stateX, moved_stateY, lastTarget.x(), lastTarget.y(), target.x(), target.y());        
+  float targetDist = maps.distanceToTargetPoint(moved_stateX, moved_stateY);
   
-  float lastTargetDist = maps.distanceToLastTargetPoint(stateX, stateY);  
+  float lastTargetDist = maps.distanceToLastTargetPoint(moved_stateX, moved_stateY);  
   if (SMOOTH_CURVES)
     targetReached = (targetDist < 0.2);    
   else 
@@ -213,7 +218,7 @@ void trackLine(bool runControl){
         float dockY = 0;
         float dockDelta = 0;
         maps.getDockingPos(dockX, dockY, dockDelta);
-        float dist_dock = distance(dockX, dockY, stateX, stateY);
+        float dist_dock = distance(dockX, dockY, moved_stateX, moved_stateY);
         // only allow trackslow if we are near dock (below DOCK_UNDOCK_TRACKSLOW_DISTANCE)
         if (dist_dock > DOCK_UNDOCK_TRACKSLOW_DISTANCE) {
             trackslow_allowed = false;
@@ -223,7 +228,7 @@ void trackLine(bool runControl){
     if (maps.trackSlow && trackslow_allowed) {
       // planner forces slow tracking (e.g. docking etc)
       linear = 0.1;           
-    } else if (     ((setSpeed > 0.2) && (maps.distanceToTargetPoint(stateX, stateY) < 0.5) && (!straight))   // approaching
+    } else if (     ((setSpeed > 0.2) && (maps.distanceToTargetPoint(moved_stateX, moved_stateY) < 0.5) && (!straight))   // approaching
           || ((linearMotionStartTime != 0) && (millis() < linearMotionStartTime + 3000))                      // leaving  
        ) 
     {
@@ -316,7 +321,7 @@ void trackLine(bool runControl){
         float dockY = 0;
         float dockDelta = 0;
         maps.getDockingPos(dockX, dockY, dockDelta);
-        float dist = distance(dockX, dockY, stateX, stateY);
+        float dist = distance(dockX, dockY, moved_stateX, moved_stateY);
         // check if current distance to docking station is below
         // KIDNAP_DETECT_DISTANCE_DOCK_UNDOCK to trigger KIDNAP_DETECT_ALLOWED_PATH_TOLERANCE_DOCK_UNDOCK
         if (dist < KIDNAP_DETECT_DISTANCE_DOCK_UNDOCK) {
@@ -377,7 +382,7 @@ void trackLine(bool runControl){
     rotateRight = false;
     activeOp->onTargetReached();
     bool straight = maps.nextPointIsStraight();
-    if (!maps.nextPoint(false,stateX,stateY)){
+    if (!maps.nextPoint(false, moved_stateX, moved_stateY)){
       // finish        
       activeOp->onNoFurtherWaypoints();      
     } else {      
