@@ -127,7 +127,8 @@ void trackLine(bool runControl){
   lateralError = distanceLineInfinite(stateX, stateY, lastTarget.x(), lastTarget.y(), target.x(), target.y());        
 
   float distToPath = distanceLine(stateX, stateY, lastTarget.x(), lastTarget.y(), target.x(), target.y());        
-  float targetDist = maps.distanceToTargetPoint(moved_stateX, moved_stateY);
+  // float targetDist = maps.distanceToTargetPoint(moved_stateX, moved_stateY);
+  float targetDist = maps.distanceToTargetPoint(stateX, stateY);
   
   float lastTargetDist = maps.distanceToLastTargetPoint(stateX, stateY);  
   if (SMOOTH_CURVES)
