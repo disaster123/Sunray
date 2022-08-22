@@ -16,6 +16,8 @@
 
 float stateX = 0;  // position-east (m)
 float stateY = 0;  // position-north (m)
+float moved_stateX = 0;  // position-east (m)
+float moved_stateY = 0;  // position-north (m)
 float stateDelta = 0;  // direction (rad)
 float stateRoll = 0;
 float statePitch = 0;
@@ -283,6 +285,11 @@ void computeRobotState(){
   // odometry
   stateX += distOdometry/100.0 * cos(stateDelta);
   stateY += distOdometry/100.0 * sin(stateDelta);        
+
+  // fix position by moving gps receiver to front of mower
+  moved_stateX = stateX + 0.5 * cos(stateDelta);
+  moved_stateY = stateY + 0.5 * sin(stateDelta);
+
   if (stateOp == OP_MOW) statMowDistanceTraveled += distOdometry/100.0;
   
   if ((imuDriver.imuFound) && (maps.useIMU)) {
