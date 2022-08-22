@@ -126,10 +126,6 @@ void trackLine(bool runControl){
   trackerDiffDelta = distancePI(stateDelta, targetDelta);                         
   lateralError = distanceLineInfinite(stateX, stateY, lastTarget.x(), lastTarget.y(), target.x(), target.y());        
 
-  // fix position by moving gps receiver to front of mower
-  float moved_stateX = stateX + 0.5 * cos(stateDelta);
-  float moved_stateY = stateY + 0.5 * sin(stateDelta);
-
   float distToPath = distanceLine(moved_stateX, moved_stateY, lastTarget.x(), lastTarget.y(), target.x(), target.y());        
   float targetDist = maps.distanceToTargetPoint(moved_stateX, moved_stateY);
   
