@@ -22,8 +22,8 @@ void EscapeReverseOp::begin(){
     // obstacle avoidance
     driveReverseStopTime = millis() + 3000;                           
 
-    orig_stateX = stateX;
-    orig_stateY = stateY;
+    orig_stateX = moved_stateX;
+    orig_stateY = moved_stateY;
 
     if (robotShouldRotateLeft()) {
       orig_motion = MOT_LEFT;
