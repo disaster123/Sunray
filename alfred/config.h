@@ -173,6 +173,7 @@ Also, you may choose the serial port below for serial monitor output (CONSOLE).
 #define USE_MOWMOTOR_CURRENT_AVERAGE true
 #define MOWMOTOR_CURRENT_FACTOR 0.25
 
+#define MOWER_GPS_TO_FRONT_DIAMETER 0.35
 
 // ----- mowing motor -------------------------------------------------
 // NOTE: motor drivers will indicate 'fault' signal if motor current (e.g. due to a stall on a molehole) or temperature is too high for a 
