@@ -134,7 +134,7 @@ void trackLine(bool runControl){
   if (SMOOTH_CURVES)
     targetReached = (targetDist_moved < 0.2);    
   else 
-    targetReached = (targetDist_moved < TARGET_REACHED_TOLERANCE);
+    targetReached = (targetDist_moved < TARGET_REACHED_TOLERANCE) || (targetDist < TARGET_REACHED_TOLERANCE);
 
   if ( (last_rotation_target.x() != target.x() || last_rotation_target.y() != target.y()) &&
         (rotateLeft || rotateRight ) ) {
