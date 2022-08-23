@@ -127,12 +127,13 @@ void trackLine(bool runControl){
   lateralError = distanceLineInfinite(stateX, stateY, lastTarget.x(), lastTarget.y(), target.x(), target.y());        
   float distToPath = distanceLine(stateX, stateY, lastTarget.x(), lastTarget.y(), target.x(), target.y());        
   float targetDist = maps.distanceToTargetPoint(stateX, stateY);
+  float targetDist_moved = maps.distanceToTargetPoint(moved_stateX, moved_stateY);
   
   float lastTargetDist = maps.distanceToLastTargetPoint(stateX, stateY);  
   if (SMOOTH_CURVES)
     targetReached = (targetDist < 0.2);    
   else 
-    targetReached = (targetDist < TARGET_REACHED_TOLERANCE);
+    targetReached = (targetDist_moved < TARGET_REACHED_TOLERANCE);
 
   if ( (last_rotation_target.x() != target.x() || last_rotation_target.y() != target.y()) &&
         (rotateLeft || rotateRight ) ) {
@@ -223,7 +224,7 @@ void trackLine(bool runControl){
     if (maps.trackSlow && trackslow_allowed) {
       // planner forces slow tracking (e.g. docking etc)
       linear = 0.1;           
-    } else if (     ((setSpeed > 0.2) && (maps.distanceToTargetPoint(stateX, stateY) < 0.5) && (!straight))   // approaching
+    } else if (     ((setSpeed > 0.2) && (maps.distanceToTargetPoint(moved_stateX, moved_stateY) < 0.5) && (!straight))   // approaching
           || ((linearMotionStartTime != 0) && (millis() < linearMotionStartTime + 3000))                      // leaving  
        ) 
     {
