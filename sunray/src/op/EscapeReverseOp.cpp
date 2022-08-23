@@ -8,6 +8,7 @@
 #include "../../robot.h"
 #include "../../StateEstimator.h"
 #include "../../map.h"
+#include "../../helper.h"
 
 float orig_stateX;
 float orig_stateY;
@@ -63,6 +64,7 @@ void EscapeReverseOp::run(){
         } else {
             CONSOLE.println("continue operation with virtual obstacle");
             maps.addObstacle(orig_stateX, orig_stateY, stateDelta, orig_motion);
+
             //Point pt;
             //if (!maps.findObstacleSafeMowPoint(pt)){
             //    changeOp(dockOp); // dock if no more (valid) mowing points
