@@ -147,7 +147,7 @@ void trackLine(bool runControl){
   // allow rotations only near last or next waypoint or if too far away from path
   // it might race between rotating mower and targetDist check below
   // if we race we still have rotateLeft or rotateRight true
-  if ( (targetDist < 1.2) || (lastTargetDist < 1.2) || (fabs(distToPath) > 1.2) ||
+  if ( (targetDist_moved < 0.7) || (lastTargetDist < 0.7) || (fabs(distToPath) > 0.7) ||
        rotateLeft || rotateRight ) {
     if (SMOOTH_CURVES)
       angleToTargetFits = (fabs(trackerDiffDelta)/PI*180.0 < 120);
