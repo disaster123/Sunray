@@ -38,10 +38,10 @@ void MowOp::begin(){
 
     if (((initiatedByOperator) && (previousOp == &idleOp)) || (lastMapRoutingFailed))  maps.clearObstacles();
 
-    if (maps.startMowing(moved_stateX, moved_stateY)){
-        if (maps.nextPoint(true, moved_stateX, moved_stateY)) {
+    if (maps.startMowing(stateX, stateY)){
+        if (maps.nextPoint(true, stateX, stateY)) {
             lastFixTime = millis();                
-            maps.setLastTargetPoint(moved_stateX, moved_stateY);        
+            maps.setLastTargetPoint(stateX, stateY);        
             //stateSensor = SENS_NONE;
             motor.setMowState(true);                
         } else {
