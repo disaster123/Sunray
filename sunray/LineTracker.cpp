@@ -27,6 +27,8 @@ bool rotateLeft = false;
 bool rotateRight = false;
 bool angleToTargetFits = false;
 bool langleToTargetFits = false;
+bool ltargetReached = false;
+float langular = 0;      
 bool targetReached = false;
 float trackerDiffDelta = 0;
 float trackerDiffDelta_turn = 0;
@@ -361,12 +363,20 @@ void trackLine(bool runControl){
       trackerDiffDelta_turn_millis = millis();
     }
 
-    if (angleToTargetFits != langleToTargetFits) {
-        //CONSOLE.print("angleToTargetFits: ");
-        //CONSOLE.print(angleToTargetFits);
-        //CONSOLE.print(" trackerDiffDelta: ");
-        //CONSOLE.println(trackerDiffDelta);
+    if ((targetReached != ltargetReached) || (angleToTargetFits != langleToTargetFits) || (angleToTargetFits && fabs(angular-langular) > 0.1)) {
+        CONSOLE.print("targetReached: ");
+        CONSOLE.print(targetReached);
+        CONSOLE.print(" targetDist: ");
+        CONSOLE.print(targetDist);
+        CONSOLE.print(" angleToTargetFits: ");
+        CONSOLE.print(angleToTargetFits);
+        CONSOLE.print(" angular: ");
+        CONSOLE.print(angular);
+        CONSOLE.print(" trackerDiffDelta: ");
+        CONSOLE.println(trackerDiffDelta);
+        ltargetReached = targetReached;
         langleToTargetFits = angleToTargetFits;
+        langular = angular;
     }
 
     motor.setLinearAngularSpeed(linear, angular);      
