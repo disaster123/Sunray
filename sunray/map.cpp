@@ -1036,6 +1036,10 @@ bool Map::addObstacle(float stateX, float stateY, float stateDelta, MotType moti
   float center_x = stateX + cos( circle_rot ) * r;
   float center_y = stateY + sin( circle_rot ) * r;
 
+  // move center of octagon in the right position of mower
+  float center_2x = stateX + cos( circle_rot ) * (OBSTACLE_DIAMETER - 0.1);
+  float center_2y = stateY + sin( circle_rot ) * (OBSTACLE_DIAMETER - 0.1);
+
   CONSOLE.print("addObstacle: state: ");
   CONSOLE.print(stateX);
   CONSOLE.print("/");
@@ -1054,17 +1058,50 @@ bool Map::addObstacle(float stateX, float stateY, float stateDelta, MotType moti
   }
   int idx = obstacles.numPolygons;
   if (!obstacles.alloc(idx+1)) return false;
-  if (!obstacles.polygons[idx].alloc(8)) return false;
+  if (!obstacles.polygons[idx].alloc(10)) return false;
   
+  int ci = 0;
   // create circle / octagon around center angle 0 - "360"
-  obstacles.polygons[idx].points[0].setXY(center_x + cos(scalePI( deg2rad(0)   + circle_rot ) ) * r, center_y + sin(scalePI( deg2rad(0)   + circle_rot ) ) * r);
-  obstacles.polygons[idx].points[1].setXY(center_x + cos(scalePI( deg2rad(45)  + circle_rot ) ) * r, center_y + sin(scalePI( deg2rad(45)  + circle_rot ) ) * r);
-  obstacles.polygons[idx].points[2].setXY(center_x + cos(scalePI( deg2rad(90)  + circle_rot ) ) * r, center_y + sin(scalePI( deg2rad(90)  + circle_rot ) ) * r);
-  obstacles.polygons[idx].points[3].setXY(center_x + cos(scalePI( deg2rad(135) + circle_rot ) ) * r, center_y + sin(scalePI( deg2rad(135) + circle_rot ) ) * r);
-  obstacles.polygons[idx].points[4].setXY(center_x + cos(scalePI( deg2rad(180) + circle_rot ) ) * r, center_y + sin(scalePI( deg2rad(180) + circle_rot ) ) * r);
-  obstacles.polygons[idx].points[5].setXY(center_x + cos(scalePI( deg2rad(225) + circle_rot ) ) * r, center_y + sin(scalePI( deg2rad(225) + circle_rot ) ) * r);
-  obstacles.polygons[idx].points[6].setXY(center_x + cos(scalePI( deg2rad(270) + circle_rot ) ) * r, center_y + sin(scalePI( deg2rad(270) + circle_rot ) ) * r);
-  obstacles.polygons[idx].points[7].setXY(center_x + cos(scalePI( deg2rad(315) + circle_rot ) ) * r, center_y + sin(scalePI( deg2rad(315) + circle_rot ) ) * r);
+  // obstacles.polygons[idx].points[0].setXY(center_x + cos(scalePI( deg2rad(0)   + circle_rot ) ) * r, center_y + sin(scalePI( deg2rad(0)   + circle_rot ) ) * r);
+  
+  // starting point in front of mower
+  obstacles.polygons[idx].points[ci].setXY(center_x + cos(scalePI( deg2rad(180) + circle_rot ) ) * r, center_y + sin(scalePI( deg2rad(180) + circle_rot ) ) * r);
+  ci += 1;
+  
+  obstacles.polygons[idx].points[ci].setXY(center_x + cos(scalePI( deg2rad(225) + circle_rot ) ) * r, center_y + sin(scalePI( deg2rad(225) + circle_rot ) ) * r);
+  ci += 1;
+
+  obstacles.polygons[idx].points[ci].setXY(center_x + cos(scalePI( deg2rad(270) + circle_rot ) ) * r, center_y + sin(scalePI( deg2rad(270) + circle_rot ) ) * r);
+  ci += 1;
+  // obstacles.polygons[idx].points[ci].setXY(center_x + cos(scalePI( deg2rad(315) + circle_rot ) ) * r, center_y + sin(scalePI( deg2rad(315) + circle_rot ) ) * r);
+  // ci += 1;
+
+  // obstacles.polygons[idx].points[ci].setXY(center_2x + cos(scalePI( deg2rad(225) + circle_rot ) ) * r, center_2y + sin(scalePI( deg2rad(225) + circle_rot ) ) * r);
+  // ci += 1;
+
+  obstacles.polygons[idx].points[ci].setXY(center_2x + cos(scalePI( deg2rad(270) + circle_rot ) ) * r, center_2y + sin(scalePI( deg2rad(270) + circle_rot ) ) * r);
+  ci += 1;
+  obstacles.polygons[idx].points[ci].setXY(center_2x + cos(scalePI( deg2rad(315) + circle_rot ) ) * r, center_2y + sin(scalePI( deg2rad(315) + circle_rot ) ) * r);
+  ci += 1;
+  
+  obstacles.polygons[idx].points[ci].setXY(center_2x + cos(scalePI( deg2rad(0)   + circle_rot ) ) * r, center_2y + sin(scalePI( deg2rad(0)   + circle_rot ) ) * r);
+  ci += 1;
+
+  obstacles.polygons[idx].points[ci].setXY(center_2x + cos(scalePI( deg2rad(45)  + circle_rot ) ) * r, center_2y + sin(scalePI( deg2rad(45)  + circle_rot ) ) * r);
+  ci += 1;
+  obstacles.polygons[idx].points[ci].setXY(center_2x + cos(scalePI( deg2rad(90)  + circle_rot ) ) * r, center_2y + sin(scalePI( deg2rad(90)  + circle_rot ) ) * r);
+  ci += 1;
+
+  // obstacles.polygons[idx].points[ci].setXY(center_2x + cos(scalePI( deg2rad(135) + circle_rot ) ) * r, center_2y + sin(scalePI( deg2rad(135) + circle_rot ) ) * r);
+  // ci += 1;
+
+  // obstacles.polygons[idx].points[ci].setXY(center_x + cos(scalePI( deg2rad(45)  + circle_rot ) ) * r, center_y + sin(scalePI( deg2rad(45)  + circle_rot ) ) * r);
+  // ci += 1;
+  obstacles.polygons[idx].points[ci].setXY(center_x + cos(scalePI( deg2rad(90)  + circle_rot ) ) * r, center_y + sin(scalePI( deg2rad(90)  + circle_rot ) ) * r);
+  ci += 1;
+
+  obstacles.polygons[idx].points[ci].setXY(center_x + cos(scalePI( deg2rad(135) + circle_rot ) ) * r, center_y + sin(scalePI( deg2rad(135) + circle_rot ) ) * r);
+  ci += 1;
 
   return true;
 }
