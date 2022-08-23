@@ -364,6 +364,10 @@ void trackLine(bool runControl){
     if (targetReached != ltargetReached) {
         CONSOLE.print("targetReached: ");
         CONSOLE.print(targetReached);
+        CONSOLE.print(" targetDist: ");
+        CONSOLE.print(targetDist);
+        CONSOLE.print(" targetDist_moved: ");
+        CONSOLE.print(targetDist_moved);
         CONSOLE.print(" angleToTargetFits: ");
         CONSOLE.print(angleToTargetFits);
         CONSOLE.print(" trackerDiffDelta: ");
@@ -375,6 +379,10 @@ void trackLine(bool runControl){
     if (angleToTargetFits != langleToTargetFits) {
         CONSOLE.print("targetReached: ");
         CONSOLE.print(targetReached);
+        CONSOLE.print(" targetDist: ");
+        CONSOLE.print(targetDist);
+        CONSOLE.print(" targetDist_moved: ");
+        CONSOLE.print(targetDist_moved);
         CONSOLE.print(" angleToTargetFits: ");
         CONSOLE.print(angleToTargetFits);
         CONSOLE.print(" trackerDiffDelta: ");
