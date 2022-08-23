@@ -26,6 +26,7 @@ bool rotateLeft = false;
 bool rotateRight = false;
 bool angleToTargetFits = false;
 bool langleToTargetFits = false;
+bool ltargetReached = false;
 bool targetReached = false;
 float trackerDiffDelta = 0;
 float trackerDiffDelta_turn = 0;
@@ -360,8 +361,21 @@ void trackLine(bool runControl){
       trackerDiffDelta_turn_millis = millis();
     }
 
+    if (targetReached != ltargetReached) {
+        CONSOLE.print("targetReached: ");
+        CONSOLE.print(targetReached);
+        CONSOLE.print(" angleToTargetFits: ");
+        CONSOLE.print(angleToTargetFits);
+        CONSOLE.print(" trackerDiffDelta: ");
+        CONSOLE.println(trackerDiffDelta);
+        ltargetReached = targetReached;
+    }
+
+
     if (angleToTargetFits != langleToTargetFits) {
-        CONSOLE.print("angleToTargetFits: ");
+        CONSOLE.print("targetReached: ");
+        CONSOLE.print(targetReached);
+        CONSOLE.print(" angleToTargetFits: ");
         CONSOLE.print(angleToTargetFits);
         CONSOLE.print(" trackerDiffDelta: ");
         CONSOLE.println(trackerDiffDelta);
