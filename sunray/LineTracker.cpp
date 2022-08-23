@@ -151,7 +151,7 @@ void trackLine(bool runControl){
     if (SMOOTH_CURVES)
       angleToTargetFits = (fabs(trackerDiffDelta)/PI*180.0 < 120);
     else     
-      angleToTargetFits = (fabs(trackerDiffDelta)/PI*180.0 < 20);
+      angleToTargetFits = (fabs(trackerDiffDelta)/PI*180.0 < 15);
   } else {
      angleToTargetFits = true;
   }
