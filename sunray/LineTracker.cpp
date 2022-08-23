@@ -127,12 +127,12 @@ void trackLine(bool runControl){
   trackerDiffDelta = distancePI(stateDelta, targetDelta);                         
   lateralError = distanceLineInfinite(moved_stateX, moved_stateY, lastTarget.x(), lastTarget.y(), target.x(), target.y());        
   float distToPath = distanceLine(moved_stateX, moved_stateY, lastTarget.x(), lastTarget.y(), target.x(), target.y());        
-  float targetDist = maps.distanceToTargetPoint(moved_stateX, moved_stateY);
+  float targetDist = maps.distanceToTargetPoint(stateX, stateY);
   float targetDist_moved = maps.distanceToTargetPoint(moved_stateX, moved_stateY);
   
   float lastTargetDist = maps.distanceToLastTargetPoint(moved_stateX, moved_stateY);  
   if (SMOOTH_CURVES)
-    targetReached = (targetDist < 0.2);    
+    targetReached = (targetDist_moved < 0.2);    
   else 
     targetReached = (targetDist_moved < TARGET_REACHED_TOLERANCE);
 
@@ -147,7 +147,7 @@ void trackLine(bool runControl){
   // allow rotations only near last or next waypoint or if too far away from path
   // it might race between rotating mower and targetDist check below
   // if we race we still have rotateLeft or rotateRight true
-  if ( (targetDist < 0.5) || (lastTargetDist < 0.5) || (fabs(distToPath) > 0.5) ||
+  if ( (targetDist < 1.2) || (lastTargetDist < 1.2) || (fabs(distToPath) > 1.2) ||
        rotateLeft || rotateRight ) {
     if (SMOOTH_CURVES)
       angleToTargetFits = (fabs(trackerDiffDelta)/PI*180.0 < 120);
