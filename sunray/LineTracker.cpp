@@ -352,6 +352,8 @@ void trackLine(bool runControl){
       if ((trackerDiffDelta_turn != 0) && (fabs(trackerDiffDelta_turn - trackerDiffDelta) < 0.02)) {
         CONSOLE.print("STEFAN: NO turn motion: ");
         CONSOLE.print( fabs(trackerDiffDelta_turn - trackerDiffDelta) );
+        CONSOLE.print(" runControl ");
+        CONSOLE.print(runControl);
         CONSOLE.println(" => obstacle (CUR DIS)!");
         //triggerObstacle();
         //return;
