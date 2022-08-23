@@ -21,7 +21,7 @@ String EscapeReverseOp::name(){
 void EscapeReverseOp::begin(){
 
     // obstacle avoidance
-    driveReverseStopTime = millis() + 3000;                           
+    driveReverseStopTime = millis() + 1500;                           
 
     orig_stateX = stateX;
     orig_stateY = stateY;
@@ -44,7 +44,7 @@ void EscapeReverseOp::end(){
 
 void EscapeReverseOp::run(){
     battery.resetIdle();
-    motor.setLinearAngularSpeed(-0.1,0);
+    motor.setLinearAngularSpeed(-0.25,0);
     // do not disable mow for obstacle detection
     // motor.setMowState(false);                                        
 
