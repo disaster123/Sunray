@@ -124,12 +124,12 @@ void trackLine(bool runControl){
   if (maps.trackReverse) targetDelta = scalePI(targetDelta + PI);
   targetDelta = scalePIangles(targetDelta, stateDelta);
   trackerDiffDelta = distancePI(stateDelta, targetDelta);                         
-  lateralError = distanceLineInfinite(stateX, stateY, lastTarget.x(), lastTarget.y(), target.x(), target.y());        
-  float distToPath = distanceLine(stateX, stateY, lastTarget.x(), lastTarget.y(), target.x(), target.y());        
-  float targetDist = maps.distanceToTargetPoint(stateX, stateY);
+  lateralError = distanceLineInfinite(moved_stateX, moved_stateY, lastTarget.x(), lastTarget.y(), target.x(), target.y());        
+  float distToPath = distanceLine(moved_stateX, moved_stateY, lastTarget.x(), lastTarget.y(), target.x(), target.y());        
+  float targetDist = maps.distanceToTargetPoint(moved_stateX, moved_stateY);
   float targetDist_moved = maps.distanceToTargetPoint(moved_stateX, moved_stateY);
   
-  float lastTargetDist = maps.distanceToLastTargetPoint(stateX, stateY);  
+  float lastTargetDist = maps.distanceToLastTargetPoint(moved_stateX, moved_stateY);  
   if (SMOOTH_CURVES)
     targetReached = (targetDist < 0.2);    
   else 
