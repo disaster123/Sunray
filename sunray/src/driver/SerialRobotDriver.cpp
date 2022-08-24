@@ -292,9 +292,23 @@ void SerialRobotDriver::motorResponse(){
       } else if (counter == 4){
         chargeVoltage = floatValue;
       } else if (counter == 5){
-        triggeredLeftBumper = (intValue != 0);
+	if (triggeredLeftBumper != (intValue != 0)) {
+          triggeredLeftBumper = (intValue != 0);
+	  if (triggeredLeftBumper) {
+	    CONSOLE.println("STEFAN: triggered Left Bumper");
+	  } else {
+	    CONSOLE.println("STEFAN: released Left Bumper");
+	  }
+	}
       } else if (counter == 6){
-        triggeredLift = (intValue != 0);
+	if (triggeredLift != (intValue != 0)) {
+          triggeredLift = (intValue != 0);
+	  if (triggeredLift)  {
+	    CONSOLE.println("STEFAN: triggered Lift");
+	  } else {
+	    CONSOLE.println("STEFAN: released Lift");
+	  }
+	}
       } else if (counter == 7){
         triggeredStopButton = (intValue != 0);
       } 
@@ -355,9 +369,23 @@ void SerialRobotDriver::summaryResponse(){
       } else if (counter == 3){
         chargeCurrent = floatValue;
       } else if (counter == 4){
-        triggeredLift = (intValue != 0);
+	if (triggeredLift != (intValue != 0)) {
+          triggeredLift = (intValue != 0);
+	  if (triggeredLift)  {
+	    CONSOLE.println("STEFAN: triggered Lift");
+	  } else {
+	    CONSOLE.println("STEFAN: released Lift");
+	  }
+	}
       } else if (counter == 5){
-        triggeredLeftBumper = (intValue != 0);
+	if (triggeredLeftBumper != (intValue != 0)) {
+          triggeredLeftBumper = (intValue != 0);
+	  if (triggeredLeftBumper) {
+	    CONSOLE.println("STEFAN: triggered Left Bumper");
+	  } else {
+	    CONSOLE.println("STEFAN: released Left Bumper");
+	  }
+	}
       } else if (counter == 6){
         triggeredRain = (intValue != 0);
       } else if (counter == 7){
