@@ -32,7 +32,12 @@ void KidnapWaitOp::onKidnapped(bool state){
 void KidnapWaitOp::onGpsNoSignal(){
     if (!maps.isUndocking()){
         stateSensor = SENS_GPS_INVALID;
-        changeOp(gpsWaitFloatOp, true);
+
+	if (gps.solution == SOL_FLOAT) {
+	  changeOp(gpsWaitFixOp, true);
+	} else {
+	  changeOp(gpsWaitFloatOp, true);
+	}
     }
 }
 
