@@ -231,11 +231,9 @@ void trackLine(bool runControl){
     if (maps.trackSlow && trackslow_allowed) {
       // planner forces slow tracking (e.g. docking etc)
       linear = 0.1;           
-    } else if (     ((setSpeed > 0.2) && (maps.distanceToTargetPoint(stateX, stateY) < 0.5) && (!straight))   // approaching
-          || ((linearMotionStartTime != 0) && (millis() < linearMotionStartTime + 3000))                      // leaving  
-       ) 
+    } else if ((setSpeed > 0.1) && (targetDist < 0.5) && (!straight))   // approaching
     {
-      linear = 0.1; // reduce speed when approaching/leaving waypoints          
+      linear = 0.15; // reduce speed when approaching/leaving waypoints          
     } 
     else {
       if (gps.solution == SOL_FLOAT)        
