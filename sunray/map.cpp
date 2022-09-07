@@ -1870,11 +1870,11 @@ bool Map::findPath(Point &src, Point &dst){
   CONSOLE.println(")");  
   
   if (ENABLE_PATH_FINDER){    
-    CONSOLE.print("path finder is enabled");      
+    //CONSOLE.print("path finder is enabled");      
     #ifdef FLOAT_CALC
-      CONSOLE.print(" (using FLOAT_CALC)");    
+      //CONSOLE.print(" (using FLOAT_CALC)");    
     #endif
-    CONSOLE.println();
+    //CONSOLE.println();
     
     // create path-finder obstacles    
     int idx = 0;
@@ -1961,14 +1961,14 @@ bool Map::findPath(Point &src, Point &dst){
     int timeout = 1000;    
     Node *currentNode = NULL;
     
-    CONSOLE.print ("freem=");
-    CONSOLE.println (freeMemory ());
+    // CONSOLE.print ("freem=");
+    // CONSOLE.println (freeMemory ());
     
-    CONSOLE.println("starting path-finder");
+    // CONSOLE.println("starting path-finder");
     while(true) {       
       if (millis() >= nextProgressTime){
         nextProgressTime = millis() + 4000;          
-        CONSOLE.print(".");
+        // CONSOLE.print(".");
         watchdogReset();     
       }
       timeout--;            
@@ -2057,10 +2057,10 @@ bool Map::findPath(Point &src, Point &dst){
       }
     } 
 
-    CONSOLE.print("finish nodes=");
-    CONSOLE.print(pathFinderNodes.numNodes);
-    CONSOLE.print(" duration=");
-    CONSOLE.println(millis()-startTime);  
+    //CONSOLE.print("finish nodes=");
+    //CONSOLE.print(pathFinderNodes.numNodes);
+    //CONSOLE.print(" duration=");
+    //CONSOLE.println(millis()-startTime);  
 
     //delay(8000); // simulate a busy path finder
 
@@ -2078,10 +2078,10 @@ bool Map::findPath(Point &src, Point &dst){
       int idx = nodeCount-1;
       while(curr) {                                
         freePoints.points[idx].assign( *curr->point );
-        CONSOLE.print("node pt=");
-        CONSOLE.print(curr->point->x());
-        CONSOLE.print(",");
-        CONSOLE.println(curr->point->y());
+        // CONSOLE.print("node pt=");
+        // CONSOLE.print(curr->point->x());
+        // CONSOLE.print(",");
+        // CONSOLE.println(curr->point->y());
         idx--;
         curr = curr->parent;                
       }            
