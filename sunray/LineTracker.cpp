@@ -363,7 +363,7 @@ void trackLine(bool runControl){
       trackerDiffDelta_turn_millis = millis();
     }
 
-    if ((targetReached != ltargetReached) || (angleToTargetFits != langleToTargetFits) || (angleToTargetFits && fabs(angular-langular) > 0.1)) {
+    if ((targetReached != ltargetReached) || (angleToTargetFits != langleToTargetFits)) {
         CONSOLE.print("targetReached: ");
         CONSOLE.print(targetReached);
         CONSOLE.print(" targetDist: ");
