@@ -184,7 +184,8 @@ class Map
     // has mowing completed?
     bool mowingCompleted();    
     // given some point, check and modify it to get obstacle-safe mowing point
-    bool findObstacleSafeMowPoint(Point &findPathToPoint);    
+    bool findObstacleSafeMowPoint(Point &newTargetPoint, float stateX, float stateY);
+    bool isPointInsideObstacle(Point pt, int skipidx);
     // choose progress (0..100%) in mowing point list    
     void setMowingPointPercent(float perc);
     // skip next mowing point
