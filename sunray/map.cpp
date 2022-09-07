@@ -973,30 +973,17 @@ bool Map::startMowing(float stateX, float stateY){
   shouldRetryDock = false;
   shouldMow = true;    
   if (mowPoints.numPoints > 0){
-    // find valid path from robot (or first docking point) to mowing point    
-    //freePoints.alloc(0);
-    Point src;
-    Point dst;
-    src.setXY(stateX, stateY);
-    if (wayMode == WAY_DOCK){
-      src.assign(dockPoints.points[0]);
-    } else {
-      wayMode = WAY_FREE;      
-      freePointsIdx = 0;    
-    }        
-    if (findObstacleSafeMowPoint(dst)){
-      //dst.assign(mowPoints.points[mowPointsIdx]);      
-      //findPathFinderSafeStartPoint(src, dst);      
-      if (findPath(src, dst)){        
-        return true;
-      } else {
-        CONSOLE.println("ERROR: no path");
-        return false;      
-      }
-    } else {
-      CONSOLE.println("ERROR: no safe start point");
+    // we enter also here after an obstacle
+    // we need a complete recalc of situation
+    if (wayMode != WAY_DOCK) {
+      wayMode = WAY_MOW;
+    }
+    bool r = nextPoint(false, stateX, stateY);
+    if (!r) {
+      CONSOLE.println("ERROR: no path");
       return false;
     }
+    return true;
   } else {
     CONSOLE.println("ERROR: no points");
     return false; 
@@ -1129,59 +1116,178 @@ bool Map::isInsidePerimeterOutsideExclusions(Point &pt){
 }
 
 
-// check if mowing point is inside any obstacle, and if so, find next mowing point (outside any obstacles)
-// returns: valid path start point (outside any obstacle) going to the mowing point (which can be used as input for pathfinder)
-bool Map::findObstacleSafeMowPoint(Point &findPathToPoint){  
-  bool safe;  
-  Point dst;  
-  while (true){
-    safe = true;  
+int Map::isPointInsideObstacle(Point pt, int skipidx){  
+  for (int obst_ins=0; obst_ins < obstacles.numPolygons; obst_ins++){
+    if (skipidx != obst_ins && pointIsInsidePolygon( obstacles.polygons[obst_ins], pt)){
+      CONSOLE.print("point conflicts with idx: ");
+      CONSOLE.print(obst_ins);
+      CONSOLE.print(": ");
+      CONSOLE.print(pt.x());
+      CONSOLE.print(" / ");
+      CONSOLE.println(pt.y());
+      return obst_ins;
+    }
+  }
+  return -1;
+}
+
+bool Map::findObstacleSafeMowPoint(Point &newTargetPoint, float stateX, float stateY){  
+  Point dst;
+  Point src;
+  Point state;
+  state.setXY(stateX, stateY);
+
+  // mowline src to dst
+  if (mowPointsIdx == 0) {
+    src.assign(state);
+  } else {
+    src.assign(mowPoints.points[mowPointsIdx-1]);
+  }
+
+  dst.assign(mowPoints.points[mowPointsIdx]);
+
+  // distance from position to dst
+  float dist_src_to_state = distance(src, state);
+  float dist_state_to_dst = distance(state, dst);
+
+  CONSOLE.print("findObstacleSafeMowPoint:");
+  CONSOLE.print(" idx: ");
+  CONSOLE.print(mowPointsIdx);
+  CONSOLE.print(" state: ");
+  CONSOLE.print(stateX);
+  CONSOLE.print(",");
+  CONSOLE.print(stateY);
+
+  CONSOLE.print(" mowPoints dst: ");
+  CONSOLE.print(dst.x());
+  CONSOLE.print(",");
+  CONSOLE.print(dst.y());
+
+  CONSOLE.print(" dist src: ");
+  CONSOLE.print(dist_src_to_state);
+
+  CONSOLE.print(" / dst: ");
+  CONSOLE.println(dist_state_to_dst);
+
+  // real target reached skip to next target
+  if (dist_state_to_dst <= TARGET_REACHED_TOLERANCE) {
+    if (!nextMowPoint(false)){
+      CONSOLE.println("findObstacleSafeMowPoint error: no more mowing points reachable due to obstacles");
+      return false;
+    }
+    // instead of recursion which might be endless - only skip to next point once
+    // return findObstacleSafeMowPoint(newTargetPoint, stateX, stateY);
+    src.assign(mowPoints.points[mowPointsIdx-1]);
     dst.assign(mowPoints.points[mowPointsIdx]);
-    CONSOLE.print("findObstacleSafeMowPoint checking ");    
+
+    // distance from position to dst
+    dist_src_to_state = distance(src, state);
+    dist_state_to_dst = distance(state, dst);
+
+    CONSOLE.print("findObstacleSafeMowPoint (next mowpoint - target reached):");
+    CONSOLE.print(" idx: ");
+    CONSOLE.print(mowPointsIdx);
+    CONSOLE.print(" state: ");
+    CONSOLE.print(stateX);
+    CONSOLE.print(",");
+    CONSOLE.print(stateY);
+
+    CONSOLE.print(" mowPoints dst: ");
+    CONSOLE.print(dst.x());
+    CONSOLE.print(",");
+    CONSOLE.print(dst.y());
+
+    CONSOLE.print(" dist src: ");
+    CONSOLE.print(dist_src_to_state);
+
+    CONSOLE.print(" / dst: ");
+    CONSOLE.println(dist_state_to_dst);
+  }
+
+  // get first obstacle in front of state_pos
+  Point bestsec;
+  float best_dist = 99999;
+  for (int idx=0; idx < obstacles.numPolygons; idx++) {
+
+    // check if obstacle intersect with mowline - check sect "front"
+    Point sect;
+    if (linePolygonIntersectPoint( src, dst, obstacles.polygons[idx], sect)) {
+      float dist_obst = distance(src, sect);
+      bool safe = (isPointInsideObstacle(sect, idx) == -1);
+
+      CONSOLE.print("findObstacleSafeMowPoint: ");
+      CONSOLE.print(idx);
+      CONSOLE.print(" found obstacle front - sect: ");
+      CONSOLE.print(sect.x());
+      CONSOLE.print(",");
+      CONSOLE.print(sect.y());
+      CONSOLE.print(" safe: ");
+      CONSOLE.print(safe);
+      CONSOLE.print(" dist src: ");
+      CONSOLE.println(dist_obst);
+
+      // distance of sect point has to be > distance than state_pos to dst / target
+      if ((dist_obst - dist_src_to_state) > 0.1 && dist_obst < best_dist && safe) {
+	bestsec.assign(sect);
+	best_dist = dist_obst;
+      } else {
+        // backside of obstacle
+	// dist_obst is not > dist_src_to_state - check other side of obstacle - because obstacle is on mowline
+        Point sect_back;
+        if (linePolygonIntersectPoint( dst, src, obstacles.polygons[idx], sect_back)) {
+          float dist_obst = distance(src, sect_back);
+          bool safe = (isPointInsideObstacle(sect_back, idx) == -1);
+
+          CONSOLE.print("findObstacleSafeMowPoint:");
+          CONSOLE.print(idx);
+          CONSOLE.print(" found obstacle back - sect: ");
+          CONSOLE.print(sect_back.x());
+          CONSOLE.print(",");
+          CONSOLE.print(sect_back.y());
+          CONSOLE.print(" safe: ");
+          CONSOLE.print(safe);
+          CONSOLE.print(" dist src: ");
+          CONSOLE.println(dist_obst);
+
+          if ((dist_obst - dist_src_to_state) > 0.1 && dist_obst < best_dist && safe) {
+            bestsec.assign(sect_back);
+            best_dist = dist_obst;
+          }
+	}
+      }
+    }
+  }
+
+  // no obstacle on mowline between state and dst
+  if (best_dist == 99999) {
+    bool safe = (isPointInsideObstacle(dst, -1) == -1);
+    if (!safe) {
+      CONSOLE.println("findObstacleSafeMowPoint: no further obstacle on mowline but mowpoint is inside obstacle. Skip to next real mowpoint.");
+      // we need to skip to next mow point
+      // try next mowing point
+      if (!nextMowPoint(false)){
+        CONSOLE.println("findObstacleSafeMowPoint error: no more mowing points reachable due to obstacles");
+        return false;
+      }
+      return findObstacleSafeMowPoint(newTargetPoint, stateX, stateY);
+    }
+
+    CONSOLE.print("findObstacleSafeMowPoint target ");    
     CONSOLE.print(dst.x());
     CONSOLE.print(",");
     CONSOLE.println(dst.y());
-    for (int idx=0; idx < obstacles.numPolygons; idx++){
-      if (pointIsInsidePolygon( obstacles.polygons[idx], dst)){
-        safe = false;
-        break;
-      }
-    }
-    if (safe) {
-      // find valid start point on path to mowing point 
-      if (mowPointsIdx == 0) {  // first mowing point has no path
-        findPathToPoint.assign(dst);
-        return true;
-      }
-      Point src;
-      src.assign(mowPoints.points[mowPointsIdx-1]); // path source is last mowing point
-      Point sect;
-      Point minSect;
-      float minDist = 9999;      
-      for (int idx=0; idx < obstacles.numPolygons; idx++){
-        if (linePolygonIntersectPoint( dst, src, obstacles.polygons[idx], sect)) {  // find shortest section point to dst    
-          float dist = distance(sect, dst);
-          if (dist < minDist ){
-            minDist = dist;
-            minSect.assign(sect); 
-          }
-        }
-      }
-      if (minDist < 9999){ // obstacle on path, use last section point on path for path source 
-        findPathToPoint.assign(minSect);
-        return true;
-      }
-      // no obstacle on path, just use next mowing point 
-      findPathToPoint.assign(dst);
-      return true;
-    }    
-    // try next mowing point
-    if (mowPointsIdx >= mowPoints.numPoints-1){
-      CONSOLE.println("findObstacleSafeMowPoint error: no more mowing points reachable due to obstacles");
-      return false;
-    } 
-    mowPointsIdx++;
+
+    newTargetPoint.assign(dst);
+    return true;
   }
+
+  CONSOLE.print("findObstacleSafeMowPoint obstacle target ");    
+  CONSOLE.print(bestsec.x());
+  CONSOLE.print(",");
+  CONSOLE.println(bestsec.y());
+
+  newTargetPoint.assign(bestsec);
+  return true;
 }
 
 bool Map::mowingCompleted(){
@@ -1250,10 +1356,10 @@ void Map::findPathFinderSafeStartPoint(Point &src, Point &dst){
 // go to next point
 // sim=true: only simulate (do not change data)
 bool Map::nextPoint(bool sim,float stateX, float stateY){
-  //CONSOLE.print("nextPoint sim=");
-  //CONSOLE.print(sim);
-  //CONSOLE.print(" wayMode=");
-  //CONSOLE.println(wayMode);
+  CONSOLE.print("nextPoint sim=");
+  CONSOLE.print(sim);
+  CONSOLE.print(" wayMode=");
+  CONSOLE.println(wayMode);
   if (wayMode == WAY_DOCK){
     return (nextDockPoint(sim));
   } 
@@ -1263,29 +1369,29 @@ bool Map::nextPoint(bool sim,float stateX, float stateY){
 #else
     Point src;
     Point dst;
-    bool r = (nextMowPoint(sim));
-    if (!r) {
-      // no new mow point available - fast path exit
-      return false;
+    Point state;
+
+    if (sim) {
+      // if we run in sim mode - skip this code
+      return (nextMowPoint(sim));
     }
 
     src.setXY(stateX, stateY);
-    // dst might be in an obstacle... check if we can move or may use a new point...
-    if (!findObstacleSafeMowPoint(dst)) {
-      // didn't find a safe dst fall back to old behaviour
-      CONSOLE.println("Map::nextPoint: WARN: no safe mow point found - fall back to normal behaviour!");
-      return true;
-    }
-    bool fr = findPath(src, dst);
-    if (!fr) {
-      // try again without obstacles
-      clearObstacles();
-      fr = findPath(src, dst);
-    }
-    if (!fr) {
-      // still didn't find a path - fall back to old behaviour
-      CONSOLE.println("Map::nextPoint: WARN: no path - fall back to normal behaviour!");
-      return true;
+    state.setXY(stateX, stateY);
+    while (true) {
+      if (!findObstacleSafeMowPoint(dst, state.x(), state.y())) {
+        // didn't find a safe dst fall back to old behaviour
+        CONSOLE.println("Map::nextPoint: WARN: no safe mow point found - fall back to normal behaviour!");
+        return true;
+      }
+      if (findPath(src, dst)) {
+	// path found
+        break;
+      }
+      // skip current dst point by setting state to current dst for searching new dst
+      // but keep state for findpath
+      CONSOLE.println("Map::nextPoint: WARN: no path found - move to next step!");
+      state.setXY(dst.x(), dst.y());
     }
 
     // move to WAY_FREE list
@@ -1295,7 +1401,13 @@ bool Map::nextPoint(bool sim,float stateX, float stateY){
 #endif
   } 
   else if (wayMode == WAY_FREE) {
-    return (nextFreePoint(sim));
+    bool r = nextFreePoint(sim);
+    // if WAY_FREE ended - it switches to WAY_MOW - reschedule function
+    if (wayMode == WAY_MOW && !sim) {
+      CONSOLE.println("nextFreePoint ended and is now WAY_MOW again");
+      return nextPoint(sim, stateX, stateY);
+    }
+    return r;
   } else return false;
 }
 
