@@ -1033,12 +1033,12 @@ bool Map::addObstacle(float stateX, float stateY, float stateDelta, MotType moti
   float circle_rot = scalePI( scalePI(stateDelta) + scalePI(deg2rad(move_angle)) );
 
   // move center of octagon in the right position of mower
-  float center_x = stateX + cos( circle_rot ) * r;
-  float center_y = stateY + sin( circle_rot ) * r;
+  float center_x = stateX + cos( circle_rot ) * ( r - 0.1 );
+  float center_y = stateY + sin( circle_rot ) * ( r - 0.1 );
 
   // move center of octagon in the right position of mower
-  float center_2x = stateX + cos( circle_rot ) * (OBSTACLE_DIAMETER - 0.1);
-  float center_2y = stateY + sin( circle_rot ) * (OBSTACLE_DIAMETER - 0.1);
+  float center_2x = stateX + cos( circle_rot ) * (OBSTACLE_DIAMETER - 0.2);
+  float center_2y = stateY + sin( circle_rot ) * (OBSTACLE_DIAMETER - 0.2);
 
   CONSOLE.print("addObstacle: state: ");
   CONSOLE.print(stateX);
