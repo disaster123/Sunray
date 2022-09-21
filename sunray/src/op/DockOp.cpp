@@ -31,7 +31,7 @@ void DockOp::begin(){
   motor.setLinearAngularSpeed(0,0);
   motor.setMowState(false);                
 
-  if (((initiatedByOperator) && (previousOp == &idleOp)) || (lastMapRoutingFailed))  maps.clearObstacles();
+  // if (((initiatedByOperator) && (previousOp == &idleOp)) || (lastMapRoutingFailed))  maps.clearObstacles();
   
   CONSOLE.print("OP_DOCK");
   CONSOLE.print(" initiatedByOperator=");
@@ -96,7 +96,7 @@ void DockOp::run(){
 void DockOp::onTargetReached(){
     CONSOLE.println("DockOp::onTargetReached");
     if (maps.wayMode == WAY_MOW){
-      maps.clearObstacles(); // clear obstacles if target reached
+      // maps.clearObstacles(); // clear obstacles if target reached
       motorErrorCounter = 0; // reset motor error counter if target reached
       stateSensor = SENS_NONE; // clear last triggered sensor
     }
