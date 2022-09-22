@@ -1254,17 +1254,18 @@ bool Map::findObstacleSafeMowPoint(Point &newTargetPoint, float stateX, float st
   if (best_dist == 99999) {
     bool safe = !isPointInsideObstacle(mowPoints.points[mowPointsIdx], -1);
     if (!safe) {
-      CONSOLE.println("findObstacleSafeMowPoint STEFAN unreachable... skip mowing point (inside obstacle)");
+      CONSOLE.println("findObstacleSafeMowPoint... skip mowing point (inside obstacle) and we're already near that point");
       // we need to skip to next mow point
       // try next mowing point
       if (!nextMowPoint(false)){
         CONSOLE.println("findObstacleSafeMowPoint error: no more mowing points reachable due to obstacles");
         return false;
-      } 
-      // XXX state might be better with new src point
-      return findObstacleSafeMowPoint(newTargetPoint, mowPoints.points[mowPointsIdx-1].x(), mowPoints.points[mowPointsIdx-1].y());
+      }
+      // return findObstacleSafeMowPoint(newTargetPoint, mowPoints.points[mowPointsIdx-1].x(), mowPoints.points[mowPointsIdx-1].y());
+      return findObstacleSafeMowPoint(newTargetPoint, stateX, stateY);
     }
 
+    dst.assign(mowPoints.points[mowPointsIdx]);
     CONSOLE.print("findObstacleSafeMowPoint target ");    
     CONSOLE.print(mowPoints.points[mowPointsIdx].x());
     CONSOLE.print(",");
