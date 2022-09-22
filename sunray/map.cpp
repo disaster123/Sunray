@@ -1112,7 +1112,11 @@ bool Map::isPointInsideObstacle(Point pt, int skipidx){
   for (int obst_ins=0; obst_ins < obstacles.numPolygons; obst_ins++){
     if (skipidx != obst_ins && pointIsInsidePolygon( obstacles.polygons[obst_ins], pt)){
 	    CONSOLE.print("point conflicts with idx: ");
-	    CONSOLE.println(obst_ins);
+	    CONSOLE.print(obst_ins);
+	    CONSOLE.print(": ");
+	    CONSOLE.print(pt.x());
+	    CONSOLE.print(" / ");
+	    CONSOLE.println(pt.y());
       return true;
     }
   }
