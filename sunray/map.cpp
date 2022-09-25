@@ -1381,6 +1381,11 @@ bool Map::nextPoint(bool sim,float stateX, float stateY){
 	// path found
         break;
       }
+      // check if src is inside obstacle
+      if ( isPointInsideObstacle(src, -1) ) {
+        CONSOLE.println("Map::nextPoint: WARN: STEFAN: src is inside obstacle!");
+      }
+
       // skip current dst point by setting state to current dst for searching new dst
       // but keep state for findpath
       CONSOLE.println("Map::nextPoint: WARN: no path found - move to next step!");
