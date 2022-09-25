@@ -1374,9 +1374,8 @@ bool Map::nextPoint(bool sim,float stateX, float stateY){
     state.setXY(stateX, stateY);
     while (true) {
       if (!findObstacleSafeMowPoint(dst, state.x(), state.y())) {
-        // didn't find a safe dst fall back to old behaviour
-        CONSOLE.println("Map::nextPoint: WARN: no safe mow point found - fall back to normal behaviour!");
-        return true;
+        CONSOLE.println("Map::nextPoint: WARN: no safe mow point found!");
+        return false;
       }
       if (findPath(src, dst)) {
 	// path found
