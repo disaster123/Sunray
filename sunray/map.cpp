@@ -1372,12 +1372,34 @@ bool Map::nextPoint(bool sim,float stateX, float stateY){
 
     src.setXY(stateX, stateY);
     state.setXY(stateX, stateY);
+    int c = 0;
+    bool ignoreobst;
+    ignoreobst = false;
+    int obstc = 0;
     while (true) {
+      c++;
+      if (c == 3) {
+        src.setXY(stateX, stateY);
+        state.setXY(stateX, stateY);
+      }
+      if (c > 2) {
+        CONSOLE.println("Map::nextPoint: WARN: IGNORE OBSTACLES!");
+	// revert to original locations and retry with ignored obstacles
+	ignoreobst = true;
+      }
       if (!findObstacleSafeMowPoint(dst, state.x(), state.y())) {
         CONSOLE.println("Map::nextPoint: WARN: no safe mow point found!");
         return false;
       }
-      if (findPath(src, dst)) {
+      if (ignoreobst) {
+        obstc = obstacles.numPolygons;
+        obstacles.numPolygons = 0;
+      }
+      bool fp = findPath(src, dst);
+      if (ignoreobst) {
+        obstacles.numPolygons = obstc;
+      }
+      if (fp) {
 	// path found
         break;
       }
