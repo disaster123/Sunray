@@ -1382,8 +1382,13 @@ bool Map::nextPoint(bool sim,float stateX, float stateY){
         break;
       }
       // check if src is inside obstacle
-      if ( isPointInsideObstacle(src, -1) ) {
-        CONSOLE.println("Map::nextPoint: WARN: STEFAN: src is inside obstacle!");
+      int ob_idx = isPointInsideObstacle(src, -1);
+      if ( ob_idx != -1 ) {
+        CONSOLE.println("Map::nextPoint: WARN: STEFAN: src is inside obstacle - remove obs!");
+	for (int oc = 0; oc < obstacles.polygons[ob_idx].numPoints; oc++) {
+	  // fake x / y to 0 to ignore obstacle
+	  obstacles.polygons[ob_idx].points[oc].setXY(0, 0);
+	}
       }
 
       // skip current dst point by setting state to current dst for searching new dst
