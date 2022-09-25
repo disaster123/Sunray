@@ -1108,19 +1108,19 @@ bool Map::isInsidePerimeterOutsideExclusions(Point &pt){
 }
 
 
-bool Map::isPointInsideObstacle(Point pt, int skipidx){  
+int Map::isPointInsideObstacle(Point pt, int skipidx){  
   for (int obst_ins=0; obst_ins < obstacles.numPolygons; obst_ins++){
     if (skipidx != obst_ins && pointIsInsidePolygon( obstacles.polygons[obst_ins], pt)){
-	    CONSOLE.print("point conflicts with idx: ");
-	    CONSOLE.print(obst_ins);
-	    CONSOLE.print(": ");
-	    CONSOLE.print(pt.x());
-	    CONSOLE.print(" / ");
-	    CONSOLE.println(pt.y());
-      return true;
+      CONSOLE.print("point conflicts with idx: ");
+      CONSOLE.print(obst_ins);
+      CONSOLE.print(": ");
+      CONSOLE.print(pt.x());
+      CONSOLE.print(" / ");
+      CONSOLE.println(pt.y());
+      return obst_ins;
     }
   }
-  return false;
+  return -1;
 }
 
 bool Map::findObstacleSafeMowPoint(Point &newTargetPoint, float stateX, float stateY){  
@@ -1205,7 +1205,7 @@ bool Map::findObstacleSafeMowPoint(Point &newTargetPoint, float stateX, float st
     Point sect;
     if (linePolygonIntersectPoint( src, dst, obstacles.polygons[idx], sect)) {
       float dist_obst = distance(src, sect);
-      bool safe = !isPointInsideObstacle(sect, idx);
+      bool safe = (isPointInsideObstacle(sect, idx) == -1);
 
       CONSOLE.print("findObstacleSafeMowPoint: ");
       CONSOLE.print(idx);
@@ -1228,7 +1228,7 @@ bool Map::findObstacleSafeMowPoint(Point &newTargetPoint, float stateX, float st
         Point sect_back;
         if (linePolygonIntersectPoint( dst, src, obstacles.polygons[idx], sect_back)) {
           float dist_obst = distance(src, sect_back);
-          bool safe = !isPointInsideObstacle(sect_back, idx);
+          bool safe = (isPointInsideObstacle(sect_back, idx) == -1);
 
           CONSOLE.print("findObstacleSafeMowPoint:");
           CONSOLE.print(idx);
@@ -1252,7 +1252,7 @@ bool Map::findObstacleSafeMowPoint(Point &newTargetPoint, float stateX, float st
 
   // no obstacle on mowline between state and dst
   if (best_dist == 99999) {
-    bool safe = !isPointInsideObstacle(mowPoints.points[mowPointsIdx], -1);
+    bool safe = (isPointInsideObstacle(mowPoints.points[mowPointsIdx], -1) == -1);
     if (!safe) {
       CONSOLE.println("findObstacleSafeMowPoint... skip mowing point (inside obstacle) and we're already near that point");
       // we need to skip to next mow point
