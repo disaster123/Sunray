@@ -1378,12 +1378,11 @@ bool Map::nextPoint(bool sim,float stateX, float stateY){
     int obstc = 0;
     while (true) {
       c++;
-      // set these once to reset loop and ignore obst
-      if (c == 10) {
+      if (c == 3) {
         src.setXY(stateX, stateY);
         state.setXY(stateX, stateY);
       }
-      if (c >= 10) {
+      if (c > 2) {
         CONSOLE.println("Map::nextPoint: WARN: IGNORE OBSTACLES!");
 	// revert to original locations and retry with ignored obstacles
 	ignoreobst = true;
