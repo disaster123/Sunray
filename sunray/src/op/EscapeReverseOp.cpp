@@ -48,6 +48,10 @@ void EscapeReverseOp::run(){
     // do not disable mow for obstacle detection
     // motor.setMowState(false);                                        
 
+    if (bumper.obstacle()) {
+        CONSOLE.println("STEFAN: ESCAPE: BUMPER triggered!!");
+    }
+
     if (millis() > driveReverseStopTime){
         CONSOLE.println("driveReverseStopTime");
         motor.stopImmediately(false); 
