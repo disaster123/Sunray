@@ -1007,10 +1007,12 @@ bool Map::addObstacle(float stateX, float stateY, float stateDelta, MotType moti
       move_angle = 180;
       break;
     case MOT_RIGHT:
-      move_angle = -22; // do not use 90 degress only fron wheels turn / move
+      move_angle = -40; // do not use 90 degress only fron wheels turn / move
+      r = r / 2;
       break;
     case MOT_LEFT:
-      move_angle = 22; // do not use 90 degress only fron wheels turn / move
+      move_angle = 40; // do not use 90 degress only fron wheels turn / move
+      r = r / 2;
       break;
     case MOT_FORWARD:
       move_angle = 0;
@@ -1024,8 +1026,8 @@ bool Map::addObstacle(float stateX, float stateY, float stateDelta, MotType moti
   float center_y = stateY + sin( circle_rot ) * ( r - 0.1 );
 
   // move center of octagon in the right position of mower
-  float center_2x = stateX + cos( circle_rot ) * (OBSTACLE_DIAMETER - 0.2);
-  float center_2y = stateY + sin( circle_rot ) * (OBSTACLE_DIAMETER - 0.2);
+  float center_2x = stateX + cos( circle_rot ) * ( r - 0.1 ) * 2;
+  float center_2y = stateY + sin( circle_rot ) * ( r - 0.1 ) * 2;
 
   CONSOLE.print("addObstacle: state: ");
   CONSOLE.print(stateX);
