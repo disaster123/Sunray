@@ -13,6 +13,7 @@
 float orig_stateX;
 float orig_stateY;
 MotType orig_motion;
+unsigned long bumperCheckTime;
 
 String EscapeReverseOp::name(){
     return "EscapeReverse";
@@ -22,6 +23,7 @@ void EscapeReverseOp::begin(){
 
     // obstacle avoidance
     driveReverseStopTime = millis() + 2500;                           
+    bumperCheckTime = millis() + 500;                           
 
     orig_stateX = stateX;
     orig_stateY = stateY;
@@ -48,8 +50,12 @@ void EscapeReverseOp::run(){
     // do not disable mow for obstacle detection
     // motor.setMowState(false);                                        
 
-    if (bumper.obstacle()) {
+    if (millis() > bumperCheckTime && bumper.obstacle()) {
         CONSOLE.println("STEFAN: ESCAPE: BUMPER triggered!!");
+        motor.stopImmediately(false); 
+	stateSensor = SENS_BUMPER;
+        changeOp(errorOp);
+	return;
     }
 
     if (millis() > driveReverseStopTime){
