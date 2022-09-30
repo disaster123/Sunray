@@ -73,7 +73,7 @@ void EscapeReverseOp::run(){
             changeOp(*nextOp, false);    // continue current operation
         } else {
             CONSOLE.println("continue operation with virtual obstacle");
-            maps.addObstacle(orig_stateX, orig_stateY, stateDelta, orig_motion);
+            maps.addObstacle(stateX, stateY, stateDelta, orig_motion);
 
             //Point pt;
             //if (!maps.findObstacleSafeMowPoint(pt)){
