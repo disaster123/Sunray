@@ -285,7 +285,11 @@ void trackLine(bool runControl){
         //if ( (GPS_SPEED_DETECTION) && (!maps.isUndocking()) ) { 
         if (GPS_SPEED_DETECTION) {         
           CONSOLE.println("gps no speed => obstacle!");
-          triggerObstacle();
+          CONSOLE.println("STEFAN: SET ERROR!!");
+          motor.stopImmediately(false);
+   	  stateSensor = SENS_MOTOR_ERROR;
+  	  activeOp->changeOp(errorOp);
+          // triggerObstacle();
           return;
         }
       }
