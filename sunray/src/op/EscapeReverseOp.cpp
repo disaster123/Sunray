@@ -14,7 +14,6 @@ float orig_stateX;
 float orig_stateY;
 MotType orig_motion;
 unsigned long bumperCheckTime;
-unsigned int bumperCheckCount;
 
 String EscapeReverseOp::name(){
     return "EscapeReverse";
@@ -24,8 +23,7 @@ void EscapeReverseOp::begin(){
 
     // obstacle avoidance
     driveReverseStopTime = millis() + 2500;                           
-    bumperCheckTime = millis() + 1000;                           
-    bumperCheckCount = 0;
+    bumperCheckTime = millis() + 100;                           
 
     orig_stateX = stateX;
     orig_stateY = stateY;
@@ -52,26 +50,20 @@ void EscapeReverseOp::run(){
     // do not disable mow for obstacle detection
     // motor.setMowState(false);                                        
 
-    if (millis() > bumperCheckTime && bumper.obstacle()) {
-	bumperCheckCount += 1;
-	if (bumperCheckCount > 2) {
-          CONSOLE.println("STEFAN: ESCAPE: BUMPER triggered!!");
-          motor.stopImmediately(false); 
-	  stateSensor = SENS_BUMPER;
-          changeOp(errorOp);
-	  return;
-	}
-    } else {
-        bumperCheckCount = 0;
-    }
-
-    if (millis() > driveReverseStopTime){
-        CONSOLE.println("driveReverseStopTime");
+    // drive back until bumper is no longer triggered or max StopTime
+    if ((!bumper.obstacle() && millis() > bumperCheckTime)  || millis() > driveReverseStopTime){
+        CONSOLE.println("driveReverseStopTime or no bumper");
         motor.stopImmediately(false); 
         driveReverseStopTime = 0;
         if (detectLift()) {
             CONSOLE.println("error: after driving reverse lift sensor still active!");
             stateSensor = SENS_LIFT;
+            changeOp(errorOp);
+            return;
+        }
+        if (bumper.obstacle()) {
+            CONSOLE.println("error: after driving reverse bumper sensor still active!");
+	    stateSensor = SENS_BUMPER;
             changeOp(errorOp);
             return;
         }
