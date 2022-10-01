@@ -23,7 +23,7 @@ void EscapeReverseOp::begin(){
 
     // obstacle avoidance
     driveReverseStopTime = millis() + 2500;                           
-    bumperCheckTime = millis() + 100;                           
+    bumperCheckTime = 0;
 
     orig_stateX = stateX;
     orig_stateY = stateY;
@@ -50,8 +50,12 @@ void EscapeReverseOp::run(){
     // do not disable mow for obstacle detection
     // motor.setMowState(false);                                        
 
+    if (bumperCheckTime == 0 && !bumper.obstacle()) {
+      bumperCheckTime = millis() + 100;                           
+    }
+
     // drive back until bumper is no longer triggered or max StopTime
-    if ((!bumper.obstacle() && millis() > bumperCheckTime)  || millis() > driveReverseStopTime){
+    if ((bumperCheckTime != 0 && millis() > bumperCheckTime)  || millis() > driveReverseStopTime){
         CONSOLE.println("driveReverseStopTime or no bumper");
         motor.stopImmediately(false); 
         driveReverseStopTime = 0;
