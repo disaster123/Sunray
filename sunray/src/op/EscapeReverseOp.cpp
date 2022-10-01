@@ -65,10 +65,10 @@ void EscapeReverseOp::run(){
       // bumper was released but is pressed now again
       // move again in the other direction
       if (orig_motion == MOT_BACKWARD) {
-        motor.setLinearAngularSpeed(-0.1,0);
+        motor.setLinearAngularSpeed(-0.15,0);
       }
       else {
-        motor.setLinearAngularSpeed(0.1,0);
+        motor.setLinearAngularSpeed(0.15,0);
       }
       driveReverseStopTime = millis() + 200;
     }
@@ -95,7 +95,7 @@ void EscapeReverseOp::run(){
             // continue without obstacles
             changeOp(*nextOp, false);    // continue current operation
         } else {
-            CONSOLE.println("continue operation with virtual obstacle");
+            // CONSOLE.println("continue operation with virtual obstacle");
             maps.addObstacle(orig_stateX, orig_stateY, stateDelta, orig_motion);
 
             //Point pt;
