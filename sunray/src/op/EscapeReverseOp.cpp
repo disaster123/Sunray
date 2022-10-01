@@ -13,7 +13,7 @@
 float orig_stateX;
 float orig_stateY;
 MotType orig_motion;
-unsigned long bumperCheckTime;
+bool bumperReleased;
 
 String EscapeReverseOp::name(){
     return "EscapeReverse";
@@ -22,8 +22,8 @@ String EscapeReverseOp::name(){
 void EscapeReverseOp::begin(){
 
     // obstacle avoidance
-    driveReverseStopTime = millis() + 2500;                           
-    bumperCheckTime = 0;
+    driveReverseStopTime = millis() + 3000;                           
+    bumperReleased = false;
 
     orig_stateX = stateX;
     orig_stateY = stateY;
@@ -46,16 +46,35 @@ void EscapeReverseOp::end(){
 
 void EscapeReverseOp::run(){
     battery.resetIdle();
-    motor.setLinearAngularSpeed(-0.25,0);
+
+    if (orig_motion == MOT_BACKWARD) {
+      motor.setLinearAngularSpeed(0.15,0);
+    }
+    else {
+      motor.setLinearAngularSpeed(-0.25,0);
+    }
     // do not disable mow for obstacle detection
     // motor.setMowState(false);                                        
 
-    if (bumperCheckTime == 0 && !bumper.obstacle()) {
-      bumperCheckTime = millis() + 100;                           
+    if (!bumperReleased && !bumper.obstacle()) {
+      // bumper is released after obstacle was detected
+      bumperReleased = true;
+    }
+
+    if (bumperReleased && bumper.obstacle()) {
+      // bumper was released but is pressed now again
+      // move again in the other direction
+      if (orig_motion == MOT_BACKWARD) {
+        motor.setLinearAngularSpeed(-0.1,0);
+      }
+      else {
+        motor.setLinearAngularSpeed(0.1,0);
+      }
+      driveReverseStopTime = millis() + 200;
     }
 
     // drive back until bumper is no longer triggered or max StopTime
-    if ((bumperCheckTime != 0 && millis() > bumperCheckTime)  || millis() > driveReverseStopTime){
+    if (millis() > driveReverseStopTime){
         CONSOLE.println("driveReverseStopTime or no bumper");
         motor.stopImmediately(false); 
         driveReverseStopTime = 0;
