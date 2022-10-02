@@ -17,6 +17,11 @@ void IdleOp::begin(){
     motor.setLinearAngularSpeed(0,0);
     motor.setMowState(false);
     maps.setIsDocked(false);
+
+    if ((initiatedByOperator) && (previousOp == &idleOp)) {
+      CONSOLE.println("OP_IDLE: clear obstacles");
+      maps.clearObstacles();
+    }
 }
 
 
