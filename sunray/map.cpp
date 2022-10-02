@@ -1047,7 +1047,7 @@ bool Map::addObstacle(float stateX, float stateY, float stateDelta, MotType moti
   // }
   int idx = obstacles.numPolygons;
   if (!obstacles.alloc(idx+1)) return false;
-  if (!obstacles.polygons[idx].alloc(11)) return false;
+  if (!obstacles.polygons[idx].alloc(12)) return false;
   
   int ci = 0;
   // create circle / octagon around center angle 0 - "360"
@@ -1055,6 +1055,9 @@ bool Map::addObstacle(float stateX, float stateY, float stateDelta, MotType moti
   
   // starting point in front of mower
   obstacles.polygons[idx].points[ci].setXY(center_x + cos(scalePI( deg2rad(160) + circle_rot ) ) * r, center_y + sin(scalePI( deg2rad(160) + circle_rot ) ) * r);
+  ci += 1;
+
+  obstacles.polygons[idx].points[ci].setXY(center_x + cos(scalePI( deg2rad(180) + circle_rot ) ) * r, center_y + sin(scalePI( deg2rad(160) + circle_rot ) ) * r);
   ci += 1;
 
   obstacles.polygons[idx].points[ci].setXY(center_x + cos(scalePI( deg2rad(200) + circle_rot ) ) * r, center_y + sin(scalePI( deg2rad(200) + circle_rot ) ) * r);
