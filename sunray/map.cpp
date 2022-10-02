@@ -1181,7 +1181,7 @@ bool Map::findObstacleSafeMowPoint(Point &newTargetPoint, float stateX, float st
     dist_src_to_state = distance(src, state);
     dist_state_to_dst = distance(state, dst);
 
-    CONSOLE.print("findObstacleSafeMowPoint 22:");
+    CONSOLE.print("findObstacleSafeMowPoint (next mowpoint - target reached):");
     CONSOLE.print(" idx: ");
     CONSOLE.print(mowPointsIdx);
     CONSOLE.print(" state: ");
@@ -1257,26 +1257,24 @@ bool Map::findObstacleSafeMowPoint(Point &newTargetPoint, float stateX, float st
 
   // no obstacle on mowline between state and dst
   if (best_dist == 99999) {
-    bool safe = (isPointInsideObstacle(mowPoints.points[mowPointsIdx], -1) == -1);
+    bool safe = (isPointInsideObstacle(dst, -1) == -1);
     if (!safe) {
-      CONSOLE.println("findObstacleSafeMowPoint... skip mowing point (inside obstacle) and we're already near that point");
+      CONSOLE.println("findObstacleSafeMowPoint: no further obstacle on mowline but mowpoint is inside obstacle. Skip to next real mowpoint.");
       // we need to skip to next mow point
       // try next mowing point
       if (!nextMowPoint(false)){
         CONSOLE.println("findObstacleSafeMowPoint error: no more mowing points reachable due to obstacles");
         return false;
       }
-      // return findObstacleSafeMowPoint(newTargetPoint, mowPoints.points[mowPointsIdx-1].x(), mowPoints.points[mowPointsIdx-1].y());
       return findObstacleSafeMowPoint(newTargetPoint, stateX, stateY);
     }
 
-    dst.assign(mowPoints.points[mowPointsIdx]);
     CONSOLE.print("findObstacleSafeMowPoint target ");    
-    CONSOLE.print(mowPoints.points[mowPointsIdx].x());
+    CONSOLE.print(dst.x());
     CONSOLE.print(",");
-    CONSOLE.println(mowPoints.points[mowPointsIdx].y());
+    CONSOLE.println(dst.y());
 
-    newTargetPoint.assign(mowPoints.points[mowPointsIdx]);
+    newTargetPoint.assign(dst);
     return true;
   }
 
