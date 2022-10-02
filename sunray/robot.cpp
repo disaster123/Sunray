@@ -807,12 +807,12 @@ bool detectObstacle(){
     float dY = lastGPSMotionY - stateY;
     float delta = sqrt( sq(dX) + sq(dY) );    
     if (delta < 0.05){
-      if (GPS_MOTION_DETECTION){
-        CONSOLE.println("gps no motion => obstacle!");
-        statMowGPSMotionTimeoutCounter++;
-        triggerObstacle();
-        return true;
-      }
+          CONSOLE.println("robot.cpp: gps no motion => obstacle!");
+          CONSOLE.println("robot.cpp: STEFAN: SET ERROR!!");
+          motor.stopImmediately(false);
+   	  stateSensor = SENS_MOTOR_ERROR;
+  	  activeOp->changeOp(errorOp);
+          return true;
     }
     lastGPSMotionX = stateX;      
     lastGPSMotionY = stateY;      
