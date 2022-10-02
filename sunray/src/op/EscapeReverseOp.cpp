@@ -75,7 +75,7 @@ void EscapeReverseOp::run(){
 
     // drive back until bumper is no longer triggered or max StopTime
     if (millis() > driveReverseStopTime){
-        CONSOLE.println("driveReverseStopTime or no bumper");
+        CONSOLE.println("driveReverseStopTime");
         motor.stopImmediately(false); 
         driveReverseStopTime = 0;
         if (detectLift()) {
