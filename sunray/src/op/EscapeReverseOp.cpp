@@ -70,7 +70,7 @@ void EscapeReverseOp::run(){
       else {
         motor.setLinearAngularSpeed(0.15,0);
       }
-      driveReverseStopTime = millis() + 200;
+      driveReverseStopTime = millis() + 100;
     }
 
     // drive back until bumper is no longer triggered or max StopTime
