@@ -173,7 +173,8 @@ bool robotShouldMoveBackward();
 bool robotShouldRotate();
 bool robotShouldRotateLeft();
 bool robotShouldRotateRight();
-
+void resetOverallMotionTimeout();
+void updateGPSMotionCheckTime();
 
 
 
