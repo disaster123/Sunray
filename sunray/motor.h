@@ -65,19 +65,19 @@ class Motor {
     void setMowState(bool switchOn);   
     void setMowMaxPwm( int val );
     void stopImmediately(bool includeMowerMotor);
+    float motorMowRpmCurrLP;    
+    float motorMowPWMCurr; 
+    float motorMowRpmCurr;    
   protected: 
     float motorLeftRpmSet; // set speed
     float motorRightRpmSet;   
     float motorLeftRpmCurr;
     float motorRightRpmCurr;
-    float motorMowRpmCurr;    
     float motorLeftRpmCurrLP;
     float motorRightRpmCurrLP;    
-    float motorMowRpmCurrLP;    
     float motorLeftRpmLast;
     float motorRightRpmLast;
     float motorMowPWMSet;  
-    float motorMowPWMCurr; 
     int motorLeftPWMCurr;
     int motorRightPWMCurr;    
     float motorMowPWMCurrLP; 
