@@ -383,6 +383,10 @@ void trackLine(bool runControl){
         CONSOLE.print(angleToTargetFits);
         CONSOLE.print(" angular: ");
         CONSOLE.print(angular);
+        CONSOLE.print(" motorMowRpmCurr: ");
+        CONSOLE.print(motor.motorMowRpmCurr);
+        CONSOLE.print(" motorMowPWMCurr: ");
+        CONSOLE.print(motor.motorMowPWMCurr);
         CONSOLE.print(" trackerDiffDelta: ");
         CONSOLE.println(trackerDiffDelta);
         ltargetReached = targetReached;
