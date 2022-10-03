@@ -63,20 +63,20 @@ class Motor {
     void setLinearAngularSpeed(float linear, float angular, bool useLinearRamp = true);
     void setMowState(bool switchOn);   
     void stopImmediately(bool includeMowerMotor);
+    float motorMowRpmCurrLP;    
+    float motorMowPWMCurr; 
+    float motorMowRpmCurr;    
   protected: 
     float motorLeftRpmSet; // set speed
     float motorRightRpmSet;   
     float motorLeftRpmCurr;
     float motorRightRpmCurr;
-    float motorMowRpmCurr;    
     float motorLeftRpmCurrLP;
     float motorRightRpmCurrLP;    
-    float motorMowRpmCurrLP;    
     float motorLeftRpmLast;
     float motorRightRpmLast;
     bool motorMowForwardSet; 
     float motorMowPWMSet;  
-    float motorMowPWMCurr; 
     int motorLeftPWMCurr;
     int motorRightPWMCurr;    
     float motorMowPWMCurrLP; 
