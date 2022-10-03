@@ -2196,6 +2196,8 @@ bool Map::findPath(Point &src, Point &dst){
     //delay(8000); // simulate a busy path finder
 
     resetImuTimeout();
+    resetOverallMotionTimeout();
+    updateGPSMotionCheckTime();
 
     if ((currentNode != NULL) && (distance(*currentNode->point, *end->point) < 0.02)) {
       Node *curr = currentNode;
