@@ -381,6 +381,8 @@ void trackLine(bool runControl){
         CONSOLE.print(motor.motorMowRpmCurr);
         CONSOLE.print(" motorMowPWMCurr: ");
         CONSOLE.print(motor.motorMowPWMCurr);
+        CONSOLE.print(" motorMowRpmCurrLP: ");
+        CONSOLE.print(motor.motorMowRpmCurrLP);
         CONSOLE.print(" trackerDiffDelta: ");
         CONSOLE.println(trackerDiffDelta);
         ltargetReached = targetReached;
