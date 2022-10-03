@@ -37,6 +37,14 @@ void EscapeReverseOp::begin(){
     } else {
       orig_motion = MOT_FORWARD;
     }
+
+    // set speed only once - so do it in begin not run
+    if (orig_motion == MOT_BACKWARD) {
+      motor.setLinearAngularSpeed(0.15,0);
+    }
+    else {
+      motor.setLinearAngularSpeed(-0.25,0);
+    }
 }
 
 
@@ -47,12 +55,6 @@ void EscapeReverseOp::end(){
 void EscapeReverseOp::run(){
     battery.resetIdle();
 
-    if (orig_motion == MOT_BACKWARD) {
-      motor.setLinearAngularSpeed(0.15,0);
-    }
-    else {
-      motor.setLinearAngularSpeed(-0.25,0);
-    }
     // do not disable mow for obstacle detection
     // motor.setMowState(false);                                        
 
@@ -63,14 +65,16 @@ void EscapeReverseOp::run(){
 
     if (bumperReleased && bumper.obstacle()) {
       // bumper was released but is pressed now again
-      // move again in the other direction
+      // move again in the other direction - until bumper is released
+      // again
       if (orig_motion == MOT_BACKWARD) {
         motor.setLinearAngularSpeed(-0.15,0);
       }
       else {
         motor.setLinearAngularSpeed(0.15,0);
       }
-      driveReverseStopTime = millis() + 100;
+      // this one is updated in every call as long as obstacle is true / triggered
+      driveReverseStopTime = millis() + 50;
     }
 
     // drive back until bumper is no longer triggered or max StopTime
