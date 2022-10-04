@@ -36,14 +36,6 @@ void EscapeReverseOp::begin(){
     } else {
       orig_motion = MOT_FORWARD;
     }
-
-    // set speed only once - so do it in begin not run
-    if (orig_motion == MOT_BACKWARD) {
-      motor.setLinearAngularSpeed(0.15,0);
-    }
-    else {
-      motor.setLinearAngularSpeed(-0.25,0);
-    }
 }
 
 
@@ -57,6 +49,17 @@ void EscapeReverseOp::run(){
     // do not disable mow for obstacle detection
     // motor.setMowState(false);                                        
 
+    if (!bumperReleased && bumper.obstacle()) {
+      // bumper was not released yes and is still active
+      // set speed only once - so do it in begin not run
+      if (orig_motion == MOT_BACKWARD) {
+        motor.setLinearAngularSpeed(0.15,0);
+      }
+      else {
+        motor.setLinearAngularSpeed(-0.25,0);
+      }
+    }
+
     if (!bumperReleased && !bumper.obstacle()) {
       CONSOLE.println("BUMPER: released");
       // bumper is released after obstacle was detected
@@ -64,6 +67,14 @@ void EscapeReverseOp::run(){
       // overwrite
       orig_stateX = stateX;
       orig_stateY = stateY;
+
+      // still driving until driveReverseStopTime
+      if (orig_motion == MOT_BACKWARD) {
+        motor.setLinearAngularSpeed(0.15,0);
+      }
+      else {
+        motor.setLinearAngularSpeed(-0.25,0);
+      }
     }
 
     if (bumperReleased && bumper.obstacle()) {
