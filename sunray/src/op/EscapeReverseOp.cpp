@@ -25,9 +25,6 @@ void EscapeReverseOp::begin(){
     driveReverseStopTime = millis() + 3000;                           
     bumperReleased = false;
 
-    orig_stateX = stateX;
-    orig_stateY = stateY;
-
     if (robotShouldRotateLeft()) {
       orig_motion = MOT_LEFT;
     } else if (robotShouldRotateRight()) {
@@ -61,6 +58,8 @@ void EscapeReverseOp::run(){
     if (!bumperReleased && !bumper.obstacle()) {
       // bumper is released after obstacle was detected
       bumperReleased = true;
+      orig_stateX = stateX;
+      orig_stateY = stateY;
     }
 
     if (bumperReleased && bumper.obstacle()) {
