@@ -24,6 +24,8 @@ void EscapeReverseOp::begin(){
     // obstacle avoidance
     driveReverseStopTime = millis() + 3000;                           
     bumperReleased = false;
+    orig_stateX = stateX;
+    orig_stateY = stateY;
 
     if (robotShouldRotateLeft()) {
       orig_motion = MOT_LEFT;
@@ -56,13 +58,16 @@ void EscapeReverseOp::run(){
     // motor.setMowState(false);                                        
 
     if (!bumperReleased && !bumper.obstacle()) {
+      CONSOLE.println("BUMPER: released");
       // bumper is released after obstacle was detected
       bumperReleased = true;
+      // overwrite
       orig_stateX = stateX;
       orig_stateY = stateY;
     }
 
     if (bumperReleased && bumper.obstacle()) {
+      CONSOLE.println("BUMPER: was released but now new obstacle - reset direction and driveReverseStopTime");
       // bumper was released but is pressed now again
       // move again in the other direction - until bumper is released
       // again
