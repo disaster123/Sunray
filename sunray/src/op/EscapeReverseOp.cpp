@@ -49,7 +49,7 @@ void EscapeReverseOp::run(){
     // do not disable mow for obstacle detection
     // motor.setMowState(false);                                        
 
-    if (!bumperReleased && bumper.obstacle()) {
+    if (!bumperReleased && (bumper.obstacle() || detectLift())) {
       // bumper was not released yes and is still active
       // set speed only once - so do it in begin not run
       if (orig_motion == MOT_BACKWARD) {
@@ -60,7 +60,7 @@ void EscapeReverseOp::run(){
       }
     }
 
-    if (!bumperReleased && !bumper.obstacle()) {
+    if (!bumperReleased && !bumper.obstacle() && !detectLift()) {
       CONSOLE.println("BUMPER: released");
       // bumper is released after obstacle was detected
       bumperReleased = true;
@@ -77,7 +77,7 @@ void EscapeReverseOp::run(){
       }
     }
 
-    if (bumperReleased && bumper.obstacle()) {
+    if (bumperReleased && (bumper.obstacle() || detectLift())) {
       CONSOLE.println("BUMPER: was released but now new obstacle - reset direction and driveReverseStopTime");
       // bumper was released but is pressed now again
       // move again in the other direction - until bumper is released
