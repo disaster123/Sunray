@@ -780,7 +780,7 @@ bool detectObstacle(){
     #ifdef LIFT_OBSTACLE_AVOIDANCE
       if (liftDriver.triggered()) {
         if (liftTimeout == 0) {
-          liftTimeout = millis() + BUMPER_DEADTIME;
+          liftTimeout = millis() + LIFT_DEADTIME;
         } else if (liftTimeout < millis()) {
           liftTimeout = 0;
           CONSOLE.println("lift sensor obstacle!");    
