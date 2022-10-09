@@ -31,7 +31,7 @@ void GpsWaitFloatOp::begin(){
     motor.setLinearAngularSpeed(0,0, false); 
     motor.setMowState(false);    
 
-    retryOperationTime = millis() + 180000;
+    retryOperationTime = millis() + 180000 * 2;
 }
 
 
@@ -45,7 +45,7 @@ void GpsWaitFloatOp::run(){
     }     
     if (millis() > retryOperationTime){
         CONSOLE.println("GpsWaitFloatOp timed out - try reboot recovery");
-        retryOperationTime = millis() + 180000;
+        retryOperationTime = millis() + 180000 * 2;
         stateSensor = SENS_GPS_INVALID;
         gps.reboot();
     }
