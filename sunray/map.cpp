@@ -1948,6 +1948,13 @@ bool Map::findPath(Point &src, Point &dst){
   
   unsigned long nextProgressTime = 0;
   unsigned long startTime = millis();
+  unsigned long time1 = 0;
+  unsigned long time2 = 0;
+  unsigned long time3 = 0;
+  unsigned long time4 = 0;
+  unsigned long time5 = 0;
+  unsigned long time6 = 0;
+  unsigned long time_tmp;
   CONSOLE.print("findPath (");
   CONSOLE.print(src.x());
   CONSOLE.print(",");
@@ -1966,6 +1973,7 @@ bool Map::findPath(Point &src, Point &dst){
     //CONSOLE.println();
     
     // create path-finder obstacles    
+    time1 = millis();
     int idx = 0;
     if (!pathFinderObstacles.alloc(1 + exclusions.numPolygons + obstacles.numPolygons)) return false;
     
@@ -2028,7 +2036,8 @@ bool Map::findPath(Point &src, Point &dst){
     for (int j=0; j < perimeterPoints.numPoints; j++){    
       pathFinderNodes.nodes[idx].point = &perimeterPoints.points[j];
       idx++;
-    }      
+    }     
+    time1 = millis() - time1;
     // start node
     Node *start = &pathFinderNodes.nodes[idx];
     start->point = &src;
@@ -2101,8 +2110,12 @@ bool Map::findPath(Point &src, Point &dst){
       //CONSOLE.print(currentNode->point->x);
       //CONSOLE.print(",");
       //CONSOLE.println(currentNode->point->y);      
+      time3 = millis();
       while (true) {        
-        neighborIdx = findNextNeighbor(pathFinderNodes, pathFinderObstacles, *currentNode, neighborIdx); 
+	time_tmp = millis();
+        neighborIdx = findNextNeighbor(pathFinderNodes, pathFinderObstacles, *currentNode, neighborIdx);
+        time2 = time2 + ( millis() - time_tmp );
+	time4 = time4 + 1;
         if (neighborIdx == -1) break;
         Node* neighbor = &pathFinderNodes.nodes[neighborIdx];                
         
@@ -2144,12 +2157,28 @@ bool Map::findPath(Point &src, Point &dst){
           //neighbor.debug = "F: " + neighbor.f + "<br />G: " + neighbor.g + "<br />H: " + neighbor.h;
         }
       }
+      time3 = millis() - time3;
     } 
 
     //CONSOLE.print("finish nodes=");
     //CONSOLE.print(pathFinderNodes.numNodes);
     //CONSOLE.print(" duration=");
     //CONSOLE.println(millis()-startTime);  
+    
+    //if ((millis()-startTime) > 1000) {
+      CONSOLE.print("time1=");
+      CONSOLE.print(time1);
+      CONSOLE.print(" time2=");
+      CONSOLE.print(time2);
+      CONSOLE.print(" time4(count)=");
+      CONSOLE.print(time4);
+      CONSOLE.print(" quot=");
+      CONSOLE.print(int(time2/max(time4,0.00001)));
+      CONSOLE.print(" time3=");
+      CONSOLE.print(time3);
+      CONSOLE.print(" runtime=");
+      CONSOLE.println(millis()-startTime);  
+    //}
 
     //delay(8000); // simulate a busy path finder
 
