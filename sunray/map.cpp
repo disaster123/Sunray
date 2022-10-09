@@ -2115,6 +2115,7 @@ bool Map::findPath(Point &src, Point &dst){
 	time_tmp = millis();
         neighborIdx = findNextNeighbor(pathFinderNodes, pathFinderObstacles, *currentNode, neighborIdx);
         time2 = time2 + ( millis() - time_tmp );
+	time4 = time4 + 1;
         if (neighborIdx == -1) break;
         Node* neighbor = &pathFinderNodes.nodes[neighborIdx];                
         
@@ -2169,6 +2170,8 @@ bool Map::findPath(Point &src, Point &dst){
       CONSOLE.print(time1);
       CONSOLE.print(" time2=");
       CONSOLE.print(time2);
+      CONSOLE.print(" time4(count)=");
+      CONSOLE.print(time4);
       CONSOLE.print(" time3=");
       CONSOLE.print(time3);
       CONSOLE.print(" runtime=");
