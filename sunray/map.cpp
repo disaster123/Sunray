@@ -1234,6 +1234,8 @@ bool Map::findObstacleSafeMowPoint(Point &newTargetPoint, float stateX, float st
     CONSOLE.println(dist_state_to_dst);
   }
 
+  float distToPath = distanceLine(stateX, stateY, src.x(), src.y(), dst.x(), dst.y());
+
   // get first obstacle in front of state_pos
   Point bestsec;
   float best_dist = 99999;
@@ -1302,7 +1304,10 @@ bool Map::findObstacleSafeMowPoint(Point &newTargetPoint, float stateX, float st
       return findObstacleSafeMowPoint(newTargetPoint, stateX, stateY);
     }
 
-    CONSOLE.print("findObstacleSafeMowPoint target ");    
+    CONSOLE.print("findObstacleSafeMowPoint target ");
+    CONSOLE.print("cur mowline dist: "); 
+    CONSOLE.print(distToPath); 
+    CONSOLE.print(" ");
     CONSOLE.print(dst.x());
     CONSOLE.print(",");
     CONSOLE.println(dst.y());
@@ -1312,6 +1317,9 @@ bool Map::findObstacleSafeMowPoint(Point &newTargetPoint, float stateX, float st
   }
 
   CONSOLE.print("findObstacleSafeMowPoint obstacle target ");    
+  CONSOLE.print("cur mowline dist: "); 
+  CONSOLE.print(distToPath); 
+  CONSOLE.print(" ");
   CONSOLE.print(bestsec.x());
   CONSOLE.print(",");
   CONSOLE.println(bestsec.y());
