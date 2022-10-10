@@ -2165,7 +2165,7 @@ bool Map::findPath(Point &src, Point &dst){
     //CONSOLE.print(" duration=");
     //CONSOLE.println(millis()-startTime);  
     
-    if ((millis()-startTime) > 1000) {
+    //if ((millis()-startTime) > 1000) {
       CONSOLE.print("time1=");
       CONSOLE.print(time1);
       CONSOLE.print(" time2=");
@@ -2178,7 +2178,7 @@ bool Map::findPath(Point &src, Point &dst){
       CONSOLE.print(time3);
       CONSOLE.print(" runtime=");
       CONSOLE.println(millis()-startTime);  
-    }
+    //}
 
     //delay(8000); // simulate a busy path finder
 
