@@ -1259,7 +1259,11 @@ bool Map::findObstacleSafeMowPoint(Point &newTargetPoint, float stateX, float st
       CONSOLE.println(dist_obst);
 
       // distance of sect point has to be > distance than state_pos to dst / target
-      if ((dist_obst - dist_src_to_state) > 0.1 && dist_obst < best_dist && safe) {
+      if (
+          (
+	    ((dist_obst - dist_src_to_state) >= TARGET_REACHED_TOLERANCE) || 
+            (distToPath >= TARGET_REACHED_TOLERANCE && (fabs(dist_obst - dist_src_to_state) < 1))
+	  ) && dist_obst < best_dist && safe) {
 	bestsec.assign(sect);
 	best_dist = dist_obst;
       } else {
@@ -1281,7 +1285,11 @@ bool Map::findObstacleSafeMowPoint(Point &newTargetPoint, float stateX, float st
           CONSOLE.print(" dist src: ");
           CONSOLE.println(dist_obst);
 
-          if ((dist_obst - dist_src_to_state) > 0.1 && dist_obst < best_dist && safe) {
+          if (
+              (
+    	        ((dist_obst - dist_src_to_state) >= TARGET_REACHED_TOLERANCE) || 
+                (distToPath >= TARGET_REACHED_TOLERANCE && (fabs(dist_obst - dist_src_to_state) < 1))
+    	      ) && dist_obst < best_dist && safe) {
             bestsec.assign(sect_back);
             best_dist = dist_obst;
           }
