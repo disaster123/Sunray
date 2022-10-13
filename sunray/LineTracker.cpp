@@ -344,8 +344,14 @@ void trackLine(bool runControl){
   }
    
   if (mow)  {  // wait until mowing motor is running
-    if (abs(motor.motorMowRpmCurrLP) < 1000 || abs(motor.motorMowPWMCurr) < 230){
-      if (!buzzer.isPlaying()) buzzer.sound(SND_WARNING, true);
+    if (abs(motor.motorMowRpmCurrLP) < 800 || abs(motor.motorMowPWMCurr) < 200){
+      if (!buzzer.isPlaying()) {
+        CONSOLE.print("motor.motorMowRpmCurrLP / motor.motorMowPWMCurr: ");
+        CONSOLE.print(motor.motorMowRpmCurrLP);
+        CONSOLE.print(" / ");
+        CONSOLE.println(motor.motorMowPWMCurr);
+	buzzer.sound(SND_WARNING, true);
+      }
       linear = 0;
       angular = 0;   
     }
