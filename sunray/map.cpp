@@ -2189,7 +2189,7 @@ bool Map::findPath(Point &src, Point &dst){
       CONSOLE.print(" time4(count)=");
       CONSOLE.print(time4);
       CONSOLE.print(" quot=");
-      CONSOLE.print(int(time2/time4));
+      CONSOLE.print(int(time2/max(time4,0.00001)));
       CONSOLE.print(" time3=");
       CONSOLE.print(time3);
       CONSOLE.print(" runtime=");
