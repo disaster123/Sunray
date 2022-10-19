@@ -739,7 +739,7 @@ bool detectLift(){
 // detect obstacle (bumper, sonar, ToF)
 // returns true, if obstacle detected, otherwise false
 bool detectObstacle(){   
-  if (! ((robotShouldMoveForward()) || (robotShouldRotate())) ) return false;      
+  // if (! ((robotShouldMoveForward()) || (robotShouldRotate())) ) return false;      
   if (TOF_ENABLE){
     if (millis() >= nextToFTime){
       nextToFTime = millis() + 200;
