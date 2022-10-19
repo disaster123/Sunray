@@ -353,7 +353,8 @@ void trackLine(bool runControl){
 	buzzer.sound(SND_WARNING, true);
       }
       linear = 0;
-      angular = 0;   
+      angular = 0;
+      motor.setLinearAngularSpeed(linear, angular);
     }
   }
 
