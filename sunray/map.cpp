@@ -2133,6 +2133,10 @@ bool Map::findPath(Point &src, Point &dst){
         time2 = time2 + ( millis() - time_tmp );
 	time4 = time4 + 1;
         if (neighborIdx == -1) break;
+	if (time4 > 350) {
+          CONSOLE.println("pathfinder: no path - fast exit");      
+          return false;
+	}
         Node* neighbor = &pathFinderNodes.nodes[neighborIdx];                
         
         if (millis() >= nextProgressTime){
