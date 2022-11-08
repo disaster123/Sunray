@@ -28,6 +28,9 @@ void GpsRebootRecoveryOp::end(){
 
 
 void GpsRebootRecoveryOp::run(){
+    if (retryOperationTime == 0) {
+        begin();
+    }
     battery.resetIdle();
     if ((millis() > retryOperationTime) || (gps.solution == SOL_FIXED)) {
         // restart current operation from new position (restart path planning)
