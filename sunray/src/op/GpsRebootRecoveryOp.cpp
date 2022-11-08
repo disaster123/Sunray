@@ -28,10 +28,14 @@ void GpsRebootRecoveryOp::end(){
 
 
 void GpsRebootRecoveryOp::run(){
+    if (retryOperationTime == 0) {
+        begin();
+    }
     battery.resetIdle();
     if ((millis() > retryOperationTime) || (gps.solution == SOL_FIXED)) {
         // restart current operation from new position (restart path planning)
         CONSOLE.println("restarting operation (retryOperationTime)");
+        retryOperationTime = millis() + 90000; // wait 90 secs after reboot, then try another map routing
         retryOperationTime = 0;
         motor.stopImmediately(true);
         changeOp(*nextOp);    // restart current operation      
