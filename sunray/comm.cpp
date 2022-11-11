@@ -1293,6 +1293,12 @@ void outputConsole(){
     CONSOLE.print(gps.solution);
     CONSOLE.print(" age=");    
     CONSOLE.print((millis()-gps.dgpsAge)/1000.0);
+    CONSOLE.print(" motorMowRpmCurr=");
+    CONSOLE.print(motor.motorMowRpmCurr);
+    CONSOLE.print(" motorMowPWMCurr=");
+    CONSOLE.print(motor.motorMowPWMCurr);
+    CONSOLE.print(" motorMowRpmCurrLP=");
+    CONSOLE.print(motor.motorMowRpmCurrLP);
     CONSOLE.println();
     //logCPUHealth();    
   }
