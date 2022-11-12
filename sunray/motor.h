@@ -63,6 +63,7 @@ class Motor {
     void setLinearAngularSpeed(float linear, float angular, bool useLinearRamp = true);
     void setMowState(bool switchOn);   
     void stopImmediately(bool includeMowerMotor);
+    void Motor::recoverMotorFaultTrue();
     float motorMowRpmCurrLP;    
     float motorMowPWMCurr; 
     float motorMowRpmCurr;    

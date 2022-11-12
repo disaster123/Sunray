@@ -219,6 +219,12 @@ void Motor::stopImmediately(bool includeMowerMotor){
   motorDriver.getMotorEncoderTicks(ticksLeft, ticksRight, ticksMow);        
 }
 
+void Motor::recoverMotorFaultTrue(){
+  CONSOLE.println("STEFAN: Motor::recoverMotorFaultTrue");
+  recoverMotorFault = true;
+  stopImmediately(true);
+  nextRecoverMotorFaultTime = millis();
+}
 
 void Motor::run() {
   if (millis() < lastControlTime + 50) return;
