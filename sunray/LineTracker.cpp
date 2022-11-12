@@ -360,7 +360,7 @@ void trackLine(bool runControl){
       angular = 0;
       motor.setLinearAngularSpeed(linear, angular);
 
-      if (motorfaulttimeout > millis()) {
+      if (motorfaulttimeout < millis()) {
         // If it takes too long...
 	motorfaulttimeout = 0;
         motor.recoverMotorFaultTrue();
