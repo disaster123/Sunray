@@ -345,10 +345,10 @@ void trackLine(bool runControl){
   }
    
   if (mow)  {  // wait until mowing motor is running
-    if (fabs(motor.motorMowRpmCurrLP) < 1000 || fabs(motor.motorMowPWMCurr) < 200 || fabs(motor.motorMowSense) < 1.0){
+    if ((fabs(motor.motorMowRpmCurr) < 800 && fabs(motor.motorMowPWMCurr) < 200) || fabs(motor.motorMowSense) < 1.0){
       if (!buzzer.isPlaying()) {
-        CONSOLE.print("motor.motorMowRpmCurrLP / motor.motorMowPWMCurr: ");
-        CONSOLE.print(motor.motorMowRpmCurrLP);
+        CONSOLE.print("motor.motorMowRpmCurr / motor.motorMowPWMCurr: ");
+        CONSOLE.print(motor.motorMowRpmCurr);
         CONSOLE.print(" / ");
         CONSOLE.println(motor.motorMowPWMCurr);
 	buzzer.sound(SND_WARNING, true);
