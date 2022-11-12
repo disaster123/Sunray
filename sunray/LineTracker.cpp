@@ -365,10 +365,10 @@ void trackLine(bool runControl){
 	motorfaulttimeout = 0;
         motor.recoverMotorFaultTrue();
       }
-      return;
+    } else {
+      motorfaulttimeout = 0;
     }
   }
-  motorfaulttimeout = 0;
 
   if (runControl){
 
