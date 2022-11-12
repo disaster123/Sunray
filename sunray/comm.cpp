@@ -1048,6 +1048,10 @@ void outputConsole(){
     CONSOLE.print(motor.motorMowPWMCurr);
     CONSOLE.print(" motorMowRpmCurrLP=");
     CONSOLE.print(motor.motorMowRpmCurrLP);
+    CONSOLE.print(" motorMowSense=");
+    CONSOLE.print(motor.motorMowSense);
+    CONSOLE.print(" motorMowSenseLP=");
+    CONSOLE.print(motor.motorMowSenseLP);
     CONSOLE.println();
     //logCPUHealth();    
   }
