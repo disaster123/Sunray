@@ -354,7 +354,7 @@ void trackLine(bool runControl){
 	buzzer.sound(SND_WARNING, true);
       }
       if (motorfaulttimeout == 0) {
-	motorfaulttimeout = millis() + 7500;
+	motorfaulttimeout = millis() + 15000;
       }
       linear = 0;
       angular = 0;
