@@ -2116,6 +2116,9 @@ bool Map::findPath(Point &src, Point &dst){
         nextProgressTime = millis() + 4000;          
         // CONSOLE.print(".");
         watchdogReset();     
+        resetImuTimeout();
+        resetOverallMotionTimeout();
+        updateGPSMotionCheckTime();
       }
       timeout--;            
       if (timeout == 0){
