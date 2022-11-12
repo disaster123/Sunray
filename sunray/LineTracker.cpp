@@ -345,7 +345,7 @@ void trackLine(bool runControl){
   }
    
   if (mow)  {  // wait until mowing motor is running
-    if (fabs(motor.motorMowRpmCurrLP) < 1000 && fabs(motor.motorMowPWMCurr) < 200){
+    if (fabs(motor.motorMowRpmCurrLP) < 1000 || fabs(motor.motorMowPWMCurr) < 200 || fabs(motor.motorMowSense) < 1.0){
       if (!buzzer.isPlaying()) {
         CONSOLE.print("motor.motorMowRpmCurrLP / motor.motorMowPWMCurr: ");
         CONSOLE.print(motor.motorMowRpmCurrLP);
@@ -364,6 +364,7 @@ void trackLine(bool runControl){
         // If it takes too long...
 	motorfaulttimeout = 0;
         motor.recoverMotorFaultTrue();
+        motor.setMowState(true);
       }
     } else {
       motorfaulttimeout = 0;
