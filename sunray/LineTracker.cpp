@@ -36,6 +36,7 @@ float trackerDiffDelta_turn_millis;
 bool stateKidnapped = false;
 bool printmotoroverload = false;
 bool trackerDiffDelta_positive = false;
+unsigned long motorfaulttimeout = 0;
 
 int get_turn_direction_preference() {
   Point target = maps.targetPoint;
@@ -344,7 +345,7 @@ void trackLine(bool runControl){
   }
    
   if (mow)  {  // wait until mowing motor is running
-    if (abs(motor.motorMowRpmCurrLP) < 800 || abs(motor.motorMowPWMCurr) < 200){
+    if (fabs(motor.motorMowRpmCurrLP) < 1100 || fabs(motor.motorMowPWMCurr) < 220){
       if (!buzzer.isPlaying()) {
         CONSOLE.print("motor.motorMowRpmCurrLP / motor.motorMowPWMCurr: ");
         CONSOLE.print(motor.motorMowRpmCurrLP);
@@ -352,11 +353,22 @@ void trackLine(bool runControl){
         CONSOLE.println(motor.motorMowPWMCurr);
 	buzzer.sound(SND_WARNING, true);
       }
+      if (motorfaulttimeout == 0) {
+	motorfaulttimeout = millis() + 7500;
+      }
       linear = 0;
       angular = 0;
       motor.setLinearAngularSpeed(linear, angular);
+
+      if (motorfaulttimeout > millis()) {
+        // If it takes too long...
+	motorfaulttimeout = 0;
+        motor.recoverMotorFaultTrue();
+      }
+      return;
     }
   }
+  motorfaulttimeout = 0;
 
   if (runControl){
 
