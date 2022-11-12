@@ -46,7 +46,7 @@ void MowOp::begin(){
     }
 
     if (maps.startMowing(stateX, stateY)){
-        if (maps.nextPoint(true, stateX, stateY, false)) {
+        if (maps.nextPoint(true, stateX, stateY, false) != 0) {
             lastFixTime = millis();                
             maps.setLastTargetPoint(stateX, stateY);        
             //stateSensor = SENS_NONE;
