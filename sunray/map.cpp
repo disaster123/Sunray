@@ -22,7 +22,8 @@ Point *CHECK_POINT = (Point*)0x12345678;  // just some arbitray address for corr
 
 unsigned long memoryCorruptions = 0;        
 unsigned long memoryAllocErrors = 0;
-
+Point nextPointState;
+bool nextPointinProgress = false;
 
 Point::Point(){
   init();
@@ -972,14 +973,15 @@ bool Map::startMowing(float stateX, float stateY){
   shouldDock = false;
   shouldRetryDock = false;
   shouldMow = true;    
+  nextPointinProgress = false;
   if (mowPoints.numPoints > 0){
     // we enter also here after an obstacle
     // we need a complete recalc of situation
     if (wayMode != WAY_DOCK) {
       wayMode = WAY_MOW;
     }
-    bool r = nextPoint(false, stateX, stateY);
-    if (!r) {
+    unsigned int r = nextPoint(false, stateX, stateY);
+    if (r == 0) {
       CONSOLE.println("ERROR: no path");
       return false;
     }
@@ -1368,61 +1370,72 @@ void Map::findPathFinderSafeStartPoint(Point &src, Point &dst){
   CONSOLE.println("point is inside perimeter and outside exclusions");
 }
 
-
 // go to next point
 // sim=true: only simulate (do not change data)
-bool Map::nextPoint(bool sim,float stateX, float stateY){
+//
+// 1 found path success
+// -1 still in progress
+// 0 failed path / no path found
+unsigned int Map::nextPoint(bool sim,float stateX, float stateY){
   CONSOLE.print("nextPoint sim=");
   CONSOLE.print(sim);
   CONSOLE.print(" wayMode=");
   CONSOLE.println(wayMode);
   if (wayMode == WAY_DOCK){
-    return (nextDockPoint(sim));
+    return (nextDockPoint(sim)) ? 1 : 0;
   } 
   else if (wayMode == WAY_MOW) {
 #ifndef __linux__
-    return (nextMowPoint(sim));
+    return (nextMowPoint(sim)) ? 1 : 0;
 #else
-    Point src;
     Point dst;
-    Point state;
+    Point src;
 
     if (sim) {
       // if we run in sim mode - skip this code
       return (nextMowPoint(sim));
     }
 
+    if (!nextPointinProgress) {
+      nextPointState.setXY(stateX, stateY);
+    }
+    nextPointinProgress = true;
+
     src.setXY(stateX, stateY);
-    state.setXY(stateX, stateY);
-    while (true) {
-      if (!findObstacleSafeMowPoint(dst, state.x(), state.y())) {
-        CONSOLE.println("Map::nextPoint: WARN: no safe mow point found!");
-        return false;
-      }
-      if (findPath(src, dst)) {
-	// path found
-        break;
-      }
-      // check if src is inside obstacle
-      int ob_idx = isPointInsideObstacle(src, -1);
-      if ( ob_idx != -1 ) {
-        CONSOLE.println("Map::nextPoint: WARN: STEFAN: src is inside obstacle - remove obs!");
-	for (int oc = 0; oc < obstacles.polygons[ob_idx].numPoints; oc++) {
-	  // fake x / y to 0 to ignore obstacle
-	  obstacles.polygons[ob_idx].points[oc].setXY(0, 0);
-	}
+    if (!findObstacleSafeMowPoint(dst, nextPointState.x(), nextPointState.y())) {
+      CONSOLE.println("Map::nextPoint: WARN: no safe mow point found!");
+      return false;
+    }
+    if (!findPath(src, dst)) {
+      while (true) {
+        // check if src is inside obstacle
+        int ob_idx = isPointInsideObstacle(src, -1);
+        if ( ob_idx != -1 ) {
+          CONSOLE.println("Map::nextPoint: WARN: STEFAN: src is inside obstacle - remove obs!");
+          for (int oc = 0; oc < obstacles.polygons[ob_idx].numPoints; oc++) {
+            // fake x / y to 0 to ignore obstacle
+            obstacles.polygons[ob_idx].points[oc].setXY(0, 0);
+          }
+        } else {
+          // no more obstacle found
+          break;
+        }
       }
 
       // skip current dst point by setting state to current dst for searching new dst
       // but keep state for findpath
       CONSOLE.println("Map::nextPoint: WARN: no path found - move to next step!");
-      state.setXY(dst.x(), dst.y());
+      nextPointState.setXY(dst.x(), dst.y());
+    } else {
+      nextPointinProgress = false;
+      // move to WAY_FREE list
+      wayMode = WAY_FREE;
+
+      return 1;
     }
 
-    // move to WAY_FREE list
-    wayMode = WAY_FREE;
-
-    return true;
+    // still in progress
+    return -1;
 #endif
   } 
   else if (wayMode == WAY_FREE) {
@@ -1432,8 +1445,8 @@ bool Map::nextPoint(bool sim,float stateX, float stateY){
       CONSOLE.println("nextFreePoint ended and is now WAY_MOW again");
       return nextPoint(sim, stateX, stateY);
     }
-    return r;
-  } else return false;
+    return r ? 1 : 0;
+  } else return 0;
 }
 
 
