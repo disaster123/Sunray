@@ -198,7 +198,7 @@ class Map
     float distanceToTargetPoint(float stateX, float stateY);    
     float distanceToLastTargetPoint(float stateX, float stateY);
     // go to next waypoint
-    bool nextPoint(bool sim,float stateX, float stateY);
+    unsigned int nextPoint(bool sim,float stateX, float stateY);
     // next point is straight and not a sharp curve?   
     bool nextPointIsStraight();
     // get docking position and orientation
