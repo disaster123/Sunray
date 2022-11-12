@@ -43,7 +43,7 @@ void MowOp::begin(){
     // if (((initiatedByOperator) && (previousOp == &idleOp)) || (lastMapRoutingFailed))  maps.clearObstacles();
 
     if (maps.startMowing(stateX, stateY)){
-        if (maps.nextPoint(true, stateX, stateY)) {
+        if (maps.nextPoint(true, stateX, stateY) != 0) {
             lastFixTime = millis();                
             maps.setLastTargetPoint(stateX, stateY);        
             //stateSensor = SENS_NONE;
