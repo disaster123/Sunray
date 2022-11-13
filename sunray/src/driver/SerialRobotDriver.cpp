@@ -499,6 +499,11 @@ void SerialRobotDriver::run(){
       CONSOLE.println("WARN: resetting motor ticks");
       resetMotorTicks = true;
       mcuCommunicationLost = true;
+    }
+    if ( cmdMotorResponseCounter < 2 ) {
+      CONSOLE.println("WARN: SerialRobot unmet communication frequency: cmdMotorResponseCounter < 2");
+      mowCurr = 0;
+      motorFault = true;
     }    
     if ( (cmdMotorResponseCounter < 10) ) { // || (cmdSummaryResponseCounter == 0) ){
       CONSOLE.print("WARN: SerialRobot unmet communication frequency: motorFreq=");
