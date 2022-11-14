@@ -485,7 +485,7 @@ void SerialRobotDriver::run(){
     requestMotorPwm(requestLeftPwm, requestRightPwm, requestMowPwm);
   }
   if (millis() > nextSummaryTime){
-    nextSummaryTime = millis() + 100; // 2 hz
+    nextSummaryTime = millis() + 100; // 10 hz
     requestSummary();
   }
   if (millis() > nextConsoleTime){
