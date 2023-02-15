@@ -2154,7 +2154,14 @@ bool Map::findPath(Point &src, Point &dst){
           return false;
 	}
         Node* neighbor = &pathFinderNodes.nodes[neighborIdx];                
-        
+     
+ 	// idea of chatgpt to optimize...	
+	if (neighbor == end) {
+	  CONSOLE.println("STEFAN: chatGPT idea - exit?");  
+	  // currentNode->parent = neighbor;
+	  // break;
+	}
+
         if (millis() >= nextProgressTime){
           nextProgressTime = millis() + 4000;          
           CONSOLE.print("+");
