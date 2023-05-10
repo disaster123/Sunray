@@ -21,13 +21,15 @@ async def handle_request(request):
             response_headers = response.headers.copy()
             # Fge CORS-Header hinzu, um Cross-Origin-Anfragen zu ermglichen
             response_headers["Access-Control-Allow-Origin"] = "*"
+            response_headers.pop("Transfer-Encoding", None)
+            response_headers.pop("Content-Length", None)
 
             content = await response.read()
 
             if request.url.path == '/':
                 if response.headers.get('Content-Encoding') == 'gzip':
                     content = gzip.decompress(content)
-                    response_headers["Content-Encoding"] = ""
+                    response_headers.pop("Content-Encoding", None)
 
                 head_start = re.search(r"<head>", content.decode(), re.IGNORECASE)
 
@@ -42,7 +44,7 @@ async def handle_request(request):
                     # Neuen HTML-Code erstellen, mit dem eingefügten Meta-Tag
                     content = content[:head_end_pos] + meta_tag.encode() + content[head_end_pos:]
                     
-                response_headers["Content-Length"] = str(len(content))
+                # response_headers["Content-Length"] = str(len(content))
 
             # Erstelle eine HTTP-Antwort an den Client
             return web.Response(status=response.status, headers=response_headers, body=content)
