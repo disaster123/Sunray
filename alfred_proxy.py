@@ -38,6 +38,8 @@ async def handle_request(request):
             
                     # Neuen HTML-Code erstellen, mit dem eingefügten Meta-Tag
                     content = content[:head_end_pos] + meta_tag.encode() + content[head_end_pos:]
+                    
+                response_headers["Content-Length"] = str(len(content))
 
             # Erstelle eine HTTP-Antwort an den Client
             return web.Response(status=response.status, headers=response_headers, body=content)
