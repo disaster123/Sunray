@@ -1,0 +1,11 @@
+
+git clone https://github.com/BPI-SINOVOIP/BPI-M4-bsp.git
+
+git clone https://github.com/morrownr/8821cu-20210916.git
+
+
+ARCH=arm64 CROSS_COMPILE=/root/BPI-M4-bsp/toolchains/gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu/bin/aarch64-linux-gnu- make KVER=4.9.119-BPI-M4 KSRC=/root/BPI-M4-bsp/linux-rtk
+
+
+bash -c 'rmmod 8821cu; insmod 8821cu.ko rtw_drv_log_level=1 rtw_led_ctrl=1 rtw_vht_enable=1 rtw_power_mgnt=1; systemctl restart networking; systemctl restart wpa_supplicant' >log.out 2>&1
+
