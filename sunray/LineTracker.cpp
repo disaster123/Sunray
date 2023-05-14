@@ -346,7 +346,7 @@ void trackLine(bool runControl){
   }
    
   if (mow)  {  // wait until mowing motor is running
-    if (millis() < motor.motorMowSpinUpTime + 10000){
+    if ((fabs(motor.motorMowRpmCurr) < 800 && fabs(motor.motorMowPWMCurr) < 200) || fabs(motor.motorMowSense) < 1.0 || (millis() < (motor.motorMowSpinUpTime + 10000)) ){
       if (!buzzer.isPlaying()) buzzer.sound(SND_WARNING, true);
       linear = 0;
       angular = 0;   
