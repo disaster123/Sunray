@@ -77,7 +77,7 @@ echo "starting proxy..."
 screen -dmS proxy python3 ~/Sunray/alfred_proxy.py
 
 echo "delayed kernel driver loading..."
-( sleep 30; bash -c 'rmmod 8821cu && ( insmod ~/Sunray/8821cu.ko rtw_drv_log_level=1 rtw_led_ctrl=1 rtw_vht_enable=1 rtw_power_mgnt=1; systemctl restart networking; systemctl restart wpa_supplicant;  )' >~/Sunray/kernel_driver.log 2>&1 ) &
+( sleep 30; sudo bash -c 'rmmod 8821cu && ( insmod /home/pi/Sunray/8821cu.ko rtw_drv_log_level=1 rtw_led_ctrl=1 rtw_vht_enable=1 rtw_power_mgnt=1; systemctl restart networking; systemctl restart wpa_supplicant;  )' >~/Sunray/kernel_driver.log 2>&1 ) &
 
 
 # -----------------------------------------
