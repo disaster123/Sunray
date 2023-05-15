@@ -71,7 +71,7 @@ done
 # -------------------------------------------
 # throttle down max cpu freq
 echo "throttle down max cpu freq..."
-echo "300000" > /sys/devices/system/cpu/cpufreq/policy0/scaling_max_freq
+echo "1000000" > /sys/devices/system/cpu/cpufreq/policy0/scaling_max_freq
 
 # -----------------------------------------
 echo "----bluetooth devices----"
