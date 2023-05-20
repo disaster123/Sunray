@@ -235,14 +235,14 @@ void trackLine(bool runControl){
 
     if (maps.trackSlow && trackslow_allowed) {
       // planner forces slow tracking (e.g. docking etc)
-      linear = 0.1;           
+      linear = 0.15;
     } else if ((setSpeed > 0.1) && (targetDist < 0.5) && (!straight))   // approaching
     {
-      linear = 0.15; // reduce speed when approaching/leaving waypoints          
+      linear = setSpeed * 0.5; // reduce speed when approaching/leaving waypoints          
     } 
     else {
       if (gps.solution == SOL_FLOAT)        
-        linear = min(setSpeed, 0.1); // reduce speed for float solution
+        linear = min(setSpeed, 0.15); // reduce speed for float solution
       else
         linear = setSpeed;         // desired speed
       if (sonar.nearObstacle()) linear = 0.1; // slow down near obstacles
@@ -253,7 +253,7 @@ void trackLine(bool runControl){
           CONSOLE.println("motor overload detected: reduce linear speed to 0.1");
       }
       printmotoroverload = true;
-      linear = 0.1;  
+      linear = 0.1;
     } else {
       printmotoroverload = false;
     }   
