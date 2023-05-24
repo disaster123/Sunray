@@ -336,8 +336,8 @@ Also, you may choose the serial port below for serial monitor output (CONSOLE).
 #define GPS_CONFIG_FILTER   true     // use signal strength filter? (recommended to get rid of 'FIX jumps') - adjust filter settings below
 //#define GPS_CONFIG_FILTER   false     // use this if you have difficulties to get a FIX solution (uses ublox default filter settings)
 #define CPG_CONFIG_FILTER_MINELEV  10   // Min SV elevation degree: 14 (high elevation, less robust), 10 (low elevation, robust) 
-#define CPG_CONFIG_FILTER_NCNOTHRS 6   // C/N0 Threshold #SVs: 10 (robust), 6 (less robust)
-#define CPG_CONFIG_FILTER_CNOTHRS  20   // 30 dbHz (robust), 13 dbHz (less robust)
+#define CPG_CONFIG_FILTER_NCNOTHRS 0   // C/N0 Threshold #SVs: 10 (robust), 6 (less robust)
+#define CPG_CONFIG_FILTER_CNOTHRS  0   // 30 dbHz (robust), 13 dbHz (less robust)
 
 
 // ------ obstacle detection and avoidance  -------------------------
