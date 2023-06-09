@@ -347,6 +347,10 @@ Also, you may choose the serial port below for serial monitor output (CONSOLE).
 #define OBSTACLE_DIAMETER 0.8   // choose diameter of obstacles placed in front of robot (m) for obstacle avoidance
 #define DISABLE_MOW_MOTOR_AT_OBSTACLE true // switch off mow motor while escape at detected obstacle; set false if mow motor shall not be stopped at detected obstacles
 
+#define CLEAR_OBSTACLES_MOWSTART true
+#define CLEAR_OBSTACLES_DOCKSTART true
+#define CLEAR_OBSTACLES_ONTARGETREACH false
+
 // detect robot being kidnapped? robot will try GPS recovery if distance to tracked path is greater than a certain value
 // (false GPS fix recovery), and if that fails go into error 
 #define KIDNAP_DETECT true  // recommended
