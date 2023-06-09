@@ -41,7 +41,9 @@ void MowOp::begin(){
     if (lastMapRoutingFailed)
       CONSOLE.println("MOW_OP: lastMapRoutingFailed");
 
-    // if (((initiatedByOperator) && (previousOp == &idleOp)) || (lastMapRoutingFailed))  maps.clearObstacles();
+    if (CLEAR_OBSTACLES_MOWSTART) {
+      if (((initiatedByOperator) && (previousOp == &idleOp)) || (lastMapRoutingFailed))  maps.clearObstacles();
+    }
 
     if (maps.startMowing(stateX, stateY)){
         if (maps.nextPoint(true, stateX, stateY)) {
@@ -228,7 +230,10 @@ void MowOp::onMotorError(){
 
 void MowOp::onTargetReached(){
     if (maps.wayMode == WAY_MOW){    
-        // maps.clearObstacles(); // clear obstacles if target reached
+        if (CLEAR_OBSTACLES_ONTARGETREACH) {
+            maps.clearObstacles(); // clear obstacles if target reached
+        }
+
         motorErrorCounter = 0; // reset motor error counter if target reached
         stateSensor = SENS_NONE; // clear last triggered sensor
     }
