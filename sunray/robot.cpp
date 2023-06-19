@@ -166,7 +166,9 @@ unsigned long bumperTimeout = 0;
 bool wifiFound = false;
 char ssid[] = WIFI_SSID;      // your network SSID (name)
 char pass[] = WIFI_PASS;        // your network password
+#ifndef __linux__
 WiFiEspServer server(80);
+#endif
 bool hasClient = false;
 WiFiEspClient client;
 WiFiEspClient espClient;
@@ -325,7 +327,9 @@ void startWIFI(){
   #endif    
   if (ENABLE_SERVER){
     //server.listenOnLocalhost();
+#ifndef __linux__
     server.begin();
+#endif
   }
   if (ENABLE_MQTT){
     CONSOLE.println("MQTT: enabled");
