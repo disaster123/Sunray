@@ -104,6 +104,7 @@ void processWifiRelayClient(){
 // client (app) --->  server (robot)
 void processWifiAppServer()
 {
+#ifndef __linux__
   if (!wifiFound) return;
   if (!ENABLE_SERVER) return;
   // listen for incoming clients    
@@ -175,6 +176,7 @@ void processWifiAppServer()
     //client.stop();
     //CONSOLE.println("Client disconnected");
   }                  
+#endif
 }
 
 
