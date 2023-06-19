@@ -1,3 +1,11 @@
+#ifdef __linux__
+  #include <cstring>
+  #include <string>
+  #include <unordered_map>
+  #include <mutex>
+  #include <condition_variable>
+#endif
+
 #include "comm.h"
 #include "config.h"
 #include "robot.h"
@@ -34,6 +42,13 @@ int simFaultConnCounter = 0;
 
 String cmd;
 String cmdResponse;
+
+#ifdef __linux__
+  std::string sharedcmd;
+  std::string sharedcmdResponse;
+  std::mutex cmdMutex;
+  std::condition_variable cv;
+#endif
 
 // use a ring buffer to increase speed and reduce memory allocation
 ERingBuffer buf(8);
@@ -988,6 +1003,7 @@ void processWifiRelayClient(){
 // client (app) --->  server (robot)
 void processWifiAppServer()
 {
+#ifndef __linux__
   if (!wifiFound) return;
   if (!ENABLE_SERVER) return;
   // listen for incoming clients    
@@ -1059,6 +1075,7 @@ void processWifiAppServer()
     //client.stop();
     //CONSOLE.println("Client disconnected");
   }                  
+#endif
 }
 
 
@@ -1186,13 +1203,320 @@ void processWifiMqttClient()
   }
 }
 
+#include <event2/event.h>
+#include <event2/listener.h>
+#include <event2/bufferevent.h>
+#include <pthread.h>
+
+// Global variables
+struct event_base* base;
+pthread_t eventThread;
+struct evconnlistener* listener;
+#define MAX_CLIENTS 10 // Maximum allowed connected clients
+int numClients = 0; // Counter for active connections
+
+#define HTTP_MAX_BUFFER_SIZE 1024 * 32
+
+enum class RequestState {
+    ReadHeaders,
+    ReadPayload
+};
+
+struct ClientData {
+    std::string buffer;
+    size_t contentLength;
+    RequestState state;
+    bool forceclose;
+};
+
+std::unordered_map<bufferevent*, ClientData> clientMap;
+
+void handleEvent(struct bufferevent* bev, short events, void* arg) {
+  bool force_disconnect = false;
+  // Handle events on the client connection
+  if (events & BEV_EVENT_ERROR) {
+    force_disconnect = true;
+
+    // Handle error event
+    CONSOLE.print("http: handleEvent: Client ERROR. disconnect. Total clients: ");
+    CONSOLE.println(numClients);
+  }
+  if (events & BEV_EVENT_TIMEOUT) {
+    force_disconnect = true;
+
+    // Handle error event
+    CONSOLE.print("http: handleEvent: Client Timeout. disconnect. Total clients: ");
+    CONSOLE.println(numClients);
+  }
+  if (events & BEV_EVENT_EOF) {
+    force_disconnect = true;
+
+    // Handle client disconnect
+#ifdef DEBUG_HTTP_SERVER
+    CONSOLE.print("http: handleEvent: Client disconnected (EOF). Total clients: ");
+    CONSOLE.println(numClients);
+#endif
+  }
+
+  if (force_disconnect) {
+    numClients--;
+
+    // Handle error event
+#ifdef DEBUG_HTTP_SERVER
+    CONSOLE.println("http: handleEvent: force disconnect.");
+#endif
+
+    // Clean up the bufferevent
+    clientMap.erase(bev);
+    bufferevent_free(bev);
+  }
+}
+
+void handleRead(struct bufferevent* bev, void* arg) {
+    static char buffer[HTTP_MAX_BUFFER_SIZE];
+    size_t bytesRead = 0;
+
+#ifdef DEBUG_HTTP_SERVER
+    CONSOLE.println("http: handleRead called...");
+#endif
+
+    auto it = clientMap.find(bev);
+    if (it == clientMap.end()) {
+        // New client connection, initialize the data
+        clientMap[bev] = { "", 0, RequestState::ReadHeaders, false };
+        it = clientMap.find(bev);
+    }
+    ClientData& clientData = it->second;
+
+    while ((bytesRead = bufferevent_read(bev, buffer, sizeof(buffer) - 1)) > 0) {
+        buffer[bytesRead] = '\0'; // Add null-terminator to treat data as a string
+
+        // Append to client buffer
+        clientData.buffer.append(buffer, bytesRead);
+
+#ifdef DEBUG_HTTP_SERVER
+        CONSOLE.print("http: handleRead: data cur: ");
+        CONSOLE.println(clientData.buffer.c_str());
+#endif
+
+        if (clientData.state == RequestState::ReadHeaders) {
+            // Check if the complete HTTP headers have been received
+            size_t headerEnd = clientData.buffer.find("\r\n\r\n");
+            if (headerEnd != std::string::npos) {
+                std::string headers = clientData.buffer.substr(0, headerEnd);
+
+                // Extract the request method
+                std::string requestMethod = headers.substr(0, headers.find(' '));
+
+                // Find the Content-Length header
+                std::string contentLengthHeader = "Content-Length:";
+                size_t contentLengthPos = headers.find(contentLengthHeader);
+                if (contentLengthPos != std::string::npos ) {
+                    // Extract the content length value
+                    size_t valueStart = contentLengthPos + contentLengthHeader.length();
+                    size_t valueEnd = headers.find("\r\n", valueStart);
+                    std::string contentLengthStr = headers.substr(valueStart, valueEnd - valueStart);
+
+                    // Convert the content length value to an integer
+                    clientData.contentLength = std::stoi(contentLengthStr);
+
+                    clientData.buffer.erase(0, headerEnd + 4);
+
+                    clientData.state = RequestState::ReadPayload;
+                } else {
+                    CONSOLE.println("http: abort connection due to invalid content length...");
+                                        // Content-Length header not found, send internal server error (500) response
+                    std::string response = "HTTP/1.1 500 Internal Server Error\r\n"
+                                           "Content-Length: 0\r\n"
+                                           "Connection: close\r\n"
+                                           "\r\n"
+                                           "invalid content-length\r\n";
+                    bufferevent_write(bev, response.c_str(), response.length());
+
+                    // Disconnect the client
+                    short errorEvent = BEV_EVENT_ERROR;
+                    handleEvent(bev, errorEvent, arg);
+                    return;
+                }
+            }
+        }
+
+        // this is no else here because we might got all data in first round
+        if (clientData.state == RequestState::ReadPayload) {
+            // Check if the complete payload has been received
+            if (clientData.buffer.length() >= clientData.contentLength) {
+                // Extract the payload
+                std::string payload = clientData.buffer.substr(0, clientData.contentLength);
+
+#ifdef DEBUG_HTTP_SERVER
+                CONSOLE.print("http: received payload: ");
+                CONSOLE.println(payload.c_str());
+#endif
+
+                // handleRead itself / the http server is single threaded - so it can't happen
+                // that a 2nd client conflicts here
+        		{
+        		    std::lock_guard<std::mutex> lock(cmdMutex);
+        		    sharedcmd = payload;
+        		    sharedcmdResponse.clear();
+        		}
+        
+        		// wait for answer
+        		std::unique_lock<std::mutex> lock(cmdMutex);
+                // mutex is always aquired after cv.wait but released after cv.wait
+        		while (true) {
+        		    cv.wait(lock);
+
+#ifdef DEBUG_HTTP_SERVER
+                    CONSOLE.println("http: notify received and lock released");
+#endif
+
+		            // sharedcmd is empty if sharedcmdResponse is set
+		            if (sharedcmd.empty()) {
+#ifdef DEBUG_HTTP_SERVER
+			            CONSOLE.print("http: got an answer in sharedcmdResponse ");
+			            CONSOLE.println(sharedcmdResponse.c_str());
+#endif
+			            break;
+		            }
+		        }
+
+                // Construct the response
+                std::string response = "HTTP/1.1 200 OK\r\n"
+                                       "Access-Control-Allow-Origin: *\r\n"
+                                       "Content-Type: text/html\r\n"
+                                       "Connection: close\r\n"
+                                       "Content-Length: " + std::to_string(sharedcmdResponse.length()) + "\r\n"
+                                       "\r\n" +
+                                       sharedcmdResponse;
+                
+                // Write the response to the client
+                bufferevent_write(bev, response.c_str(), response.length());
+        	    sharedcmdResponse.clear();
+        
+                // Switch to reading headers for the next request
+                clientData.state = RequestState::ReadHeaders;
+                clientData.buffer.clear();
+#ifdef DEBUG_HTTP_SERVER
+                CONSOLE.println("http: handleRead request successfully finished...");
+#endif
+                // as long as we don't support keep alive close the connection now
+                clientData.forceclose = true;
+                return;
+            }
+        }
+    }
+
+#ifdef DEBUG_HTTP_SERVER
+    CONSOLE.println("http: handleRead ended...");
+#endif
+}
+
+
+void handleWrite(struct bufferevent* bev, void* arg) {
+#ifdef DEBUG_HTTP_SERVER
+    CONSOLE.println("http: handleWrite called...");
+#endif
+}
+
+void handleNewConnection(struct evconnlistener* listener, evutil_socket_t fd, struct sockaddr* address, int socklen, void* arg) {
+  // Convert the client address to a human-readable format
+  char clientIP[INET_ADDRSTRLEN];
+  struct sockaddr_in* clientAddr = (struct sockaddr_in*)address;
+  const char* clientIPStr = evutil_inet_ntop(AF_INET, &(clientAddr->sin_addr), clientIP, sizeof(clientIP));
+
+  // Increment the number of active clients
+  numClients++;
+
+  if (clientIPStr != NULL) {
+#ifdef DEBUG_HTTP_SERVER
+    CONSOLE.print("http: New client connected from IP: ");
+    CONSOLE.print(clientIPStr);
+    CONSOLE.print(" num clients: ");
+    CONSOLE.println(numClients);
+#endif
+  } else {
+    CONSOLE.print("http: Unable to retrieve client IP address");
+    CONSOLE.print(" num clients: ");
+    CONSOLE.println(numClients);
+  }
+
+  // Check if the maximum number of clients is already reached
+  if (numClients >= MAX_CLIENTS) {
+      CONSOLE.println("http: Maximum number of clients reached. Connection refused.");
+      numClients--;
+      evutil_closesocket(fd);
+      return;
+  }
+
+  // Create a new bufferevent for the client connection
+  struct event_base* base = evconnlistener_get_base(listener);
+  struct bufferevent* bev = bufferevent_socket_new(base, fd, BEV_OPT_CLOSE_ON_FREE);
+
+  // Set the read and write timeouts for the bufferevent
+  struct timeval timeout;
+  timeout.tv_sec = 3;
+  timeout.tv_usec = 0;
+  bufferevent_set_timeouts(bev, &timeout, &timeout);
+
+  // Set callbacks for the bufferevent
+  bufferevent_setcb(bev, handleRead, handleWrite, handleEvent, NULL);
+
+  bufferevent_enable(bev, EV_READ | EV_WRITE);
+}
+
+void* eventLoopThread(void* arg) {
+    // Initialize libevent and create an event base
+    base = event_base_new();
+
+    // Create a listener for accepting new connections
+    struct sockaddr_in sin;
+    memset(&sin, 0, sizeof(sin));
+    sin.sin_family = AF_INET;
+    sin.sin_port = htons(80); // Replace <port_number> with the desired port number
+
+    listener = evconnlistener_new_bind(base, handleNewConnection, NULL, LEV_OPT_REUSEABLE | LEV_OPT_CLOSE_ON_FREE, -1, (struct sockaddr*)&sin, sizeof(sin));
+
+    if (!listener) {
+        CONSOLE.println("http: Error: creating listener.");
+   	    return NULL;
+    }
+
+    event_base_dispatch(base);
+
+    // Clean up
+    evconnlistener_free(listener);
+    event_base_free(base);
+
+    return NULL;
+}
 
 void processComm(){
+
+  if (!base) {
+      // Create a thread for the event loop
+      pthread_create(&eventThread, NULL, eventLoopThread, NULL);
+  }
+
   processConsole();     
   processBLE();     
   if (!bleConnected){
+#ifdef __linux__
+    {
+      std::lock_guard<std::mutex> lock(cmdMutex);
+      if (!sharedcmd.empty() && sharedcmdResponse.empty()) {
+	      cmd = String(sharedcmd.c_str());
+	      processCmd(true,true);
+	      sharedcmd.clear();
+          sharedcmdResponse = cmdResponse.c_str();
+      }
+      // always notify other thread - it may race in the first attempt if we're much faster than 2nd thread
+      cv.notify_one();
+    }
+#else
     processWifiAppServer();
     processWifiRelayClient();
+#endif
     processWifiMqttClient();
   }
   if (triggerWatchdog) {
