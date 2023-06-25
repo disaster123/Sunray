@@ -229,7 +229,7 @@ void MowOp::onMotorError(){
 }
 
 void MowOp::onTargetReached(){
-    if (maps.wayMode == WAY_MOW){    
+    if (maps.wayMode == WAY_MOW || maps.wayMode == WAY_FREE) {
         if (CLEAR_OBSTACLES_ONTARGETREACH) {
             maps.clearObstacles(); // clear obstacles if target reached
         }
