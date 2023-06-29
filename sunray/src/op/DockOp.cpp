@@ -147,10 +147,10 @@ void DockOp::onObstacleRotation(){
 
 void DockOp::onObstacle(){
     if (battery.chargerConnected()) {
-      CONSOLE.println("triggerObstacle: ignoring, because charger connected");      
+      CONSOLE.println("DockOp: triggerObstacle: ignoring, because charger connected");      
       return;
     }
-    CONSOLE.println("triggerObstacle");      
+    CONSOLE.println("DockOp: triggerObstacle");      
     statMowObstacles++;      
     if (maps.isDocking()) {    
         if (maps.retryDocking(stateX, stateY)) {
