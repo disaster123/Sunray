@@ -124,7 +124,7 @@ void MowOp::onBatteryLowShouldDock(){
 
 
 void MowOp::onObstacle(){
-    CONSOLE.println("triggerObstacle");      
+    CONSOLE.println("MowOp: triggerObstacle");      
     statMowObstacles++;      
     if (maps.isDocking()) {    
         if (maps.retryDocking(stateX, stateY)) {
