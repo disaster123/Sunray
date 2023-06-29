@@ -1085,17 +1085,15 @@ void run(){
   if(millis() > loopTimeTimer + 10000){
     if(loopTimeMax > 500){
       CONSOLE.print("WARNING - LoopTime: ");
-    }else{
-      CONSOLE.print("Info - LoopTime: ");
+      CONSOLE.print(loopTimeNow);
+      CONSOLE.print(" - ");
+      CONSOLE.print(loopTimeMin);
+      CONSOLE.print(" - ");
+      CONSOLE.print(loopTimeMean);
+      CONSOLE.print(" - ");
+      CONSOLE.print(loopTimeMax);
+      CONSOLE.println("ms");
     }
-    CONSOLE.print(loopTimeNow);
-    CONSOLE.print(" - ");
-    CONSOLE.print(loopTimeMin);
-    CONSOLE.print(" - ");
-    CONSOLE.print(loopTimeMean);
-    CONSOLE.print(" - ");
-    CONSOLE.print(loopTimeMax);
-    CONSOLE.println("ms");
     loopTimeMin = 99999; 
     loopTimeMax = 0;
     loopTimeTimer = millis();
