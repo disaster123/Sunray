@@ -14,6 +14,8 @@ String KidnapWaitOp::name(){
 }
 
 void KidnapWaitOp::begin(){    
+  CONSOLE.println("KidnapWaitOp: begin");
+
   stateSensor = SENS_KIDNAPPED;
   recoverGpsTime = millis() + 30000;
   recoverGpsCounter = 0;
@@ -33,11 +35,12 @@ void KidnapWaitOp::onGpsNoSignal(){
     if (!maps.isUndocking()){
         stateSensor = SENS_GPS_INVALID;
 
-	if (gps.solution == SOL_FLOAT) {
-	  changeOp(gpsWaitFixOp, true);
-	} else {
-	  changeOp(gpsWaitFloatOp, true);
-	}
+    // this makes no sense - after rebooting GPS below - it's always INVALID and than immediatly FLOAT...
+	// if (gps.solution == SOL_FLOAT) {
+	//   changeOp(gpsWaitFixOp, true);
+	// } else {
+	//   changeOp(gpsWaitFloatOp, true);
+	// }
     }
 }
 
@@ -56,7 +59,7 @@ void KidnapWaitOp::run(){
       changeOp(errorOp);
       return;
     }   
-    if (GPS_REBOOT_RECOVERY){           
+    if (GPS_REBOOT_RECOVERY and gps.solution == SOL_FIXED){           
       gps.reboot();   // try to recover from false GPS fix     
     }
   }
