@@ -146,7 +146,8 @@ void Motor::setLinearAngularSpeed(float linear, float angular, bool useLinearRam
    setLinearAngularSpeedTimeout = millis() + 1000;
    setLinearAngularSpeedTimeoutActive = true;
    if ((activateLinearSpeedRamp) && (useLinearRamp)) {
-     linearSpeedSet = 0.9 * linearSpeedSet + 0.1 * linear;
+     // linearSpeedSet = 0.9 * linearSpeedSet + 0.1 * linear;
+     linearSpeedSet = 0.975 * linearSpeedSet + 0.025 * linear;
    } else {
      linearSpeedSet = linear;
    }
@@ -470,6 +471,11 @@ void Motor::sense(){
   motorLeftPWMCurrLP = lp * motorLeftPWMCurrLP + (1.0-lp) * ((float)motorLeftPWMCurr);
   lp = 0.99;
   motorMowPWMCurrLP = lp * motorMowPWMCurrLP + (1.0-lp) * ((float)motorMowPWMCurr); 
+  //####################################################################################
+  // shorttime-lowpass.
+  float slp = 0.5;
+  motorMowSenseSLP = slp * motorMowSenseSLP + (1.0-slp) * motorMowSense; 
+  //####################################################################################
  
   // compute normalized current (normalized to 1g gravity)
   //float leftAcc = (motorLeftRpmCurr - motorLeftRpmLast) / deltaControlTimeSec;

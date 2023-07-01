@@ -166,7 +166,7 @@ void trackLine(bool runControl){
   if (!angleToTargetFits){
     // angular control (if angle to far away, rotate to next waypoint)
     linear = 0;
-    angular = 29.0 / 180.0 * PI; //  29 degree/s (0.5 rad/s);              
+    angular = 46.4 / 180.0 * PI; //  46.4 degree/s (0.8 rad/s);              
 				 //
     if ((!rotateLeft) && (!rotateRight)){ // decide for one rotation direction (and keep it)
       int r = 0;
@@ -239,7 +239,7 @@ void trackLine(bool runControl){
       linear = setSpeed * 0.5; // reduce speed when approaching/leaving waypoints          
     } 
     else {
-      if (gps.solution == SOL_FLOAT)        
+      if (gps.solution == SOL_FLOAT)
         linear = min(setSpeed, 0.15); // reduce speed for float solution
       else
         linear = setSpeed;         // desired speed
@@ -254,6 +254,12 @@ void trackLine(bool runControl){
       linear = 0.1;
     } else {
       printmotoroverload = false;
+      //####################################################################################
+      // slow down on mow current.
+      float mowlinear = setSpeed - (setSpeed - 0.1) / (MOW_OVERLOAD_CURRENT / 2) * (motor.motorMowSenseSLP - MOW_OVERLOAD_CURRENT/2);
+      if(mowlinear > setSpeed)mowlinear = setSpeed;
+      linear = min(linear, mowlinear);
+      //####################################################################################
     }   
           
     //angula                                    r = 3.0 * trackerDiffDelta + 3.0 * lateralError;       // correct for path errors 
@@ -263,7 +269,12 @@ void trackLine(bool runControl){
       k = stanleyTrackingSlowK; //STANLEY_CONTROL_K_SLOW;   
       p = stanleyTrackingSlowP; //STANLEY_CONTROL_P_SLOW;          
     }
-    angular =  p * trackerDiffDelta + atan2(k * lateralError, (0.001 + fabs(motor.linearSpeedSet)));       // correct for path errors           
+    // angular =  p * trackerDiffDelta + atan2(k * lateralError, (0.001 + fabs(motor.linearSpeedSet)));       // correct for path errors           
+    if(linear < 0){
+      angular = 0;
+    }else{
+      angular =  p * trackerDiffDelta + atan2(k * lateralError, (0.001 + fabs(linear)));       // correct for path errors           
+    }
     /*pidLine.w = 0;              
     pidLine.x = lateralError;
     pidLine.max_output = PI;
@@ -396,7 +407,14 @@ void trackLine(bool runControl){
         langular = angular;
     }
 
-    motor.setLinearAngularSpeed(linear, angular);      
+    // motor.setLinearAngularSpeed(linear, angular);      
+    //####################################################################################
+    if(fabs(motor.linearSpeedSet) < 0.2 && linear < 0.2){
+      motor.setLinearAngularSpeed(linear, angular, false);      
+    }else{
+      motor.setLinearAngularSpeed(linear, angular, true);      
+    }
+    //####################################################################################
     if (detectLift()) mow = false; // in any case, turn off mower motor if lifted 
     motor.setMowState(mow);    
   }
