@@ -22,7 +22,7 @@ String EscapeReverseOp::name(){
 void EscapeReverseOp::begin(){
 
     // obstacle avoidance
-    driveReverseStopTime = millis() + 3000;                           
+    driveReverseStopTime = millis() + 5000;                           
     bumperReleased = false;
     orig_stateX = stateX;
     orig_stateY = stateY;
@@ -53,7 +53,7 @@ void EscapeReverseOp::run(){
       // bumper was not released yes and is still active
       // set speed only once - so do it in begin not run
       if (orig_motion == MOT_BACKWARD) {
-        motor.setLinearAngularSpeed(0.15,0);
+        motor.setLinearAngularSpeed(0.25,0);
       }
       else {
         motor.setLinearAngularSpeed(-0.25,0);
@@ -70,7 +70,7 @@ void EscapeReverseOp::run(){
 
       // still driving until driveReverseStopTime
       if (orig_motion == MOT_BACKWARD) {
-        motor.setLinearAngularSpeed(0.15,0);
+        motor.setLinearAngularSpeed(0.25,0);
       }
       else {
         motor.setLinearAngularSpeed(-0.25,0);
@@ -83,13 +83,13 @@ void EscapeReverseOp::run(){
       // move again in the other direction - until bumper is released
       // again
       if (orig_motion == MOT_BACKWARD) {
-        motor.setLinearAngularSpeed(-0.15,0);
+        motor.setLinearAngularSpeed(-0.2,0);
       }
       else {
-        motor.setLinearAngularSpeed(0.15,0);
+        motor.setLinearAngularSpeed(0.2,0);
       }
       // this one is updated in every call as long as obstacle is true / triggered
-      driveReverseStopTime = millis() + 50;
+      // driveReverseStopTime = millis() + 50;
     }
 
     // drive back until bumper is no longer triggered or max StopTime
@@ -105,10 +105,12 @@ void EscapeReverseOp::run(){
         }
         if (bumper.obstacle()) {
             CONSOLE.println("error: after driving reverse bumper sensor still active!");
-	    stateSensor = SENS_BUMPER;
+	        stateSensor = SENS_BUMPER;
             changeOp(errorOp);
             return;
         }
+        // no obstacles near docking station
+        // XXX: add undocking and add distance check
         if (maps.isDocking()){
             CONSOLE.println("continue docking");
             // continue without obstacles
