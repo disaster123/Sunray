@@ -146,19 +146,21 @@ void DockOp::onObstacleRotation(){
 }
 
 void DockOp::onObstacle(){
+    CONSOLE.println("DockOp: triggerObstacle");
     if (battery.chargerConnected()) {
-      CONSOLE.println("DockOp: triggerObstacle: ignoring, because charger connected");      
+      CONSOLE.println("DockOp: triggerObstacle: ignoring, because charger connected");
       return;
     }
-    CONSOLE.println("DockOp: triggerObstacle");      
-    statMowObstacles++;      
+    statMowObstacles++;
     if (maps.isDocking()) {    
+        CONSOLE.println("DockOp: triggerObstacle: isDocking - call maps.retryDocking");      
         if (maps.retryDocking(stateX, stateY)) {
             changeOp(escapeReverseOp, true);                      
             return;
         }
     } 
     if ((OBSTACLE_AVOIDANCE) && (maps.wayMode != WAY_DOCK)){    
+        CONSOLE.println("DockOp: triggerObstacle: maps.wayMode != WAY_DOCK)");      
         changeOp(escapeReverseOp, true);      
     } else {     
         stateSensor = SENS_OBSTACLE;

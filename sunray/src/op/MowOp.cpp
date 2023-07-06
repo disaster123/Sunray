@@ -147,13 +147,20 @@ void MowOp::onTimetableStartMowing(){
 void MowOp::onObstacle(){
     CONSOLE.println("MowOp: triggerObstacle");      
     statMowObstacles++;      
+
+    if (battery.chargerConnected()) {
+      CONSOLE.println("MowOp: triggerObstacle: ignoring, because charger connected - may be undocking");
+      return;
+    }
+
     if (maps.isDocking()) {    
+        CONSOLE.println("MowOp: maps.isDocking: XXX - how can this happen? should be DockOp");
         if (maps.retryDocking(stateX, stateY)) {
             changeOp(escapeReverseOp, true);                      
             return;
         }
     } 
-    if ((OBSTACLE_AVOIDANCE) && (maps.wayMode != WAY_DOCK)){    
+    if (OBSTACLE_AVOIDANCE){
         changeOp(escapeReverseOp, true);      
     } else {     
         stateSensor = SENS_OBSTACLE;
