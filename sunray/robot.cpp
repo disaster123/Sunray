@@ -786,10 +786,6 @@ bool detectObstacle(){
       if (liftDriver.triggered()) {
         if (liftTimeout == 0) {
           liftTimeout = millis() + LIFT_DEADTIME;
-          // higher timeouts for DOCKING
-          if (maps.wayMode == WAY_DOCK) {
-              liftTimeout += LIFT_DEADTIME * 2;
-          }
         } else if (liftTimeout < millis()) {
           liftTimeout = 0;
           CONSOLE.println("lift sensor obstacle!");    
@@ -806,9 +802,6 @@ bool detectObstacle(){
   if (bumper.obstacle()) {
     if (bumperTimeout == 0) {
       bumperTimeout = millis() + BUMPER_DEADTIME;
-      if (maps.wayMode == WAY_DOCK) {
-          bumperTimeout += BUMPER_DEADTIME * 2;
-      }
     } else if (bumperTimeout < millis()) {
       bumperTimeout = 0;
       CONSOLE.println("bumper obstacle!");    
