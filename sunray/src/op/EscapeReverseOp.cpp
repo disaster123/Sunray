@@ -45,6 +45,7 @@ void EscapeReverseOp::begin(){
       orig_motion = MOT_RIGHT;
     } else if (robotShouldMoveBackward()) {
       orig_motion = MOT_BACKWARD;
+      CONSOLE.println("EscapeReverseOp: BUMPER: motion backward");
     } else {
       orig_motion = MOT_FORWARD;
     }
