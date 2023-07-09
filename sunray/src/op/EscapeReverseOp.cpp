@@ -63,7 +63,6 @@ void EscapeReverseOp::run(){
     }
 
     // drive away in bumper mode as long as bumper was not released and bumper is still triggered
-    // ||
     // or lift_mode
     if ((bumper_mode && !bumperReleased && (bumper.obstacle() || detectLift())) ||
         (lift_mode)) {
@@ -78,7 +77,7 @@ void EscapeReverseOp::run(){
 
     // if bumper_mode and bumper was not released yet and bumper is released now
     if (bumper_mode && !bumperReleased && !bumper.obstacle() && !detectLift()) {
-      CONSOLE.println("BUMPER: now released - set new obstacle position");
+      CONSOLE.println("BUMPER: now released - set new obstacle position and drive 1s back");
       // bumper is released after obstacle was detected
       bumperReleased = true;
       // overwrite
