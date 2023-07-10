@@ -168,7 +168,7 @@ void trackLine(bool runControl){
   if (!angleToTargetFits){
     // angular control (if angle to far away, rotate to next waypoint)
     linear = 0;
-    angular = 46.4 / 180.0 * PI; //  46.4 degree/s (0.8 rad/s);              
+    angular = 40.6 / 180.0 * PI; //  40,6 degree/s (0.7 rad/s);              
 				 //
     if ((!rotateLeft) && (!rotateRight)){ // decide for one rotation direction (and keep it)
       int r = 0;
