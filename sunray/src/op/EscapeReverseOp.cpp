@@ -126,6 +126,17 @@ void EscapeReverseOp::run(){
         // CONSOLE.println("continue operation with virtual obstacle");
         maps.addObstacle(orig_stateX, orig_stateY, stateDelta, orig_motion);
 
+        float dX = orig_stateX - stateX;
+        float dY = orig_stateY - stateY;
+        float delta = sqrt( sq(dX) + sq(dY) );    
+        if (delta < 0.05){
+          CONSOLE.print("EscapeReverseOp: no motion => set motor error! delta: ");
+          CONSOLE.println(delta);
+          stateSensor = SENS_MOTOR_ERROR;
+          changeOp(errorOp);
+          return;
+        }
+
         changeOp(*nextOp, false);    // continue current operation
     }
 }
