@@ -39,6 +39,12 @@ void EscapeReverseOp::begin(){
         bumper_mode = true;
     }
 
+    // if none mode is set - may be due to gps no motion - run in lift_mode
+    if (!lift_mode && !bumper_mode) {
+      CONSOLE.println("EscapeReverseOp: force lift_mode");
+      lift_mode = true;
+    }
+
     if (robotShouldRotateLeft()) {
       orig_motion = MOT_LEFT;
     } else if (robotShouldRotateRight()) {
