@@ -51,7 +51,7 @@ void KidnapWaitOp::run(){
 
   if (millis() > recoverGpsTime){
     CONSOLE.println("KIDNAP_DETECT");
-    recoverGpsTime = millis() + 30000;
+    recoverGpsTime = millis() + 60000;
     recoverGpsCounter++;
     if (recoverGpsCounter == 3){          
       CONSOLE.println("error: kidnapped!");
@@ -59,7 +59,7 @@ void KidnapWaitOp::run(){
       changeOp(errorOp);
       return;
     }   
-    if (GPS_REBOOT_RECOVERY and gps.solution == SOL_FIXED){           
+    if (GPS_REBOOT_RECOVERY and gps.solution != SOL_FIXED){           
       gps.reboot();   // try to recover from false GPS fix     
     }
   }
