@@ -286,9 +286,9 @@ void computeRobotState(){
   stateX += distOdometry/100.0 * cos(stateDelta);
   stateY += distOdometry/100.0 * sin(stateDelta);        
 
-  // fix position by moving gps receiver to front of mower
-  moved_stateX = stateX + 0.5 * cos(stateDelta);
-  moved_stateY = stateY + 0.5 * sin(stateDelta);
+  // front gps position
+  moved_stateX = stateX + MOWER_SIZE * cos(stateDelta);
+  moved_stateY = stateY + MOWER_SIZE * sin(stateDelta);
 
   if (stateOp == OP_MOW) statMowDistanceTraveled += distOdometry/100.0;
   
