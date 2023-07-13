@@ -1,33 +1,34 @@
 # Sunray
 
-## Branch Watchdog
-Fix: Watchdog-Reset - Timer-reset-cycle reduced to 1s<br>
-New: Debuginformation mean, min and max loopduration<br>
-Fix: Stackpointer-problem caused by activeOp->getOpChain()
+Diese Version ist nur auf Alfred getestet, sollte aber auch auf anderen Mähern lauffähig sein. Es stehen dann aber ggf. nicht alle Funktionen zur Verfügung.
 
-## Download
-__WARNING__: Do not use the master version (via download button), that is 'code we work on' and it may be unstable - use one release version instead (click on 'releases' link below)!
+## Probleme / Fehler
 
-https://github.com/Ardumower/Sunray/releases
+Bugs und Fehler bitte via Github Issues melden: https://github.com/disaster123/Sunray/issues
 
-## Description
-An alternative Firmware (experimental) for Ardumower kit mowing and gear motors, PCB 1.3, Adafruit Grand Central M4 (or Arduino Due) and ArduSimple RTK kit
+## Änderungen im Gegensatz zur originalen Sunray FW
+* to fill
+* to fill2
 
-The robot mower uses RTK to localize itself (without a perimeter wire)
+## Installation
 
-## Warning
-All software and hardware, software and motor components are designed and optimized as a whole, if you try to replace or exclude some component not as designed, you risk to damage your hardware with the software
+WIP
 
-## Wiki
-http://wiki.ardumower.de/index.php?title=Ardumower_Sunray
+```
+# Installation von libevent für den neuen HTTP Server
+sudo apt-get update
+sudo apt-get install libevent-dev
 
-## Demo video
-https://www.youtube.com/watch?v=yDcmS5zdj90
+# WLAN driver für Alfred
+
+...
+```
+
 
 ## License
 Ardumower Sunray 
 Copyright (c) 2013-2020 by Alexander Grau, Grau GmbH
+Copyright (c) 2022-2023 by Stefan Priebe
 
 Licensed GPLv3 for open source use
 or Grau GmbH Commercial License for commercial use (http://grauonline.de/cms2/?page_id=153)
-    
