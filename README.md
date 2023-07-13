@@ -10,7 +10,7 @@ Bugs und Fehler bitte via Github Issues melden: https://github.com/disaster123/S
 * to fill
 * to fill2
 
-## Installation
+## Installation auf Alfred / Linux / Raspberry PI / Banana PI
 
 WIP
 
