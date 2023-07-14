@@ -1008,7 +1008,7 @@ bool Map::startMowing(float stateX, float stateY){
     if (wayMode != WAY_DOCK) {
       wayMode = WAY_MOW;
     }
-    bool r = nextPoint(false, stateX, stateY);
+    bool r = nextPoint(false, stateX, stateY, false);
     if (!r) {
       CONSOLE.println("ERROR: no path");
       return false;
@@ -1373,7 +1373,7 @@ void Map::findPathFinderSafeStartPoint(Point &src, Point &dst){
 // may be due to an obstacle on the way from src to dst
 // if WAY_FREE ends - it calls WAY_MOW again to get a new WAY_FREE
 // list
-bool Map::nextPoint(bool sim,float stateX, float stateY){
+bool Map::nextPoint(bool sim,float stateX, float stateY, bool nextmowpoint){
   CONSOLE.print("nextPoint sim=");
   CONSOLE.print(sim);
   CONSOLE.print(" wayMode=");
@@ -1403,7 +1403,9 @@ bool Map::nextPoint(bool sim,float stateX, float stateY){
       clearObstacles();
     }
 
-    if (!nextMowPoint(false)){
+    // only skip to next mowpoint if nextmowpoint is set true
+    // this should normaly only happen by linetracker in WAY_FREE mode
+    if (nextmowpoint && !nextMowPoint(false)){
       CONSOLE.println("Map::nextPoint: ERROR: no more mowing points!");
       return false;
     }
@@ -1436,7 +1438,7 @@ bool Map::nextPoint(bool sim,float stateX, float stateY){
     // if WAY_FREE ended - it switches to WAY_MOW - reschedule function
     if (wayMode == WAY_MOW && !sim) {
       CONSOLE.println("nextFreePoint ended and is now WAY_MOW again");
-      return nextPoint(sim, stateX, stateY);
+      return nextPoint(sim, stateX, stateY, nextmowpoint);
     }
     return r;
   } else return false;

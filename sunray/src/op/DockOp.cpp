@@ -50,7 +50,7 @@ void DockOp::begin(){
   // plan route to next target point 
 
   if (maps.startDocking(stateX, stateY)){       
-    if (maps.nextPoint(true, stateX, stateY)) {
+    if (maps.nextPoint(true, stateX, stateY, false)) {
       maps.repeatLastMowingPoint();
       lastFixTime = millis();                
       maps.setLastTargetPoint(stateX, stateY);        
