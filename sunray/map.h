@@ -184,7 +184,7 @@ class Map
     // has mowing completed?
     bool mowingCompleted();    
     // given some point, check and modify it to get obstacle-safe mowing point
-    bool findObstacleSafeMowPoint(Point &newTargetPoint, float stateX, float stateY);
+    bool findObstacleSafeMowPoint(Point &newTargetPoint, float stateX, float stateY, bool nextmowpoint);
     int isPointInsideObstacle(Point pt, int skipidx);
     // choose progress (0..100%) in mowing point list    
     void setMowingPointPercent(float perc);
@@ -198,7 +198,7 @@ class Map
     float distanceToTargetPoint(float stateX, float stateY);    
     float distanceToLastTargetPoint(float stateX, float stateY);
     // go to next waypoint
-    unsigned int nextPoint(bool sim,float stateX, float stateY);
+    unsigned int nextPoint(bool sim,float stateX, float stateY, bool nextmowpoint);
     // next point is straight and not a sharp curve?   
     bool nextPointIsStraight();
     // get docking position and orientation

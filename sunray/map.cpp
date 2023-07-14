@@ -980,7 +980,7 @@ bool Map::startMowing(float stateX, float stateY){
     if (wayMode != WAY_DOCK) {
       wayMode = WAY_MOW;
     }
-    unsigned int r = nextPoint(false, stateX, stateY);
+    unsigned int r = nextPoint(false, stateX, stateY, false);
     if (r == 0) {
       CONSOLE.println("ERROR: no path");
       return false;
@@ -1133,7 +1133,7 @@ int Map::isPointInsideObstacle(Point pt, int skipidx){
   return -1;
 }
 
-bool Map::findObstacleSafeMowPoint(Point &newTargetPoint, float stateX, float stateY){  
+bool Map::findObstacleSafeMowPoint(Point &newTargetPoint, float stateX, float stateY, bool nextmowpoint){  
   Point dst;
   Point src;
   Point state;
@@ -1171,9 +1171,8 @@ bool Map::findObstacleSafeMowPoint(Point &newTargetPoint, float stateX, float st
   CONSOLE.print(" / dst: ");
   CONSOLE.println(dist_state_to_dst);
 
-  // real target is current target and we got called - so mower must be here
-  // set new target point from list of mowPoints
-  if (targetPoint.x() == dst.x() && targetPoint.y() == dst.y()) {
+  // switch to next mowpoint
+  if (nextmowpoint) {
     if (!nextMowPoint(false)){
       CONSOLE.println("findObstacleSafeMowPoint error: no more mowing points reachable due to obstacles");
       return false;
@@ -1276,13 +1275,8 @@ bool Map::findObstacleSafeMowPoint(Point &newTargetPoint, float stateX, float st
     bool safe = (isPointInsideObstacle(dst, -1) == -1);
     if (!safe) {
       CONSOLE.println("findObstacleSafeMowPoint: no further obstacle on mowline but mowpoint is inside obstacle. Skip to next real mowpoint.");
-      // we need to skip to next mow point
-      // try next mowing point
-      if (!nextMowPoint(false)){
-        CONSOLE.println("findObstacleSafeMowPoint error: no more mowing points reachable due to obstacles");
-        return false;
-      }
-      return findObstacleSafeMowPoint(newTargetPoint, stateX, stateY);
+      // we need to skip to next mow point - nextmowpoint true
+      return findObstacleSafeMowPoint(newTargetPoint, stateX, stateY, true);
     }
 
     CONSOLE.print("findObstacleSafeMowPoint target ");
@@ -1377,7 +1371,7 @@ void Map::findPathFinderSafeStartPoint(Point &src, Point &dst){
 // 1 found path success
 // -1 still in progress
 // 0 failed path / no path found
-unsigned int Map::nextPoint(bool sim,float stateX, float stateY){
+unsigned int Map::nextPoint(bool sim,float stateX, float stateY, bool nextmowpoint){
   CONSOLE.print("nextPoint sim=");
   CONSOLE.print(sim);
   CONSOLE.print(" wayMode=");
@@ -1403,7 +1397,7 @@ unsigned int Map::nextPoint(bool sim,float stateX, float stateY){
     nextPointinProgress = true;
 
     src.setXY(stateX, stateY);
-    if (!findObstacleSafeMowPoint(dst, nextPointState.x(), nextPointState.y())) {
+    if (!findObstacleSafeMowPoint(dst, nextPointState.x(), nextPointState.y(), nextmowpoint)) {
       CONSOLE.println("Map::nextPoint: WARN: no safe mow point found!");
       return false;
     }
@@ -1444,7 +1438,7 @@ unsigned int Map::nextPoint(bool sim,float stateX, float stateY){
     // if WAY_FREE ended - it switches to WAY_MOW - reschedule function
     if (wayMode == WAY_MOW && !sim) {
       CONSOLE.println("nextFreePoint ended and is now WAY_MOW again");
-      return nextPoint(sim, stateX, stateY);
+      return nextPoint(sim, stateX, stateY, true);
     }
     return r ? 1 : 0;
   } else return 0;
