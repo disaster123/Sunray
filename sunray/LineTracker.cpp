@@ -170,8 +170,8 @@ void trackLine(bool runControl){
     linear = 0;
 
     float angularspeed = 40.6; 
-    if (fabs(trackerDiffDelta)/PI*180.0 < 25) {
-        angularspeed = angularspeed * 0.75;
+    if (fabs(trackerDiffDelta)/PI*180.0 < 45) {
+        angularspeed = angularspeed * 0.5;
     }
 
     angular = angularspeed / 180.0 * PI; //  40,6 degree/s (0.7 rad/s);              
