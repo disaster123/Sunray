@@ -155,6 +155,8 @@ void trackLine(bool runControl){
   // if we race we still have rotateLeft or rotateRight true
   if ( (targetDist < 0.5) || (lastTargetDist < 0.5) || (fabs(distToPath) > 0.5) ||
        rotateLeft || rotateRight ) {
+    CONSOLE.print("DEBUG check for angleToTargetFits: ");
+    CONSOLE.println(fabs(trackerDiffDelta)/PI*180.0);
     if (SMOOTH_CURVES)
       angleToTargetFits = (fabs(trackerDiffDelta)/PI*180.0 < 120);
     else     
