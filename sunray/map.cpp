@@ -1199,42 +1199,6 @@ bool Map::findObstacleSafeMowPoint(Point &newTargetPoint, float stateX, float st
   CONSOLE.print(" / dst: ");
   CONSOLE.println(dist_state_to_dst);
 
-  // real target is current target and we got called - so mower must be here
-  // set new target point from list of mowPoints
-  if (targetPoint.x() == dst.x() && targetPoint.y() == dst.y()) {
-    if (!nextMowPoint(false)){
-      CONSOLE.println("findObstacleSafeMowPoint error: no more mowing points reachable due to obstacles");
-      return false;
-    }
-    // instead of recursion which might be endless - only skip to next point once
-    // return findObstacleSafeMowPoint(newTargetPoint, stateX, stateY);
-    src.assign(mowPoints.points[mowPointsIdx-1]);
-    dst.assign(mowPoints.points[mowPointsIdx]);
-
-    // distance from position to dst
-    dist_src_to_state = distance(src, state);
-    dist_state_to_dst = distance(state, dst);
-
-    CONSOLE.print("findObstacleSafeMowPoint (next mowpoint - target reached):");
-    CONSOLE.print(" idx: ");
-    CONSOLE.print(mowPointsIdx);
-    CONSOLE.print(" state: ");
-    CONSOLE.print(stateX);
-    CONSOLE.print(",");
-    CONSOLE.print(stateY);
-
-    CONSOLE.print(" mowPoints dst: ");
-    CONSOLE.print(dst.x());
-    CONSOLE.print(",");
-    CONSOLE.print(dst.y());
-
-    CONSOLE.print(" dist src: ");
-    CONSOLE.print(dist_src_to_state);
-
-    CONSOLE.print(" / dst: ");
-    CONSOLE.println(dist_state_to_dst);
-  }
-
   float distToPath = distanceLine(stateX, stateY, src.x(), src.y(), dst.x(), dst.y());
 
   // get first obstacle in front of state_pos
@@ -1437,6 +1401,11 @@ bool Map::nextPoint(bool sim,float stateX, float stateY){
     if ( ob_idx != -1 ) {
       CONSOLE.println("Map::nextPoint: WARN: src is inside obstacle - clear!");
       clearObstacles();
+    }
+
+    if (!nextMowPoint(false)){
+      CONSOLE.println("Map::nextPoint: ERROR: no more mowing points!");
+      return false;
     }
 
     // this loop has currently no sense - we might want to implement
