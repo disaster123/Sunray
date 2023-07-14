@@ -155,12 +155,10 @@ void trackLine(bool runControl){
   // if we race we still have rotateLeft or rotateRight true
   if ( (targetDist < 0.5) || (lastTargetDist < 0.5) || (fabs(distToPath) > 0.5) ||
        rotateLeft || rotateRight ) {
-    CONSOLE.print("DEBUG check for angleToTargetFits: ");
-    CONSOLE.println(fabs(trackerDiffDelta)/PI*180.0);
     if (SMOOTH_CURVES)
       angleToTargetFits = (fabs(trackerDiffDelta)/PI*180.0 < 120);
     else     
-      angleToTargetFits = (fabs(trackerDiffDelta)/PI*180.0 < 10);
+      angleToTargetFits = (fabs(trackerDiffDelta)/PI*180.0 < 20);
   } else {
     // while tracking the mowing line do allow rotations if angle to target increases (e.g. due to gps jumps)
     angleToTargetFits = (fabs(trackerDiffDelta)/PI*180.0 < 45);       
@@ -391,7 +389,9 @@ void trackLine(bool runControl){
         CONSOLE.print(targetDist);
         CONSOLE.print(" angleToTargetFits: ");
         CONSOLE.print(angleToTargetFits);
-        CONSOLE.print(" angular: ");
+        CONSOLE.print(" (");
+        CONSOLE.print(fabs(trackerDiffDelta)/PI*180.0);
+        CONSOLE.print(") angular: ");
         CONSOLE.print(angular);
         CONSOLE.print(" motorMowRpmCurr: ");
         CONSOLE.print(motor.motorMowRpmCurr);
