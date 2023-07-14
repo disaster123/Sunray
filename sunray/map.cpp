@@ -1423,7 +1423,6 @@ bool Map::nextPoint(bool sim,float stateX, float stateY){
 #else
     Point src;
     Point dst;
-    Point state;
 
     if (sim) {
       // if we run in sim mode - skip this code
@@ -1431,30 +1430,30 @@ bool Map::nextPoint(bool sim,float stateX, float stateY){
     }
 
     src.setXY(stateX, stateY);
-    state.setXY(stateX, stateY);
+
+    // check if src is inside obstacle - this will prevent us from finding a path
+    int ob_idx = isPointInsideObstacle(src, -1);
+    // src is inside obstacle - this might be problematic for finding a path
+    if ( ob_idx != -1 ) {
+      CONSOLE.println("Map::nextPoint: WARN: src is inside obstacle - clear!");
+      clearObstacles();
+    }
+
+    // this loop has currently no sense - we might want to implement
+    // some special logic if findPath fails - like skip to next point...
     while (true) {
-      if (!findObstacleSafeMowPoint(dst, state.x(), state.y())) {
-        CONSOLE.println("Map::nextPoint: WARN: no safe mow point found!");
+      if (!findObstacleSafeMowPoint(dst, src.x(), src.y())) {
+        CONSOLE.println("Map::nextPoint: ERROR: no safe mow point found!");
         return false;
       }
       if (findPath(src, dst)) {
         // path found
         break;
       }
-      // check if src is inside obstacle
-      int ob_idx = isPointInsideObstacle(src, -1);
-      if ( ob_idx != -1 ) {
-          CONSOLE.println("Map::nextPoint: WARN: STEFAN: src is inside obstacle - remove obs!");
-          for (int oc = 0; oc < obstacles.polygons[ob_idx].numPoints; oc++) {
-              // fake x / y to 0 to ignore obstacle
-	          obstacles.polygons[ob_idx].points[oc].setXY(0, 0);
-          }
-      }
 
-      // skip current dst point by setting state to current dst for searching new dst
-      // but keep state for findpath
-      CONSOLE.println("Map::nextPoint: WARN: no path found - move to next step!");
-      state.setXY(dst.x(), dst.y());
+      // no path found - abort with error
+      CONSOLE.println("Map::nextPoint: ERROR: no path from src to dst found!");
+      return false;
     }
 
     // move to WAY_FREE list
