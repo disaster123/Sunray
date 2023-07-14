@@ -1199,8 +1199,9 @@ bool Map::findObstacleSafeMowPoint(Point &newTargetPoint, float stateX, float st
   CONSOLE.print(" / dst: ");
   CONSOLE.println(dist_state_to_dst);
 
-  // real target reached skip to next target
-  if (dist_state_to_dst <= TARGET_REACHED_TOLERANCE) {
+  // real target is current target and we got called - so mower must be here
+  // set new target point from list of mowPoints
+  if (targetPoint.x() == dst.x() && targetPoint.y() == dst.y()) {
     if (!nextMowPoint(false)){
       CONSOLE.println("findObstacleSafeMowPoint error: no more mowing points reachable due to obstacles");
       return false;
