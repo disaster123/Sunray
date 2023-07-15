@@ -269,7 +269,7 @@ void trackLine(bool runControl){
     // switched from turn motion to linear - we now need to correct last motion front wheels to 
     // opposite angle
     if (angleToTargetFits == true && langleToTargetFits == false) {
-       angular = angular + langular * -1.5;
+       angular = langular * -1.5;
     }
     /*pidLine.w = 0;              
     pidLine.x = lateralError;
