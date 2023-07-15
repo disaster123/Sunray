@@ -160,6 +160,10 @@ void trackLine(bool runControl){
     angleToTargetFits = false;
   }
 
+  if (targetangle > 7 && maps.trackSlow) {
+    angleToTargetFits = false;
+  }
+
   if (!angleToTargetFits){
     // angular control (if angle to far away, rotate to next waypoint)
     linear = 0;
@@ -240,7 +244,7 @@ void trackLine(bool runControl){
       linear = 0.15;
     } else if ((setSpeed > 0.1) && (targetDist < 0.5) && (!straight))   // approaching
     {
-      linear = setSpeed * 0.5; // reduce speed when approaching/leaving waypoints          
+      linear = setSpeed * 0.7; // reduce speed when approaching/leaving waypoints          
     } 
     else {
       if (gps.solution == SOL_FLOAT)        
