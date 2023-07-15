@@ -143,35 +143,24 @@ void trackLine(bool runControl){
     targetReached = (targetDist < TARGET_REACHED_TOLERANCE);
 
   if ( (last_rotation_target.x() != target.x() || last_rotation_target.y() != target.y()) &&
-        (rotateLeft || rotateRight ) ) {
+        (rotateLeft || rotateRight ) || targetReached ) {
     // CONSOLE.println("reset left / right rot (target point changed)");
     rotateLeft = false;
     rotateRight = false;
     trackerDiffDelta_turn = 0;
   }
 
-  // allow rotations only near last or next waypoint or if too far away from path
-  // it might race between rotating mower and targetDist check below
-  // if we race we still have rotateLeft or rotateRight true
-  if ( (targetDist < 0.5) || (lastTargetDist < 0.5) || (fabs(distToPath) > 0.5) ||
-       rotateLeft || rotateRight ) {
-    if (SMOOTH_CURVES)
-      angleToTargetFits = (fabs(trackerDiffDelta)/PI*180.0 < 120);
-    else     
-      angleToTargetFits = (fabs(trackerDiffDelta)/PI*180.0 < 20);
-  } else {
-    // while tracking the mowing line do allow rotations if angle to target increases (e.g. due to gps jumps)
-    angleToTargetFits = (fabs(trackerDiffDelta)/PI*180.0 < 45);       
-    //angleToTargetFits = true;
-  }
+  angleToTargetFits = (fabs(trackerDiffDelta)/PI*180.0 < 10) || targetReached;
 
   if (!angleToTargetFits){
     // angular control (if angle to far away, rotate to next waypoint)
     linear = 0;
 
     float angularspeed = 40.6; 
-    if (fabs(trackerDiffDelta)/PI*180.0 < 45) {
+    if (fabs(trackerDiffDelta)/PI*180.0 < 30) {
         angularspeed = angularspeed * 0.5;
+    } else if (fabs(trackerDiffDelta)/PI*180.0 < 20) {
+        angularspeed = angularspeed * 0.3;
     }
 
     angular = angularspeed / 180.0 * PI; //  40,6 degree/s (0.7 rad/s);              
@@ -200,16 +189,16 @@ void trackLine(bool runControl){
         rotateLeft = true;
       }
 
-      trackerDiffDelta_positive = (trackerDiffDelta >= 0);
+      // trackerDiffDelta_positive = (trackerDiffDelta >= 0);
     }        
-    if (trackerDiffDelta_positive != (trackerDiffDelta >= 0)) {
-      CONSOLE.println("reset left / right rotation - DiffDelta overflow");
-      rotateLeft = false;
-      rotateRight = false;
-      trackerDiffDelta_turn = 0;
-      // reverse rotation (*-1) - slowly rotate back
-      angular = 10.0 / 180.0 * PI * -1; //  10 degree/s (0.19 rad/s);               
-    }
+    // if (trackerDiffDelta_positive != (trackerDiffDelta >= 0)) {
+    //   CONSOLE.println("reset left / right rotation - DiffDelta overflow");
+    //   rotateLeft = false;
+    //   rotateRight = false;
+    //   trackerDiffDelta_turn = 0;
+    //   // reverse rotation (*-1) - slowly rotate back
+    //   angular = 10.0 / 180.0 * PI * -1; //  10 degree/s (0.19 rad/s);               
+    // }
     if (rotateRight) angular *= -1;
 
   } 
@@ -221,6 +210,7 @@ void trackLine(bool runControl){
     rotateLeft = false;
     rotateRight = false;
     trackerDiffDelta_turn = 0;
+    angular = 0;
 
     // in case of docking or undocking - check if trackslow is allowed
     if ( maps.isUndocking() || maps.isDocking() ) {
@@ -233,9 +223,9 @@ void trackLine(bool runControl){
         if (dist_dock > DOCK_UNDOCK_TRACKSLOW_DISTANCE) {
             trackslow_allowed = false;
         }
-	if (dist_dock < DOCK_UNDOCK_TRACKSLOW_DISTANCE && maps.isDocking()) {
+        if (dist_dock < DOCK_UNDOCK_TRACKSLOW_DISTANCE && maps.isDocking()) {
             trackslow_allowed = false;
-	}
+        }
     }
 
     if (maps.trackSlow && trackslow_allowed) {
