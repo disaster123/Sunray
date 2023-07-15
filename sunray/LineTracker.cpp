@@ -357,7 +357,8 @@ void trackLine(bool runControl){
   if (detectLift()) mow = false;
   
   if (mow)  {  // wait until mowing motor is running
-    if ((fabs(motor.motorMowRpmCurr) < 800 && fabs(motor.motorMowPWMCurr) < 200) || fabs(motor.motorMowSense) < 1.0 || (millis() < (motor.motorMowSpinUpTime + 10000)) ){
+    if (motor.motorMowSense < 1.1 || motor.motorMowSenseLP < 1.1 || (millis() < (motor.motorMowSpinUpTime + 10000)) ){
+    // if ((fabs(motor.motorMowRpmCurr) < 800 && fabs(motor.motorMowPWMCurr) < 200) || fabs(motor.motorMowSense) < 1.0 || (millis() < (motor.motorMowSpinUpTime + 10000)) ){
       if (!buzzer.isPlaying()) buzzer.sound(SND_WARNING, true);
       linear = 0;
       angular = 0;          
