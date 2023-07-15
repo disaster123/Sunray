@@ -131,8 +131,9 @@ void trackLine(bool runControl){
   float targetDelta = pointsAngle(stateX, stateY, target.x(), target.y());      
   if (maps.trackReverse) targetDelta = scalePI(targetDelta + PI);
   targetDelta = scalePIangles(targetDelta, stateDelta);
-  trackerDiffDelta = distancePI(stateDelta, targetDelta);                         
-  lateralError = distanceLineInfinite(stateX, stateY, lastTarget.x(), lastTarget.y(), target.x(), target.y());        
+  trackerDiffDelta = distancePI(stateDelta, targetDelta);
+  lateralError = distanceLineInfinite(stateX, stateY, lastTarget.x(), lastTarget.y(), target.x(), target.y());
+  float targetangle = fabs(trackerDiffDelta)/PI*180.0;
   float distToPath = distanceLine(stateX, stateY, lastTarget.x(), lastTarget.y(), target.x(), target.y());        
   float targetDist = maps.distanceToTargetPoint(stateX, stateY);
   
@@ -150,16 +151,21 @@ void trackLine(bool runControl){
     trackerDiffDelta_turn = 0;
   }
 
-  angleToTargetFits = (fabs(trackerDiffDelta)/PI*180.0 < 10) || targetReached;
+  // use a hysteresis for angleToTargetFits
+  if (targetangle < 5) {
+    angleToTargetFits = true;
+  } else if (targetangle > 10) {
+    angleToTargetFits = false;
+  }
 
   if (!angleToTargetFits){
     // angular control (if angle to far away, rotate to next waypoint)
     linear = 0;
 
     float angularspeed = 40.6; 
-    if (fabs(trackerDiffDelta)/PI*180.0 < 30) {
+    if (targetangle < 30) {
         angularspeed = angularspeed * 0.5;
-    } else if (fabs(trackerDiffDelta)/PI*180.0 < 20) {
+    } else if (targetangle < 20) {
         angularspeed = angularspeed * 0.3;
     }
 
@@ -200,7 +206,6 @@ void trackLine(bool runControl){
     //   angular = 10.0 / 180.0 * PI * -1; //  10 degree/s (0.19 rad/s);               
     // }
     if (rotateRight) angular *= -1;
-
   } 
   else {
     // line control (stanley)    
@@ -380,7 +385,7 @@ void trackLine(bool runControl){
         CONSOLE.print(" angleToTargetFits: ");
         CONSOLE.print(angleToTargetFits);
         CONSOLE.print(" (");
-        CONSOLE.print(fabs(trackerDiffDelta)/PI*180.0);
+        CONSOLE.print(targetangle);
         CONSOLE.print(") angular: ");
         CONSOLE.print(angular);
         CONSOLE.print(" motorMowRpmCurr: ");
