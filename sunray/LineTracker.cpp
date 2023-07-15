@@ -152,9 +152,11 @@ void trackLine(bool runControl){
   }
 
   // use a hysteresis for angleToTargetFits
-  if (targetangle < 5) {
+  // the last 10 degrees happen alone - because the front wheels
+  // are still turned in this direction
+  if (targetangle < 10) {
     angleToTargetFits = true;
-  } else if (targetangle > 15) {
+  } else if (targetangle > 20) {
     angleToTargetFits = false;
   }
 
