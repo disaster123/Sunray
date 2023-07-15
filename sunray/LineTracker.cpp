@@ -152,9 +152,9 @@ void trackLine(bool runControl){
   }
 
   // use a hysteresis for angleToTargetFits
-  if (targetangle < 10) {
+  if (targetangle < 5) {
     angleToTargetFits = true;
-  } else if (targetangle > 20) {
+  } else if (targetangle > 15) {
     angleToTargetFits = false;
   }
 
