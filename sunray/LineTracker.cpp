@@ -266,9 +266,10 @@ void trackLine(bool runControl){
       p = stanleyTrackingSlowP; //STANLEY_CONTROL_P_SLOW;          
     }
     angular =  p * trackerDiffDelta + atan2(k * lateralError, (0.001 + fabs(motor.linearSpeedSet)));       // correct for path errors           
-    // switch from turn motion
+    // switched from turn motion to linear - we now need to correct last motion front wheels to 
+    // opposite angle
     if (angleToTargetFits == true && langleToTargetFits == false) {
-       angular = langular * -1;
+       angular = angular + langular * -1.5;
     }
     /*pidLine.w = 0;              
     pidLine.x = lateralError;
