@@ -228,9 +228,9 @@ void trackLine(bool runControl){
         if (dist_dock > DOCK_UNDOCK_TRACKSLOW_DISTANCE) {
             trackslow_allowed = false;
         }
-        if (dist_dock < DOCK_UNDOCK_TRACKSLOW_DISTANCE && maps.isDocking()) {
-            trackslow_allowed = false;
-        }
+        // if (dist_dock < DOCK_UNDOCK_TRACKSLOW_DISTANCE && maps.isDocking()) {
+        //     trackslow_allowed = false;
+        // }
     }
 
     if (maps.trackSlow && trackslow_allowed) {
