@@ -152,9 +152,9 @@ void trackLine(bool runControl){
   }
 
   // use a hysteresis for angleToTargetFits
-  if (targetangle < 5) {
+  if (targetangle < 10) {
     angleToTargetFits = true;
-  } else if (targetangle > 10) {
+  } else if (targetangle > 20) {
     angleToTargetFits = false;
   }
 
@@ -266,6 +266,10 @@ void trackLine(bool runControl){
       p = stanleyTrackingSlowP; //STANLEY_CONTROL_P_SLOW;          
     }
     angular =  p * trackerDiffDelta + atan2(k * lateralError, (0.001 + fabs(motor.linearSpeedSet)));       // correct for path errors           
+    // switch from turn motion
+    if (angleToTargetFits == true && langleToTargetFits == false) {
+       angular = langular * -1;
+    }
     /*pidLine.w = 0;              
     pidLine.x = lateralError;
     pidLine.max_output = PI;
@@ -402,7 +406,6 @@ void trackLine(bool runControl){
         CONSOLE.println(trackerDiffDelta);
         ltargetReached = targetReached;
         langleToTargetFits = angleToTargetFits;
-        langular = angular;
     }
 
     motor.setLinearAngularSpeed(linear, angular);      
@@ -410,6 +413,7 @@ void trackLine(bool runControl){
     motor.setMowState(mow);    
   }
 
+  langular = angular;
   if (targetReached){
     rotateLeft = false;
     rotateRight = false;
