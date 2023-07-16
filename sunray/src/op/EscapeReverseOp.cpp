@@ -10,6 +10,8 @@
 #include "../../map.h"
 #include "../../helper.h"
 
+float orig_stateX2;
+float orig_stateY2;
 float orig_stateX;
 float orig_stateY;
 MotType orig_motion;
@@ -26,6 +28,8 @@ void EscapeReverseOp::begin(){
     bumperReleased = false;
     orig_stateX = stateX;
     orig_stateY = stateY;
+    orig_stateX2 = stateX;
+    orig_stateY2 = stateY;
     bumper_mode = false;
     lift_mode = false;
 
@@ -132,8 +136,8 @@ void EscapeReverseOp::run(){
         // CONSOLE.println("continue operation with virtual obstacle");
         maps.addObstacle(orig_stateX, orig_stateY, stateDelta, orig_motion);
 
-        float dX = orig_stateX - stateX;
-        float dY = orig_stateY - stateY;
+        float dX = orig_stateX2 - stateX;
+        float dY = orig_stateY2 - stateY;
         float delta = sqrt( sq(dX) + sq(dY) );    
         if (delta < 0.05){
           CONSOLE.print("EscapeReverseOp: no motion => set motor error! delta: ");
