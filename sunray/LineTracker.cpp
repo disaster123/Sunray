@@ -160,8 +160,20 @@ void trackLine(bool runControl){
     angleToTargetFits = false;
   }
 
-  if (targetangle > 7 && maps.trackSlow) {
-    angleToTargetFits = false;
+  // in case of docking be more accurate
+  if ( maps.isDocking() ) {
+      float dockX = 0;
+      float dockY = 0;
+      float dockDelta = 0;
+      maps.getDockingPos(dockX, dockY, dockDelta);
+      float dist_dock = distance(dockX, dockY, stateX, stateY);
+      if (dist_dock < DOCK_UNDOCK_TRACKSLOW_DISTANCE) {
+        if (targetangle < 5) {
+          angleToTargetFits = true;
+        } else if (targetangle > 7) {
+          angleToTargetFits = false;
+        }
+      }
   }
 
   if (!angleToTargetFits){
