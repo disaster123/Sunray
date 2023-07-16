@@ -136,6 +136,8 @@ void trackLine(bool runControl){
   float targetangle = fabs(trackerDiffDelta)/PI*180.0;
   float distToPath = distanceLine(stateX, stateY, lastTarget.x(), lastTarget.y(), target.x(), target.y());        
   float targetDist = maps.distanceToTargetPoint(stateX, stateY);
+  float angleFits_low = 10.0;
+  float angleFits_high = 20.0;
   
   float lastTargetDist = maps.distanceToLastTargetPoint(stateX, stateY);  
   if (SMOOTH_CURVES)
@@ -151,15 +153,6 @@ void trackLine(bool runControl){
     trackerDiffDelta_turn = 0;
   }
 
-  // use a hysteresis for angleToTargetFits
-  // the last 10 degrees happen alone - because the front wheels
-  // are still turned in this direction
-  if (targetangle < 10) {
-    angleToTargetFits = true;
-  } else if (targetangle > 20) {
-    angleToTargetFits = false;
-  }
-
   // in case of docking be more accurate
   if ( maps.isDocking() ) {
       float dockX = 0;
@@ -168,12 +161,18 @@ void trackLine(bool runControl){
       maps.getDockingPos(dockX, dockY, dockDelta);
       float dist_dock = distance(dockX, dockY, stateX, stateY);
       if (dist_dock < DOCK_UNDOCK_TRACKSLOW_DISTANCE) {
-        if (targetangle < 5) {
-          angleToTargetFits = true;
-        } else if (targetangle > 7) {
-          angleToTargetFits = false;
-        }
+        angleFits_low = 5.0;
+        angleFits_high = 7.0;
       }
+  }
+
+  // use a hysteresis for angleToTargetFits
+  // the last 10 degrees happen alone - because the front wheels
+  // are still turned in this direction
+  if (targetangle < angleFits_low || targetReached) {
+    angleToTargetFits = true;
+  } else if (targetangle > angleFits_high) {
+    angleToTargetFits = false;
   }
 
   if (!angleToTargetFits){
