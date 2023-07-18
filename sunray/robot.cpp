@@ -785,7 +785,8 @@ bool detectObstacle(){
       if (liftDriver.triggered()) {
         if (liftTimeout == 0) {
           liftTimeout = millis() + LIFT_DEADTIME;
-        } else if (liftTimeout < millis()) {
+        }
+        if (liftTimeout < millis() || LIFT_DEADTIME == 0) {
           liftTimeout = 0;
           CONSOLE.println("lift sensor obstacle!");    
           statMowBumperCounter++;
