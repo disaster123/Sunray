@@ -161,8 +161,8 @@ void trackLine(bool runControl){
       maps.getDockingPos(dockX, dockY, dockDelta);
       float dist_dock = distance(dockX, dockY, stateX, stateY);
       if (dist_dock < DOCK_UNDOCK_TRACKSLOW_DISTANCE) {
-        angleFits_low = 5.0;
-        angleFits_high = 7.0;
+        angleFits_low = 7.0;
+        angleFits_high = 15.0;
       }
   }
 
