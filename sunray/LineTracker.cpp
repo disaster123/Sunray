@@ -248,6 +248,17 @@ void trackLine(bool runControl){
         // if (dist_dock < DOCK_UNDOCK_TRACKSLOW_DISTANCE && maps.isDocking()) {
         //     trackslow_allowed = false;
         // }
+    } else {
+      // check if we force target reach - because we otherwise leave the map
+      // we do not dock or undock and the angle fits to target
+      if (!targetReached && angleToTargetFits) {
+        Point pt;
+        pt.setXY( moved_stateX, moved_stateY );
+        if (!maps.isInsidePerimeterOutsideExclusions(pt)) {
+          CONSOLE.println("LineTracker: force targetReached because front is outside Perimeter");
+          targetReached = true;
+        }
+      }
     }
 
     if (maps.trackSlow && trackslow_allowed) {
