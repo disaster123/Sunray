@@ -292,10 +292,6 @@ void computeRobotState(){
   stateX += distOdometry/100.0 * cos(stateDelta);
   stateY += distOdometry/100.0 * sin(stateDelta);        
 
-  // front gps position
-  moved_stateX = stateX + MOWER_SIZE * cos(stateDelta);
-  moved_stateY = stateY + MOWER_SIZE * sin(stateDelta);
-
   if (stateOp == OP_MOW) statMowDistanceTraveled += distOdometry/100.0;
   
   if ((imuDriver.imuFound) && (maps.useIMU)) {
@@ -311,6 +307,10 @@ void computeRobotState(){
   stateDeltaSpeedWheels = 0.99 * stateDeltaSpeedWheels + 0.01 * deltaOdometry / 0.02; // wheels yaw rotation speed (20ms timestep) 
   //CONSOLE.println(stateDelta / PI * 180.0);
   stateDeltaIMU = 0;
+
+  // front gps position
+  moved_stateX = stateX + (MOWER_SIZE/2) * cos(stateDelta);
+  moved_stateY = stateY + (MOWER_SIZE/2) * sin(stateDelta);
 
   // compute yaw rotation speed (delta speed)
   stateDeltaSpeed = (stateDelta - stateDeltaLast) / 0.02;  // 20ms timestep
