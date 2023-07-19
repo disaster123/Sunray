@@ -1419,8 +1419,8 @@ bool Map::nextPoint(bool sim,float stateX, float stateY, bool nextmowpoint){
     int ob_idx = isPointInsideObstacle(src, -1);
     // src is inside obstacle - this might be problematic for finding a path
     if ( ob_idx != -1 ) {
-      CONSOLE.println("Map::nextPoint: WARN: src is inside obstacle - clear!");
-      clearObstacles();
+      CONSOLE.println("Map::nextPoint: WARN: src is inside obstacle - remove obstacle!");
+      obstacles.removePolygon(ob_idx);
     }
 
     // only skip to next mowpoint if nextmowpoint is set true
