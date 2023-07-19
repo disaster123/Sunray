@@ -253,7 +253,14 @@ void trackLine(bool runControl){
       // we do not dock or undock and the angle fits to target
       if (!targetReached && !straight && targetDist < (MOWER_SIZE*1.5/100.0)) {
         if (maps.checkpoint( moved_stateX, moved_stateY )) {
-          CONSOLE.println("LineTracker: front is not inside Parameter or inside exclusion!");
+          CONSOLE.print("LineTracker: front is not inside Parameter or inside exclusion or inside obstacle! state: ");
+          CONSOLE.print(moved_stateX);
+          CONSOLE.print("/");
+          CONSOLE.print(moved_stateY);
+          CONSOLE.print(" target: ");
+          CONSOLE.print(target.x());
+          CONSOLE.print("/");
+          CONSOLE.println(target.y());
           targetReached = true;
           // fake stateX and stateY
           stateX = moved_stateX;
