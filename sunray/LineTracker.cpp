@@ -255,6 +255,9 @@ void trackLine(bool runControl){
         if (maps.checkpoint( moved_stateX, moved_stateY )) {
           CONSOLE.println("LineTracker: front is not inside Parameter or inside exclusion!");
           targetReached = true;
+          // fake stateX and stateY
+          stateX = moved_stateX;
+          stateY = moved_stateY;
         }
       }
     }
