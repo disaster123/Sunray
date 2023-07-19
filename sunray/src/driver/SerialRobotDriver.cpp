@@ -294,6 +294,9 @@ void SerialRobotDriver::motorResponse(){
       } else if (counter == 5){
         triggeredLeftBumper = (intValue != 0);
       } else if (counter == 6){
+        if ((!triggeredLift) && (triggeredLift != (intValue != 0))) {
+          CONSOLE.println("SerialRobotDriver: triggeredLift");
+        }
         triggeredLift = (intValue != 0);
       } else if (counter == 7){
         triggeredStopButton = (intValue != 0);
