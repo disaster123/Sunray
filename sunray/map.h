@@ -67,6 +67,7 @@ class PolygonList // owns polygons!
      ~PolygonList();
      void init();
      bool alloc(short aNumPolygons);
+     void removePolygon(short polygonID);
      void dealloc();
      void dump();
      int numPoints();
