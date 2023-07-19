@@ -894,6 +894,7 @@ float Map::distanceToLastTargetPoint(float stateX, float stateY){
 
 // check if path from last target to target to next target is a curve
 bool Map::nextPointIsStraight(){
+  // XXX TODO - should support WAY_FREE as well
   if (wayMode != WAY_MOW) return false;
   if (mowPointsIdx+1 >= mowPoints.numPoints) return false;     
   Point nextPt;
