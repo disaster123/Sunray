@@ -252,7 +252,7 @@ void trackLine(bool runControl){
       // check if we force target reach - because we otherwise leave the map
       // we do not dock or undock and the angle fits to target
       if (!targetReached && !straight) {
-        if (maps.checkpoint( moved_stateX, moved_stateY )) {
+        if (!maps.checkpoint( moved_stateX, moved_stateY )) {
           CONSOLE.println("LineTracker: front is not inside Parameter or inside exclusion!");
           // targetReached = true;
         }
