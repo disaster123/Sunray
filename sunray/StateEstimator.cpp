@@ -309,8 +309,8 @@ void computeRobotState(){
   stateDeltaIMU = 0;
 
   // front gps position
-  moved_stateX = stateX + (MOWER_SIZE/100) * cos(stateDelta);
-  moved_stateY = stateY + (MOWER_SIZE/100) * sin(stateDelta);
+  moved_stateX = stateX + (MOWER_SIZE/100.0 + 0.2) * cos(stateDelta);
+  moved_stateY = stateY + (MOWER_SIZE/100.0 + 0.2) * sin(stateDelta);
 
   // compute yaw rotation speed (delta speed)
   stateDeltaSpeed = (stateDelta - stateDeltaLast) / 0.02;  // 20ms timestep
