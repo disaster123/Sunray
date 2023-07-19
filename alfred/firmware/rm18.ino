@@ -450,10 +450,10 @@ void readSensors(){
   bumper = ((abs(bumperX-300) > 150) || (abs(bumperY-300) > 150));
 
   // lift low-pass filtering
-  w = 0.5;
+  w = 0.2;
   liftLeftLP = w * liftLeftLP + (1.0-w) * ((float)liftLeft);
   liftRightLP = w * liftRightLP + (1.0-w) * ((float)liftRight);
-  if ((abs(liftLeft-530) < 200) || (abs(liftRight-530) < 200)){
+  if ((abs(liftLeft-530) < 200) && (abs(liftRight-530) < 200)){
     liftLeftLP = liftLeft;   // reset LP if lift is not triggered
     liftRightLP = liftRight;
   }
