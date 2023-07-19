@@ -255,6 +255,26 @@ bool PolygonList::alloc(short aNumPolygons){
   return true;
 }
 
+void PolygonList::removePolygon(short polygonID) {
+    if (polygonID < 0 || polygonID >= numPolygons) {
+        // Ungültige Polygon-ID, nichts zu löschen
+        return;
+    }
+
+    // Speicherplatz für die Punkte des zu entfernenden Polygons freigeben
+    if (polygons[polygonID].points != NULL) {
+        delete[] polygons[polygonID].points;
+        polygons[polygonID].points = NULL;
+    }
+
+    polygons[polygonID] = polygons[numPolygons - 1];
+    polygons[numPolygons - 1] = Polygon(); // Leeres Polygon (falls Polygon-Objekt verwendet wird)
+
+    // Die Anzahl der Polygone entsprechend reduzieren
+    numPolygons--;
+    polygons[numPolygons].points = CHECK_POINT;
+}
+
 void PolygonList::dealloc(){
   if (polygons == NULL) return;
   for (int i=0; i < numPolygons; i++){
