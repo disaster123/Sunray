@@ -248,24 +248,23 @@ void trackLine(bool runControl){
         // if (dist_dock < DOCK_UNDOCK_TRACKSLOW_DISTANCE && maps.isDocking()) {
         //     trackslow_allowed = false;
         // }
-    } else {
-      // check if we force target reach - because we otherwise leave the map
-      // we do not dock or undock and the angle fits to target
-      if (!targetReached && !straight && targetDist < (MOWER_SIZE*1.5/100.0)) {
-        if (maps.checkpoint( moved_stateX, moved_stateY )) {
-          CONSOLE.print("LineTracker: front is not inside Parameter or inside exclusion or inside obstacle! state: ");
-          CONSOLE.print(moved_stateX);
-          CONSOLE.print("/");
-          CONSOLE.print(moved_stateY);
-          CONSOLE.print(" target: ");
-          CONSOLE.print(target.x());
-          CONSOLE.print("/");
-          CONSOLE.println(target.y());
-          targetReached = true;
-          // fake stateX and stateY
-          stateX = moved_stateX;
-          stateY = moved_stateY;
-        }
+    }
+
+    // target not already reached and near target
+    if (!targetReached && targetDist < (MOWER_SIZE*1.5/100.0)) {
+      // check if front has reached target
+      float targetDist_mowerfront = maps.distanceToTargetPoint(stateX_mowerfront, stateY_mowerfront);
+      // mowerfront has reached target and infrontof is outside perimeter
+      if ((targetDist_mowerfront < TARGET_REACHED_TOLERANCE) && (maps.checkpoint( stateX_infrontof, stateY_infrontof ))) {
+        CONSOLE.print("LineTracker: front is not inside Parameter or inside exclusion or inside obstacle! state: ");
+        CONSOLE.print(stateX_infrontof);
+        CONSOLE.print("/");
+        CONSOLE.print(stateY_infrontof);
+        CONSOLE.print(" target: ");
+        CONSOLE.print(target.x());
+        CONSOLE.print("/");
+        CONSOLE.println(target.y());
+        targetReached = true;
       }
     }
 
