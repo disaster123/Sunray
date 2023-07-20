@@ -857,42 +857,52 @@ void Map::repeatLastMowingPoint(){
   }
 }
 
+bool docktargetshifted = false;
+Point docktargetshiftpoint;
+
 void Map::run(){
   switch (wayMode){
     case WAY_DOCK:      
-      if (dockPointsIdx < dockPoints.numPoints){
-        targetPoint.assign( dockPoints.points[dockPointsIdx] );
-        // last docking point
-        int shiftoption = random(3);
-        // shiftoption == 0 means keep original point
-        if (dockPointsIdx+1 == dockPoints.numPoints && shiftoption > 0) {
-          Point newtarget;
-          // XXX STEFAN hier Verschiebung einbauen
-          // Berechne den Winkel zwischen den beiden Punkten
-          float angle = pointsAngle(dockPoints.points[dockPointsIdx-1].x(), dockPoints.points[dockPointsIdx-1].y(),
-                                    targetPoint.x(), targetPoint.y());
-          float newAngle;
-
-          // verschiebung des Punktes um 90 grad (PI / 2) zur Linie nach links oder rechts
-          if (shiftoption == 1) {
-            newAngle = scalePI(angle + PI / 2);
+      // last docking point
+      if (dockPointsIdx+1 == dockPoints.numPoints) {
+        if (!docktargetshifted) {
+          docktargetshifted = true;
+          int shiftoption = random(3);
+          // shiftoption == 0 means keep original point
+          if (shiftoption == 0) {
+            docktargetshiftpoint.assign( dockPoints.points[dockPointsIdx] );
           } else {
-            newAngle = scalePI(angle - PI / 2);
+            // XXX STEFAN hier Verschiebung einbauen
+            // Berechne den Winkel zwischen den beiden Punkten
+            float angle = pointsAngle(dockPoints.points[dockPointsIdx-1].x(), dockPoints.points[dockPointsIdx-1].y(),
+                                      dockPoints.points[dockPointsIdx].x(), dockPoints.points[dockPointsIdx].y());
+            float newAngle;
+
+            // verschiebung des Punktes um 90 grad (PI / 2) zur Linie nach links oder rechts
+            if (shiftoption == 1) {
+              newAngle = scalePI(angle + PI / 2);
+            } else {
+              newAngle = scalePI(angle - PI / 2);
+            }
+            
+            // Berechne die Verschiebung in x- und y-Richtung bei 10cm
+            float dxShifted = 0.1 * cos(newAngle);
+            float dyShifted = 0.1 * sin(newAngle);
+
+            docktargetshiftpoint.setXY( dockPoints.points[dockPointsIdx].x() + dxShifted, dockPoints.points[dockPointsIdx].y() + dyShifted );
+
+            CONSOLE.print("STEFAN: Last docking point. Shifted: ");
+            CONSOLE.print(docktargetshiftpoint.x());
+            CONSOLE.print("/");
+            CONSOLE.print(docktargetshiftpoint.y());
+            CONSOLE.println("");
           }
-          
-          // Berechne die Verschiebung in x- und y-Richtung bei 10cm
-          float dxShifted = 0.1 * cos(newAngle);
-          float dyShifted = 0.1 * sin(newAngle);
-
-          newtarget.setXY( targetPoint.x() + dxShifted, targetPoint.y() + dyShifted );
-
-          targetPoint.assign( newtarget );
-          CONSOLE.print("STEFAN: Last docking point. Shifted: ");
-          CONSOLE.print(newtarget.x());
-          CONSOLE.print("/");
-          CONSOLE.print(newtarget.y());
-          CONSOLE.println("");
         }
+        targetPoint.assign( docktargetshiftpoint );
+
+      } else if (dockPointsIdx < dockPoints.numPoints) {
+        docktargetshifted = false;
+        targetPoint.assign( dockPoints.points[dockPointsIdx] );
       }
       break;
     case WAY_MOW:
