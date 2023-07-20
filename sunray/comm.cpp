@@ -1108,7 +1108,7 @@ void handleRead(struct bufferevent* bev, void* arg) {
         		    sharedcmdResponse.clear();
         		}
         
-        		// wait for answer
+        		// wait for answer - lock keeps locked until running out of scope or calling unlock()
         		std::unique_lock<std::mutex> lock(cmdMutex);
                 // mutex is always aquired after cv.wait but released after cv.wait
         		while (true) {
@@ -1136,10 +1136,14 @@ void handleRead(struct bufferevent* bev, void* arg) {
                                        "Content-Length: " + std::to_string(sharedcmdResponse.length()) + "\r\n"
                                        "\r\n" +
                                        sharedcmdResponse;
+                lock.unlock();
                 
                 // Write the response to the client
                 bufferevent_write(bev, response.c_str(), response.length());
+
+                lock.lock();
         	    sharedcmdResponse.clear();
+                lock.unlock();
         
                 // Switch to reading headers for the next request
                 clientData.state = RequestState::ReadHeaders;
