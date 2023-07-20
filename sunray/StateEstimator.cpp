@@ -313,8 +313,8 @@ void computeRobotState(){
   // front gps position
   stateX_mowerfront = stateX + (MOWER_GPS_TO_FRONT/100.0) * cos(stateDelta);
   stateY_mowerfront = stateY + (MOWER_GPS_TO_FRONT/100.0) * sin(stateDelta);
-  stateX_infrontof = stateX + (MOWER_GPS_TO_FRONT/100.0+0.15) * cos(stateDelta);
-  stateY_infrontof = stateY + (MOWER_GPS_TO_FRONT/100.0+0.15) * sin(stateDelta);
+  stateX_infrontof = stateX + (MOWER_GPS_TO_FRONT/100.0+0.05) * cos(stateDelta);
+  stateY_infrontof = stateY + (MOWER_GPS_TO_FRONT/100.0+0.05) * sin(stateDelta);
 
   // compute yaw rotation speed (delta speed)
   stateDeltaSpeed = (stateDelta - stateDeltaLast) / 0.02;  // 20ms timestep
