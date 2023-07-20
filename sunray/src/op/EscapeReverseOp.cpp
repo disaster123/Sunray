@@ -53,7 +53,7 @@ void EscapeReverseOp::begin(){
       orig_motion = MOT_LEFT;
     } else if (robotShouldRotateRight()) {
       orig_motion = MOT_RIGHT;
-    } else if (robotShouldMoveBackward()) {
+    } else if (robotShouldMoveBackward() || maps.trackReverse) {
       orig_motion = MOT_BACKWARD;
       CONSOLE.println("EscapeReverseOp: BUMPER: motion backward");
     } else {
