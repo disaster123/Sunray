@@ -103,7 +103,7 @@ void DockOp::run(){
 
 void DockOp::onTargetReached(){
     CONSOLE.println("DockOp::onTargetReached");
-    if (maps.wayMode == WAY_MOW){
+    if (maps.wayMode == WAY_DOCK || maps.wayMode == WAY_FREE){
       if (CLEAR_OBSTACLES_ONTARGETREACH) {
         maps.clearObstacles(); // clear obstacles if target reached
       }
