@@ -16,8 +16,10 @@
 
 float stateX = 0;  // position-east (m)
 float stateY = 0;  // position-north (m)
-float moved_stateX = 0;  // position-east (m)
-float moved_stateY = 0;  // position-north (m)
+float stateX_mowerfront = 0;  // position-east (m)
+float stateY_mowerfront = 0;  // position-north (m)
+float stateX_infrontof = 0;  // position-east (m)
+float stateY_infrontof = 0;  // position-north (m)
 float stateDelta = 0;  // direction (rad)
 float stateRoll = 0;
 float statePitch = 0;
@@ -309,8 +311,10 @@ void computeRobotState(){
   stateDeltaIMU = 0;
 
   // front gps position
-  moved_stateX = stateX + (MOWER_GPS_TO_FRONT/100.0) * cos(stateDelta);
-  moved_stateY = stateY + (MOWER_GPS_TO_FRONT/100.0) * sin(stateDelta);
+  stateX_mowerfront = stateX + (MOWER_GPS_TO_FRONT/100.0) * cos(stateDelta);
+  stateY_mowerfront = stateY + (MOWER_GPS_TO_FRONT/100.0) * sin(stateDelta);
+  stateX_infrontof = stateX + (MOWER_GPS_TO_FRONT/100.0+0.15) * cos(stateDelta);
+  stateY_infrontof = stateY + (MOWER_GPS_TO_FRONT/100.0+0.15) * sin(stateDelta);
 
   // compute yaw rotation speed (delta speed)
   stateDeltaSpeed = (stateDelta - stateDeltaLast) / 0.02;  // 20ms timestep

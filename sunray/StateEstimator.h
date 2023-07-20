@@ -13,8 +13,10 @@
 
 extern float stateX;  // position-east (m)
 extern float stateY;  // position-north (m)
-extern float moved_stateX;  // position-east (m)
-extern float moved_stateY;  // position-north (m)
+extern float stateX_mowerfront;  // position-east (m)
+extern float stateY_mowerfront;  // position-north (m)
+extern float stateX_infrontof;  // position-east (m)
+extern float stateY_infrontof;  // position-north (m)
 extern float stateDelta;  // direction (rad)
 extern float stateRoll;
 extern float statePitch;
