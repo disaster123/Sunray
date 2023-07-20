@@ -862,6 +862,37 @@ void Map::run(){
     case WAY_DOCK:      
       if (dockPointsIdx < dockPoints.numPoints){
         targetPoint.assign( dockPoints.points[dockPointsIdx] );
+        // last docking point
+        int shiftoption = random(3);
+        // shiftoption == 0 means keep original point
+        if (dockPointsIdx+1 == dockPoints.numPoints && shiftoption > 0) {
+          Point newtarget;
+          // XXX STEFAN hier Verschiebung einbauen
+          // Berechne den Winkel zwischen den beiden Punkten
+          float angle = pointsAngle(dockPoints.points[dockPointsIdx-1].x(), dockPoints.points[dockPointsIdx-1].y(),
+                                    targetPoint.x(), targetPoint.y());
+          float newAngle;
+
+          // verschiebung des Punktes um 90 grad (PI / 2) zur Linie nach links oder rechts
+          if (shiftoption == 1) {
+            newAngle = scalePI(angle + PI / 2);
+          } else {
+            newAngle = scalePI(angle - PI / 2);
+          }
+          
+          // Berechne die Verschiebung in x- und y-Richtung bei 10cm
+          float dxShifted = 0.1 * cos(newAngle);
+          float dyShifted = 0.1 * sin(newAngle);
+
+          newtarget.setXY( targetPoint.x() + dxShifted, targetPoint.y() + dyShifted );
+
+          targetPoint.assign( newtarget );
+          CONSOLE.print("STEFAN: Last docking point. Shifted: ");
+          CONSOLE.print(newtarget.x());
+          CONSOLE.print("/");
+          CONSOLE.print(newtarget.y());
+          CONSOLE.println("");
+        }
       }
       break;
     case WAY_MOW:
