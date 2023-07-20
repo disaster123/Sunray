@@ -402,6 +402,12 @@ void trackLine(bool runControl){
     }
   }
 
+  if (targetReached) {
+    // do not proceed if we have target reached
+    linear = 0;
+    angular = 0;
+  }
+
   if (runControl){
 
     if ((angular > 0) && ((rotateLeft || rotateRight) && ((trackerDiffDelta_turn_millis + 2000) < millis() || (trackerDiffDelta_turn == 0)))) {
