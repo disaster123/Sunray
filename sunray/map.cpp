@@ -1439,7 +1439,9 @@ bool Map::nextPoint(bool sim,float stateX, float stateY, bool nextmowpoint){
   CONSOLE.print("nextPoint sim=");
   CONSOLE.print(sim);
   CONSOLE.print(" wayMode=");
-  CONSOLE.println(wayMode);
+  CONSOLE.print(wayMode);
+  CONSOLE.print(" mowpointidx=");
+  CONSOLE.println(mowPointsIdx);
   if (wayMode == WAY_DOCK){
     return (nextDockPoint(sim));
   } 
@@ -1491,6 +1493,13 @@ bool Map::nextPoint(bool sim,float stateX, float stateY, bool nextmowpoint){
 
     // move to WAY_FREE list
     wayMode = WAY_FREE;
+
+    CONSOLE.print("nextPoint sim=");
+    CONSOLE.print(sim);
+    CONSOLE.print(" wayMode now=");
+    CONSOLE.print(wayMode);
+    CONSOLE.print(" mowpointidx=");
+    CONSOLE.println(mowPointsIdx);
 
     return true;
 #endif
