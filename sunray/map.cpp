@@ -886,8 +886,8 @@ void Map::run(){
             }
             
             // Berechne die Verschiebung in x- und y-Richtung bei 10cm
-            float dxShifted = 0.03 * cos(newAngle);
-            float dyShifted = 0.03 * sin(newAngle);
+            float dxShifted = 0.07 * cos(newAngle);
+            float dyShifted = 0.07 * sin(newAngle);
 
             docktargetshiftpoint.setXY( dockPoints.points[dockPointsIdx].x() + dxShifted, dockPoints.points[dockPointsIdx].y() + dyShifted );
 
