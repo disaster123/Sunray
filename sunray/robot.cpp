@@ -802,7 +802,8 @@ bool detectObstacle(){
   if (bumper.obstacle()) {
     if (bumperTimeout == 0) {
       bumperTimeout = millis() + BUMPER_DEADTIME;
-    } else if (bumperTimeout < millis()) {
+    }
+    if (bumperTimeout < millis() || maps.wayMode == WAY_DOCK) {
       bumperTimeout = 0;
       CONSOLE.println("bumper obstacle!");    
       statMowBumperCounter++;
