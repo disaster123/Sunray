@@ -33,8 +33,6 @@ void EscapeReverseOp::begin(){
     bumper_mode = false;
     lift_mode = false;
 
-    motor.stopImmediately(false);
-
     if (detectLift()) {
         lift_mode = true;
         motor.setMowState(false);
@@ -59,6 +57,9 @@ void EscapeReverseOp::begin(){
     } else {
       orig_motion = MOT_FORWARD;
     }
+
+    // this has to run AFTER motion detection above
+    motor.stopImmediately(false);
 }
 
 
