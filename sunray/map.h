@@ -231,9 +231,9 @@ class Map
   private:
     void finishedUploadingMap();
     void checkMemoryErrors();
-    bool nextMowPoint(bool sim);
-    bool nextDockPoint(bool sim);
-    bool nextFreePoint(bool sim);        
+    bool nextMowPoint(bool sim, bool nextpoint);
+    bool nextDockPoint(bool sim, bool nextpoint);
+    bool nextFreePoint(bool sim, bool nextpoint);
     float distance(Point &src, Point &dst);        
     float pointsAngle(float x1, float y1, float x2, float y2);
     float scalePI(float v);

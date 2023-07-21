@@ -1332,7 +1332,7 @@ bool Map::findObstacleSafeMowPoint(Point &newTargetPoint, float stateX, float st
       CONSOLE.println("findObstacleSafeMowPoint: no further obstacle on mowline but mowpoint is inside obstacle. Skip to next real mowpoint.");
       // we need to skip to next mow point
       // try next mowing point
-      if (!nextMowPoint(false)){
+      if (!nextMowPoint(false, true)){
         CONSOLE.println("findObstacleSafeMowPoint error: no more mowing points reachable due to obstacles");
         return false;
       }
@@ -1443,18 +1443,18 @@ bool Map::nextPoint(bool sim,float stateX, float stateY, bool nextmowpoint){
   CONSOLE.print(" mowpointidx=");
   CONSOLE.println(mowPointsIdx);
   if (wayMode == WAY_DOCK){
-    return (nextDockPoint(sim));
+    return (nextDockPoint(sim, nextmowpoint));
   } 
   else if (wayMode == WAY_MOW) {
 #ifndef __linux__
-    return (nextMowPoint(sim));
+    return (nextMowPoint(sim, nextmowpoint));
 #else
     Point src;
     Point dst;
 
     if (sim) {
       // if we run in sim mode - skip this code
-      return (nextMowPoint(sim));
+      return (nextMowPoint(sim, nextmowpoint));
     }
 
     src.setXY(stateX, stateY);
@@ -1469,7 +1469,7 @@ bool Map::nextPoint(bool sim,float stateX, float stateY, bool nextmowpoint){
 
     // only skip to next mowpoint if nextmowpoint is set true
     // this should normaly only happen by linetracker in WAY_FREE mode
-    if (nextmowpoint && !nextMowPoint(false)){
+    if (!nextMowPoint(false, nextmowpoint)){
       CONSOLE.println("Map::nextPoint: ERROR: no more mowing points!");
       return false;
     }
@@ -1505,7 +1505,7 @@ bool Map::nextPoint(bool sim,float stateX, float stateY, bool nextmowpoint){
 #endif
   } 
   else if (wayMode == WAY_FREE) {
-    bool r = nextFreePoint(sim);
+    bool r = nextFreePoint(sim, nextmowpoint);
     // if WAY_FREE ended - it switches to WAY_MOW - reschedule function
     if (wayMode == WAY_MOW && !sim) {
       CONSOLE.println("nextFreePoint ended and is now WAY_MOW again");
@@ -1517,7 +1517,10 @@ bool Map::nextPoint(bool sim,float stateX, float stateY, bool nextmowpoint){
 
 
 // get next mowing point
-bool Map::nextMowPoint(bool sim){  
+bool Map::nextMowPoint(bool sim, bool nextpoint){  
+  if (!nextpoint) {
+    return true;
+  }
   if (shouldMow){
     if (mowPointsIdx+1 < mowPoints.numPoints){
       // next mowing point       
@@ -1540,7 +1543,10 @@ bool Map::nextMowPoint(bool sim){
 }
 
 // get next docking point  
-bool Map::nextDockPoint(bool sim){    
+bool Map::nextDockPoint(bool sim, bool nextpoint){    
+  if (!nextpoint) {
+    return true;
+  }
   if (shouldDock){
     // should dock  
     if (dockPointsIdx+1 < dockPoints.numPoints){
@@ -1601,7 +1607,10 @@ bool Map::nextDockPoint(bool sim){
 }
 
 // get next free point  
-bool Map::nextFreePoint(bool sim){
+bool Map::nextFreePoint(bool sim, bool nextpoint){
+  if (!nextpoint) {
+    return true;
+  }
   // free points
   if (freePointsIdx+1 < freePoints.numPoints){
     if (!sim) lastTargetPoint.assign(targetPoint);
