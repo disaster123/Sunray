@@ -153,6 +153,13 @@ void MowOp::onObstacle(){
       return;
     }
 
+    // this is the docking point BEFORE last point (penultimate)
+    // so we're most probably still in docking station
+    if (maps.isUndocking() && ((maps.dockPointsIdx+2) == maps.dockPoints.numPoints) ) {
+      CONSOLE.println("MowOp: triggerObstacle: ignoring, because charger connected - may be undocking");
+      return;
+    }
+
     if (maps.isDocking()) {    
         CONSOLE.println("MowOp: maps.isDocking: XXX - how can this happen? should be DockOp");
         if (maps.retryDocking(stateX, stateY)) {
