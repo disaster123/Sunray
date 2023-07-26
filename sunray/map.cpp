@@ -1486,6 +1486,12 @@ bool Map::nextPoint(bool sim,float stateX, float stateY, bool nextmowpoint){
         break;
       }
 
+      // if we're searching for next point try again?
+      if (nextmowpoint) {
+        CONSOLE.println("Map::nextPoint: WARN: needed to skip point!");
+        return nextPoint(sim, stateX, stateY, true);
+      }
+
       // no path found - abort with error
       CONSOLE.println("Map::nextPoint: ERROR: no path from src to dst found!");
       return false;
