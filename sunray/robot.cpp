@@ -789,7 +789,14 @@ bool detectObstacle(){
         }
         if (liftTimeout < millis() || LIFT_DEADTIME == 0) {
           liftTimeout = 0;
-          CONSOLE.println("lift sensor obstacle!");    
+          int liftleft_raw;
+          int liftright_raw;
+          robotDriver.getDebugVars(liftleft_raw, liftright_raw);
+          CONSOLE.print("lift sensor obstacle! left: ");    
+          CONSOLE.print(liftleft_raw);    
+          CONSOLE.print(" right: ");    
+          CONSOLE.print(liftright_raw);    
+          CONSOLE.println("");    
           statMowBumperCounter++;
           triggerObstacle();    
           return true;
