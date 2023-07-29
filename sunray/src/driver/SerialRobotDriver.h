@@ -40,6 +40,8 @@ class SerialRobotDriver: public RobotDriver {
     bool triggeredLeftBumper;
     bool triggeredRightBumper;
     bool triggeredLift;
+    int liftleft;
+    int liftright;
     bool triggeredRain;
     bool triggeredStopButton;
     void begin() override;
@@ -56,6 +58,7 @@ class SerialRobotDriver: public RobotDriver {
     bool setLedState(int ledNumber, bool greenState, bool redState);
     bool setFanPowerState(bool state);
     bool setImuPowerState(bool state);
+    void getDebugVars(int &lastliftleft, int &lastliftright) override;
   protected:    
     bool ledPanelInstalled;
     #ifdef __linux__
