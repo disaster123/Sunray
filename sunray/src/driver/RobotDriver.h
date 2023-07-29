@@ -25,6 +25,9 @@ class RobotDriver {
     virtual bool getRobotID(String &id) = 0;
     virtual bool getMcuFirmwareVersion(String &name, String &ver) = 0;    
     virtual float getCpuTemperature() = 0;
+    // get debug stuff
+    virtual void getDebugVars(int &lastliftleft, int &lastliftright) {
+    } 
 };
 
 class MotorDriver {

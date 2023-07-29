@@ -32,6 +32,8 @@ void SerialRobotDriver::begin(){
   triggeredRain = false;
   triggeredStopButton = false;
   triggeredLift = false;
+  liftleft = 0;
+  liftright = 0;
   motorFault = false;
   mcuCommunicationLost = true;
   nextSummaryTime = 0;
@@ -300,6 +302,10 @@ void SerialRobotDriver::motorResponse(){
         triggeredLift = (intValue != 0);
       } else if (counter == 7){
         triggeredStopButton = (intValue != 0);
+      } else if (counter == 8){
+        liftleft = intValue;
+      } else if (counter == 9){
+        liftright = intValue;
       } 
       counter++;
       lastCommaIdx = idx;
@@ -479,6 +485,11 @@ void SerialRobotDriver::updatePanelLEDs(){
   } else {
     setLedState(1, false, false);
   }
+}
+
+void SerialRobotDriver::getDebugVars(int &lastliftleft, int &lastliftright) {
+  lastliftright = liftright;
+  lastliftleft = liftleft;
 }
 
 void SerialRobotDriver::run(){  
