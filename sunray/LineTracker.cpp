@@ -447,7 +447,16 @@ void trackLine(bool runControl){
         CONSOLE.print(" motorMowSenseLP: ");
         CONSOLE.print(motor.motorMowSenseLP);
         CONSOLE.print(" trackerDiffDelta: ");
-        CONSOLE.println(trackerDiffDelta);
+        CONSOLE.print(trackerDiffDelta);
+        int liftleft_raw;
+        int liftright_raw;
+        robotDriver.getDebugVars(liftleft_raw, liftright_raw);
+        CONSOLE.print(" liftleft_raw: ");
+        CONSOLE.print(liftleft_raw);
+        CONSOLE.print(" lifright_raw: ");
+        CONSOLE.print(liftright_raw);
+        CONSOLE.println("");
+
         ltargetReached = targetReached;
         langleToTargetFits = angleToTargetFits;
     }
