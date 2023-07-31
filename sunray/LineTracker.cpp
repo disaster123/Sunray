@@ -453,7 +453,7 @@ void trackLine(bool runControl){
         robotDriver.getDebugVars(liftleft_raw, liftright_raw);
         CONSOLE.print(" liftleft_raw: ");
         CONSOLE.print(liftleft_raw);
-        CONSOLE.print(" lifright_raw: ");
+        CONSOLE.print(" liftright_raw: ");
         CONSOLE.print(liftright_raw);
         CONSOLE.println("");
 
