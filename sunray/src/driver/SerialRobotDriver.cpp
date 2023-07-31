@@ -514,7 +514,7 @@ void SerialRobotDriver::run(){
       resetMotorTicks = true;
       mcuCommunicationLost = true;
     }    
-    if ( (cmdMotorResponseCounter < 30) ) { // || (cmdSummaryResponseCounter == 0) ){
+    if ( (cmdMotorResponseCounter < 25) ) { // || (cmdSummaryResponseCounter == 0) ){
       CONSOLE.print("WARN: SerialRobot unmet communication frequency: motorFreq=");
       CONSOLE.print(cmdMotorCounter);
       CONSOLE.print("/");
