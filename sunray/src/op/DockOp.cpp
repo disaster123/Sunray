@@ -16,6 +16,7 @@ DockOp::DockOp(){
   mapRoutingFailedCounter = 0;
   dockReasonRainTriggered = false;
   dockReasonRainAutoStartTime = 0;
+  initiatedByOperator = true;
 }
 
 
