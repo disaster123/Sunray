@@ -126,7 +126,7 @@ void trackLine(bool runControl){
   Point lastTarget = maps.lastTargetPoint;
   float linear = 1.0;  
   bool mow = true;
-  if (stateOp == OP_DOCK) mow = false;
+  if ( maps.isUndocking() || maps.isDocking() || stateOp == OP_DOCK ) mow = false;
   float angular = 0;      
   float targetDelta = pointsAngle(stateX, stateY, target.x(), target.y());      
   if (maps.trackReverse) targetDelta = scalePI(targetDelta + PI);
