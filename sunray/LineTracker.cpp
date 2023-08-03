@@ -426,15 +426,19 @@ void trackLine(bool runControl){
     }
 
     if ((targetReached != ltargetReached) || (angleToTargetFits != langleToTargetFits)) {
-        CONSOLE.print("targetReached: ");
+        CONSOLE.print("target: ");
+        CONSOLE.print(target.x());
+        CONSOLE.print("/");
+        CONSOLE.print(target.y());
+        CONSOLE.print(" reached: ");
         CONSOLE.print(targetReached);
-        CONSOLE.print(" targetDist: ");
-        CONSOLE.print(targetDist);
         CONSOLE.print(" angleToTargetFits: ");
         CONSOLE.print(angleToTargetFits);
         CONSOLE.print(" (");
         CONSOLE.print(targetangle);
-        CONSOLE.print(") angular: ");
+        CONSOLE.print(") targetDist: ");
+        CONSOLE.print(targetDist);
+        CONSOLE.print(" angular: ");
         CONSOLE.print(angular);
         CONSOLE.print(" motorMowRpmCurr: ");
         CONSOLE.print(motor.motorMowRpmCurr);
