@@ -1329,14 +1329,8 @@ bool Map::findObstacleSafeMowPoint(Point &newTargetPoint, float stateX, float st
   if (best_dist == 99999) {
     bool safe = (isPointInsideObstacle(dst, -1) == -1);
     if (!safe) {
-      CONSOLE.println("findObstacleSafeMowPoint: no further obstacle on mowline but mowpoint is inside obstacle. Skip to next real mowpoint.");
-      // we need to skip to next mow point
-      // try next mowing point
-      if (!nextMowPoint(false, true)){
-        CONSOLE.println("findObstacleSafeMowPoint error: no more mowing points reachable due to obstacles");
-        return false;
-      }
-      return findObstacleSafeMowPoint(newTargetPoint, stateX, stateY);
+      CONSOLE.println("findObstacleSafeMowPoint: no further obstacle on mowline but mowpoint is inside obstacle.");
+      return false;
     }
 
     CONSOLE.print("findObstacleSafeMowPoint target ");
@@ -1478,8 +1472,8 @@ bool Map::nextPoint(bool sim,float stateX, float stateY, bool nextmowpoint){
     // some special logic if findPath fails - like skip to next point...
     while (true) {
       if (!findObstacleSafeMowPoint(dst, src.x(), src.y())) {
-        CONSOLE.println("Map::nextPoint: ERROR: no safe mow point found!");
-        return false;
+        CONSOLE.println("Map::nextPoint: findObstacleSafeMowPoint: failed - skip to next real mowpoint!");
+        return nextPoint(sim, stateX, stateY, true);
       }
       if (findPath(src, dst)) {
         // path found
