@@ -1508,7 +1508,22 @@ bool Map::nextPoint(bool sim,float stateX, float stateY, bool nextmowpoint){
     bool r = nextFreePoint(sim, nextmowpoint);
     // if WAY_FREE ended - it switches to WAY_MOW - reschedule function
     if (wayMode == WAY_MOW && !sim) {
-      CONSOLE.println("nextFreePoint ended and is now WAY_MOW again");
+      CONSOLE.print("nextFreePoint ended and is now WAY_MOW again state: ");
+      CONSOLE.print(stateX);
+      CONSOLE.print("/");
+      CONSOLE.print(stateY);
+      CONSOLE.print(" real dst mow point: ");
+      CONSOLE.print(mowPoints.points[mowPointsIdx].x());
+      CONSOLE.print("/");
+      CONSOLE.println(mowPoints.points[mowPointsIdx].y());
+
+      nextmowpoint = false;
+      if (mowPoints.points[mowPointsIdx].x() == lastTargetPoint.x() &&
+          mowPoints.points[mowPointsIdx].y() == lastTargetPoint.y() ) {
+          // target was real mow target - otherwise recalc from current situation
+          nextmowpoint = true;
+      }
+
       return nextPoint(sim, stateX, stateY, nextmowpoint);
     }
     return r;
