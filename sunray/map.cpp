@@ -1066,7 +1066,7 @@ bool Map::startMowing(float stateX, float stateY){
   shouldDock = false;
   shouldRetryDock = false;
   shouldMow = true;    
-  // nextPointinProgress = false;
+  nextPointinProgress = false;
   if (mowPoints.numPoints > 0){
     // we enter also here after an obstacle
     // we need a complete recalc of situation
