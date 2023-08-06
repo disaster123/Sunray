@@ -78,7 +78,7 @@ sudo -u pi screen -dmS proxy python3 /home/pi/Sunray/alfred_proxy.py
 
 if [ ! -e "/tmp/kernel_drv_wlan" ]; then
   echo "delayed kernel driver loading..."
-  ( sleep 3; bash -c 'rmmod 8821cu && ( sleep 5; insmod /home/pi/Sunray/8821cu.ko rtw_drv_log_level=0 rtw_led_ctrl=0 rtw_vht_enable=2 rtw_power_mgnt=1 rtw_dfs_region_domain=1; systemctl restart networking; systemctl restart wpa_supplicant;  )' >/home/pi/Sunray/kernel_driver.log 2>&1 ) &
+  ( sleep 3; bash -c 'rmmod 8821cu && ( sleep 5; insmod /home/pi/Sunray/8821cu.ko rtw_drv_log_level=1 rtw_led_ctrl=0 rtw_power_mgnt=1 rtw_country_code=DE; systemctl restart networking; systemctl restart wpa_supplicant;  )' >/home/pi/Sunray/kernel_driver.log 2>&1 ) &
   touch "/tmp/kernel_drv_wlan"
 fi
 
