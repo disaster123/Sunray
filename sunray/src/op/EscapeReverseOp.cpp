@@ -89,7 +89,7 @@ void EscapeReverseOp::run(){
 
     // if bumper_mode and bumper was not released yet and bumper is released now
     if (bumper_mode && !bumperReleased && !bumper.obstacle() && !detectLift()) {
-      CONSOLE.println("BUMPER: now released - set new obstacle position and drive 500ms back");
+      CONSOLE.println("BUMPER: now released - set new obstacle position and drive 1s back");
       // bumper is released after obstacle was detected
       bumperReleased = true;
       // overwrite
@@ -97,7 +97,7 @@ void EscapeReverseOp::run(){
       orig_stateY = stateY;
 
       // from now on drive back 1s
-      driveReverseStopTime = millis() + 500;
+      driveReverseStopTime = millis() + 1000;
     }
 
     // this code does not work - as it should only work for bumper not for lift
