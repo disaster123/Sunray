@@ -263,8 +263,11 @@ void trackLine(bool runControl){
         CONSOLE.print(" target: ");
         CONSOLE.print(target.x());
         CONSOLE.print("/");
-        CONSOLE.println(target.y());
+        CONSOLE.print(target.y());
+        CONSOLE.println(" set stateX and statY to mowerfront");
         targetReached = true;
+        stateX = stateX_mowerfront;
+        stateY = stateY_mowerfront;
       }
     }
 
