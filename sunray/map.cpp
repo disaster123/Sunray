@@ -1475,6 +1475,13 @@ bool Map::nextPoint(bool sim,float stateX, float stateY, bool nextmowpoint){
         CONSOLE.println("Map::nextPoint: findObstacleSafeMowPoint: failed - skip to next real mowpoint!");
         return nextPoint(sim, stateX, stateY, true);
       }
+      if (dst.x() == lastTargetPoint.x() && dst.y() == lastTargetPoint.y()) {
+        // new target is identical to last target - skip to next one by setting current position to target
+        if (!findObstacleSafeMowPoint(dst, lastTargetPoint.x(), lastTargetPoint.y())) {
+          CONSOLE.println("Map::nextPoint: findObstacleSafeMowPoint: failed - skip to next real mowpoint!");
+          return nextPoint(sim, stateX, stateY, true);
+        }
+      }
       if (findPath(src, dst)) {
         // path found
         break;
