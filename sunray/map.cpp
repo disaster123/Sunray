@@ -1515,7 +1515,8 @@ bool Map::nextPoint(bool sim,float stateX, float stateY, bool nextmowpoint){
       CONSOLE.print(" real dst mow point: ");
       CONSOLE.print(mowPoints.points[mowPointsIdx].x());
       CONSOLE.print("/");
-      CONSOLE.println(mowPoints.points[mowPointsIdx].y());
+      CONSOLE.print(mowPoints.points[mowPointsIdx].y());
+      CONSOLE.print(" real next mowpoint allowed: ");
 
       nextmowpoint = false;
       if (mowPoints.points[mowPointsIdx].x() == lastTargetPoint.x() &&
@@ -1523,6 +1524,7 @@ bool Map::nextPoint(bool sim,float stateX, float stateY, bool nextmowpoint){
           // target was real mow target - otherwise recalc from current situation
           nextmowpoint = true;
       }
+      CONSOLE.println(nextmowpoint);
 
       return nextPoint(sim, stateX, stateY, nextmowpoint);
     }
