@@ -1208,9 +1208,18 @@ bool Map::isInsidePerimeterOutsideExclusions(Point &pt){
 }
 
 
-int Map::isPointInsideObstacle(Point pt, int skipidx){  
-  for (int obst_ins=0; obst_ins < obstacles.numPolygons; obst_ins++){
-    if (skipidx != obst_ins && pointIsInsidePolygon( obstacles.polygons[obst_ins], pt)){
+int Map::isPointInsideObstacle(Point pt, int skipidx){
+  // shrink all obstacles for test - identical to findPath
+  if (!pathFinderObstacles.alloc(obstacles.numPolygons)) return 0;
+
+  int idx = 0;
+  for (int i=0; i < obstacles.numPolygons; i++){
+    if (!polygonOffset(obstacles.polygons[i], pathFinderObstacles.polygons[idx], -0.04)) return 0;
+    idx++;
+  }  
+
+  for (int obst_ins=0; obst_ins < pathFinderObstacles.numPolygons; obst_ins++){
+    if (skipidx != obst_ins && pointIsInsidePolygon( pathFinderObstacles.polygons[obst_ins], pt)){
       CONSOLE.print("point conflicts with idx: ");
       CONSOLE.print(obst_ins);
       CONSOLE.print(": ");
