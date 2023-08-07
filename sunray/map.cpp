@@ -2246,7 +2246,10 @@ bool Map::findPath(Point &src, Point &dst){
       }
       //CONSOLE.print("lowInd=");
       //CONSOLE.println(lowInd);
-      if (lowInd == -1) break;
+      if (lowInd == -1) {
+        CONSOLE.println("findPath: break by lowInd == -1");
+        break;
+      }
       currentNode = &pathFinderNodes.nodes[lowInd]; 
       // console.log('ol '+openList.length + ' cl ' + closedList.length + ' ' + currentNode.pos.X + ',' + currentNode.pos.Y);
       // End case -- result has been found, return the traced path
@@ -2267,7 +2270,10 @@ bool Map::findPath(Point &src, Point &dst){
         neighborIdx = findNextNeighbor(pathFinderNodes, pathFinderObstacles, *currentNode, neighborIdx);
         time2 = time2 + ( millis() - time_tmp );
 	time4 = time4 + 1;
-        if (neighborIdx == -1) break;
+        if (neighborIdx == -1) {
+          CONSOLE.println("pathfinder: break: neighborIdx == -1");      
+          break;
+        }
 	if (time4 > 350) {
           CONSOLE.println("pathfinder: no path - fast exit");      
           return false;
@@ -2362,7 +2368,8 @@ bool Map::findPath(Point &src, Point &dst){
       }            
     } else {
       // No result was found
-      CONSOLE.println("pathfinder: no path");      
+      CONSOLE.print("pathfinder: no path - currentNode distance: ");
+      CONSOLE.println( (currentNode == NULL) ? -9999.0 : distance(*currentNode->point, *end->point) );
       return false;
       //freePoints.alloc(2);
       //freePoints.points[0].assign(src);    
