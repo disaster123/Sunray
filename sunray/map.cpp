@@ -1495,13 +1495,6 @@ bool Map::nextPoint(bool sim,float stateX, float stateY, bool nextmowpoint){
       if (findPath(src, dst)) {
         // path found
         break;
-      } else {
-        CONSOLE.println("Map::nextPoint: findPath failed - try again without obstacles!");
-        clearObstacles();
-        if (findPath(src, dst)) {
-          // path found
-          break;
-        }
       }
 
       // if we're searching for next point try again?
