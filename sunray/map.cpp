@@ -1511,9 +1511,8 @@ bool Map::nextPoint(bool sim,float stateX, float stateY, bool nextmowpoint){
       }
 
       // no path found - abort with error
-      CONSOLE.println("Map::nextPoint: ERROR: no path from src to dst found - skip to next real mowpoint!");
-      return nextPoint(sim, stateX, stateY, true);
-      // return false;
+      CONSOLE.println("Map::nextPoint: ERROR: no path from src to dst found!");
+      return false;
     }
 
     // move to WAY_FREE list
