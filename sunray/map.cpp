@@ -2277,9 +2277,9 @@ bool Map::findPath(Point &src, Point &dst){
           CONSOLE.println("pathfinder: break: neighborIdx == -1");      
           break;
         }
-	if (time4 > 350) {
-          CONSOLE.println("pathfinder: no path - fast exit");      
-          return false;
+	if (time4 == 350) {
+          CONSOLE.println("pathfinder: no path - fast exit - cur disabled");      
+          // return false;
 	}
         Node* neighbor = &pathFinderNodes.nodes[neighborIdx];                
         
