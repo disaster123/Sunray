@@ -1561,6 +1561,13 @@ bool Map::nextMowPoint(bool sim, bool nextpoint){
       // next mowing point       
       if (!sim) lastTargetPoint.assign(targetPoint);
       if (!sim) mowPointsIdx++;
+
+      if (!sim) {
+        while (mowPoints.points[mowPointsIdx].x() == 0.0 && mowPoints.points[mowPointsIdx].y() == 0.0) {
+          CONSOLE.println("WARN: skip illegal MOWPOINT 0.0");
+          mowPointsIdx++;
+        }
+      }
       //if (!sim) targetPointIdx++;      
       return true;
     } else {
