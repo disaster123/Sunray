@@ -149,14 +149,14 @@ void MowOp::onObstacle(){
     statMowObstacles++;      
 
     if (battery.chargerConnected()) {
-      CONSOLE.println("MowOp: triggerObstacle: ignoring, because charger connected - may be undocking");
+      CONSOLE.println("MowOp: triggerObstacle: ignoring, because charger connected");
       return;
     }
 
     // this is the docking point BEFORE last point (penultimate)
     // so we're most probably still in docking station
-    if (maps.isUndocking() && ((maps.dockPointsIdx+2) == maps.dockPoints.numPoints) ) {
-      CONSOLE.println("MowOp: triggerObstacle: ignoring, because charger connected - may be undocking");
+    if (maps.isUndocking() && (maps.dockPointsIdx >= maps.dockPoints.numPoints-2)) {
+      CONSOLE.println("MowOp: triggerObstacle: ignoring because near dock!");
       return;
     }
 
