@@ -1208,13 +1208,13 @@ bool Map::isInsidePerimeterOutsideExclusions(Point &pt){
 }
 
 
-int Map::isPointInsideObstacle(Point pt, int skipidx){
+int Map::isPointInsideObstacle(Point pt, int skipidx, float offset){
   // shrink all obstacles for test - identical to findPath
   if (!pathFinderObstacles.alloc(obstacles.numPolygons)) return 0;
 
   int idx = 0;
   for (int i=0; i < obstacles.numPolygons; i++){
-    if (!polygonOffset(obstacles.polygons[i], pathFinderObstacles.polygons[idx], -0.04)) return 0;
+    if (!polygonOffset(obstacles.polygons[i], pathFinderObstacles.polygons[idx], offset)) return 0;
     idx++;
   }  
 
@@ -1281,7 +1281,7 @@ bool Map::findObstacleSafeMowPoint(Point &newTargetPoint, float stateX, float st
     Point sect;
     if (linePolygonIntersectPoint( src, dst, obstacles.polygons[idx], sect)) {
       float dist_obst = distance(src, sect);
-      bool safe = (isPointInsideObstacle(sect, idx) == -1);
+      bool safe = (isPointInsideObstacle(sect, idx, 0) == -1);
 
       CONSOLE.print("findObstacleSafeMowPoint: ");
       CONSOLE.print(idx);
@@ -1308,7 +1308,7 @@ bool Map::findObstacleSafeMowPoint(Point &newTargetPoint, float stateX, float st
         Point sect_back;
         if (linePolygonIntersectPoint( dst, src, obstacles.polygons[idx], sect_back)) {
           float dist_obst = distance(src, sect_back);
-          bool safe = (isPointInsideObstacle(sect_back, idx) == -1);
+          bool safe = (isPointInsideObstacle(sect_back, idx, 0) == -1);
 
           CONSOLE.print("findObstacleSafeMowPoint:");
           CONSOLE.print(idx);
@@ -1336,7 +1336,7 @@ bool Map::findObstacleSafeMowPoint(Point &newTargetPoint, float stateX, float st
 
   // no obstacle on mowline between state and dst
   if (best_dist == 99999) {
-    bool safe = (isPointInsideObstacle(dst, -1) == -1);
+    bool safe = (isPointInsideObstacle(dst, -1, 0) == -1);
     if (!safe) {
       CONSOLE.println("findObstacleSafeMowPoint: no further obstacle on mowline but mowpoint is inside obstacle.");
       return false;
@@ -1463,7 +1463,7 @@ bool Map::nextPoint(bool sim,float stateX, float stateY, bool nextmowpoint){
     src.setXY(stateX, stateY);
 
     // check if src is inside obstacle - this will prevent us from finding a path
-    int ob_idx = isPointInsideObstacle(src, -1);
+    int ob_idx = isPointInsideObstacle(src, -1, -0.03);
     // src is inside obstacle - this might be problematic for finding a path
     if ( ob_idx != -1 ) {
       CONSOLE.println("Map::nextPoint: WARN: src is inside obstacle - remove obstacle!");
