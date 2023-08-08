@@ -1505,8 +1505,8 @@ bool Map::nextPoint(bool sim,float stateX, float stateY, bool nextmowpoint){
 
       // no path found - abort with error
       stateSensor = SENS_MOTOR_ERROR;
-      setOperation(OP_ERROR);
-      return false;
+      setOperation(OP_ERROR, false);
+      return true;
     }
 
     // move to WAY_FREE list
