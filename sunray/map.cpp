@@ -1504,7 +1504,8 @@ bool Map::nextPoint(bool sim,float stateX, float stateY, bool nextmowpoint){
       }
 
       // no path found - abort with error
-      CONSOLE.println("Map::nextPoint: ERROR: no path from src to dst found!");
+      stateSensor = SENS_MOTOR_ERROR;
+      setOperation(OP_ERROR);
       return false;
     }
 
