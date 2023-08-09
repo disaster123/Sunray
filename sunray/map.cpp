@@ -1481,14 +1481,14 @@ bool Map::nextPoint(bool sim,float stateX, float stateY, bool nextmowpoint){
     // some special logic if findPath fails - like skip to next point...
     while (true) {
       if (!findObstacleSafeMowPoint(dst, src.x(), src.y())) {
-        CONSOLE.println("Map::nextPoint: findObstacleSafeMowPoint: failed - skip to next real mowpoint!");
+        CONSOLE.println("Map::nextPoint: WARN: findObstacleSafeMowPoint: failed - skip to next real mowpoint!");
         return nextPoint(sim, stateX, stateY, true);
       }
       if (dst.x() == lastTargetPoint.x() && dst.y() == lastTargetPoint.y()) {
-        CONSOLE.println("Map::nextPoint: rerun findObstacleSafeMowPoint with lastTargetPoint");
+        CONSOLE.println("Map::nextPoint: WARN: rerun findObstacleSafeMowPoint with lastTargetPoint");
         // new target is identical to last target - skip to next one by setting current position to target
         if (!findObstacleSafeMowPoint(dst, lastTargetPoint.x(), lastTargetPoint.y())) {
-          CONSOLE.println("Map::nextPoint: findObstacleSafeMowPoint: failed - skip to next real mowpoint!");
+          CONSOLE.println("Map::nextPoint: WARN: findObstacleSafeMowPoint: failed - skip to next real mowpoint!");
           return nextPoint(sim, stateX, stateY, true);
         }
       }
@@ -1496,7 +1496,7 @@ bool Map::nextPoint(bool sim,float stateX, float stateY, bool nextmowpoint){
         // path found
         break;
       } else {
-        CONSOLE.println("Map::nextPoint: findPath failed - try again without obstacles!");
+        CONSOLE.println("Map::nextPoint: WARN: findPath failed - try again without obstacles!");
         clearObstacles();
         if (findPath(src, dst)) {
           // path found
