@@ -49,6 +49,9 @@ int get_turn_direction_preference() {
 	  cur_angle = scalePI(stateDelta + PI);
 	  targetDelta = scalePI(targetDelta + PI);
   }
+  if (maps.trackReverse) {
+	  cur_angle = scalePI(stateDelta + PI);
+  }
 
   // create circle / octagon around center angle 0 - "360"
   circle.points[0].setXY(center_x + cos(deg2rad(0)) * r, center_y + sin(deg2rad(0)) * r);
