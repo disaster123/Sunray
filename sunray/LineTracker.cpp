@@ -401,11 +401,11 @@ void trackLine(bool runControl){
     }
   }
 
-  if (targetReached) {
-    // do not proceed if we have target reached
-    linear = 0;
-    angular = 0;
-  }
+  // if (targetReached) {
+  //   // do not proceed if we have target reached
+  //   linear = 0;
+  //   angular = 0;
+  // }
 
   if (runControl){
 
