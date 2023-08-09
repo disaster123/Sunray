@@ -1338,7 +1338,7 @@ bool Map::findObstacleSafeMowPoint(Point &newTargetPoint, float stateX, float st
   if (best_dist == 99999) {
     bool safe = (isPointInsideObstacle(dst, -1, 0) == -1);
     if (!safe) {
-      CONSOLE.println("findObstacleSafeMowPoint: no further obstacle on mowline but mowpoint is inside obstacle.");
+      CONSOLE.println("findObstacleSafeMowPoint: WARN: no further obstacle on mowline but mowpoint is inside obstacle.");
       return false;
     }
 
