@@ -21,7 +21,7 @@ float stanleyTrackingNormalP = STANLEY_CONTROL_P_NORMAL;
 float stanleyTrackingSlowK = STANLEY_CONTROL_K_SLOW;
 float stanleyTrackingSlowP = STANLEY_CONTROL_P_SLOW;    
 
-float setSpeed = 0.1; // linear speed (m/s)
+float setSpeed = 0.15; // linear speed (m/s)
 Point last_rotation_target;
 bool rotateLeft = false;
 bool rotateRight = false;
@@ -270,14 +270,14 @@ void trackLine(bool runControl){
 
     if (maps.trackSlow && trackslow_allowed) {
       // planner forces slow tracking (e.g. docking etc)
-      linear = 0.15;
-    } else if ((setSpeed > 0.1) && (targetDist < 0.5) && (!straight))   // approaching
+      linear = 0.18;
+    } else if ((setSpeed > 0.2) && (targetDist < 0.5) && (!straight))   // approaching
     {
       linear = setSpeed * 0.7; // reduce speed when approaching/leaving waypoints          
     } 
     else {
       if (gps.solution == SOL_FLOAT)        
-        linear = min(setSpeed, 0.15); // reduce speed for float solution
+        linear = min(setSpeed, 0.18); // reduce speed for float solution
       else
         linear = setSpeed;         // desired speed
       if (sonar.nearObstacle()) linear = 0.1; // slow down near obstacles
@@ -285,10 +285,10 @@ void trackLine(bool runControl){
     // slow down speed in case of overload and overwrite all prior speed 
     if ( (motor.motorLeftOverload) || (motor.motorRightOverload) || (motor.motorMowOverload) ){
       if (!printmotoroverload) {
-          CONSOLE.println("motor overload detected: reduce linear speed to 0.1");
+          CONSOLE.println("motor overload detected: reduce linear speed to 0.15");
       }
       printmotoroverload = true;
-      linear = 0.1;
+      linear = 0.15;
     } else {
       printmotoroverload = false;
     }   
@@ -304,7 +304,7 @@ void trackLine(bool runControl){
     // switched from turn motion to linear - we now need to correct last motion front wheels to 
     // opposite angle
     if (angleToTargetFits == true && langleToTargetFits == false) {
-       angular = langular * -1.5;
+       angular = langular * -5;
     }
     /*pidLine.w = 0;              
     pidLine.x = lateralError;
