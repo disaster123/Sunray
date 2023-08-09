@@ -180,7 +180,7 @@ class Map
     long calcMapCRC();
 
     // -------mowing operation--------------------------------------
-    bool checkpoint(float x, float y);
+    bool checkpoint(float x, float y, float obstacleoffset);
     // call to inform mapping to start mowing  
     bool startMowing(float stateX, float stateY);    
     // has mowing completed?

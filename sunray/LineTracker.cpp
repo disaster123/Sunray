@@ -80,7 +80,7 @@ int get_turn_direction_preference() {
     // CONSOLE.print(circle.points[i].x());
     // CONSOLE.print("/");
     // CONSOLE.println(circle.points[i].y());
-    if (maps.checkpoint(circle.points[i].x(), circle.points[i].y())) {
+    if (maps.checkpoint(circle.points[i].x(), circle.points[i].y(), -0.04)) {
 
             // skip points in front of us
             if (fabs(angle-cur_angle) < 0.05) {
@@ -255,8 +255,8 @@ void trackLine(bool runControl){
       // check if front has reached target
       float targetDist_mowerfront = maps.distanceToTargetPoint(stateX_mowerfront, stateY_mowerfront);
       // mowerfront has reached target and infrontof is outside perimeter
-      if ((targetDist_mowerfront < TARGET_REACHED_TOLERANCE) && (maps.checkpoint( stateX_infrontof, stateY_infrontof ))) {
-        CONSOLE.print("LineTracker: front is not inside Parameter or inside exclusion or inside obstacle! state: ");
+      if ((targetDist_mowerfront < TARGET_REACHED_TOLERANCE) && (maps.checkpoint( stateX_infrontof, stateY_infrontof, -0.04 ))) {
+        CONSOLE.print("LineTracker: front is not inside perimeter or inside exclusion or inside obstacle! state: ");
         CONSOLE.print(stateX_infrontof);
         CONSOLE.print("/");
         CONSOLE.print(stateY_infrontof);
