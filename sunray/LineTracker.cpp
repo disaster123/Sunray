@@ -476,11 +476,11 @@ void trackLine(bool runControl){
     rotateRight = false;
     activeOp->onTargetReached();
     bool straight = maps.nextPointIsStraight();
+    int curmowpoint = maps.mowPointsIdx;
     if (!maps.nextPoint(false,stateX,stateY,true)){
-      // check also in sim mode to ensure there is no mowpoint left and not the routing failed...
-      if (!maps.nextPoint(true, stateX,stateY,true)) {
-        // finish        
-        activeOp->onNoFurtherWaypoints();      
+      if (curmowpoint > maps.mowPointsIdx && maps.mowPointsIdx == 0 && maps.wayMode == WAY_MOW) {
+        // finish
+        activeOp->onNoFurtherWaypoints();
       } else {
         // code rented from MowOp - this must be a routing error
         activeOp->changeOp(gpsRebootRecoveryOp, true);
