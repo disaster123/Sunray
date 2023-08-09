@@ -329,9 +329,8 @@ void trackLine(bool runControl){
   // also, if lifted, do not turn on mowing motor so that the robot will drive and can do obstacle avoidance 
   if (detectLift()) mow = false;
   
-  if (mow)  { 
+  if (mow)  {  // wait until mowing motor is running
     if (millis() < motor.motorMowSpinUpTime + 10000){
-       // wait until mowing motor is running
       if (!buzzer.isPlaying()) buzzer.sound(SND_WARNING, true);
       linear = 0;
       angular = 0;          
@@ -348,6 +347,7 @@ void trackLine(bool runControl){
     }
 
     motor.setLinearAngularSpeed(linear, angular);      
+    if (detectLift()) mow = false; // in any case, turn off mower motor if lifted 
     motor.setMowState(mow);    
   }
 
