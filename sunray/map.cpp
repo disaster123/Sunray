@@ -1463,7 +1463,7 @@ bool Map::nextPoint(bool sim,float stateX, float stateY, bool nextmowpoint){
     src.setXY(stateX, stateY);
 
     // check if src is inside obstacle - this will prevent us from finding a path
-    int ob_idx = isPointInsideObstacle(src, -1, -0.03);
+    int ob_idx = isPointInsideObstacle(src, -1, -0.04);
     // src is inside obstacle - this might be problematic for finding a path
     if ( ob_idx != -1 ) {
       CONSOLE.println("Map::nextPoint: WARN: src is inside obstacle - remove obstacle!");
