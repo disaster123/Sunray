@@ -863,7 +863,8 @@ void processCmd(bool checkCrc, bool decrypt){
       CONSOLE.print(crc,HEX);
       CONSOLE.print(" expected crc: ");
       CONSOLE.print(expectedCrc,HEX);
-      CONSOLE.print(" cmd: ");
+      CONSOLE.println();
+      CONSOLE.print("CRC ERROR: cmd: ");
       CONSOLE.print(cmd);
       CONSOLE.println();
       return;        
