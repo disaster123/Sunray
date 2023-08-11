@@ -96,8 +96,7 @@ void EscapeReverseOp::run(){
       orig_stateX = stateX;
       orig_stateY = stateY;
 
-      // from now on drive back 1s
-      driveReverseStopTime = millis() + 1000;
+      driveReverseStopTime = millis() + 250;
     }
 
     // this code does not work - as it should only work for bumper not for lift
