@@ -143,6 +143,7 @@ class Map
     int dockPointsIdx;   // next dock point in docking point polygon
     int freePointsIdx;   // next free point in free point polygon
     int percentCompleted;
+    float curmowpointdistancetodst;
     
     Polygon points;
     Polygon perimeterPoints;
@@ -186,7 +187,7 @@ class Map
     // has mowing completed?
     bool mowingCompleted();    
     // given some point, check and modify it to get obstacle-safe mowing point
-    bool findObstacleSafeMowPoint(Point &newTargetPoint, float stateX, float stateY);
+    bool findObstacleSafeMowPoint(Point &newTargetPoint, float stateX, float stateY, float &distancetodst);
     int isPointInsideObstacle(Point pt, int skipidx, float offset);
     // choose progress (0..100%) in mowing point list    
     void setMowingPointPercent(float perc);

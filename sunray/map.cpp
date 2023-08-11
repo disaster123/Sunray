@@ -1232,7 +1232,7 @@ int Map::isPointInsideObstacle(Point pt, int skipidx, float offset){
   return -1;
 }
 
-bool Map::findObstacleSafeMowPoint(Point &newTargetPoint, float stateX, float stateY){  
+bool Map::findObstacleSafeMowPoint(Point &newTargetPoint, float stateX, float stateY, float &distancetodst){  
   Point dst;
   Point src;
   Point state;
@@ -1271,6 +1271,10 @@ bool Map::findObstacleSafeMowPoint(Point &newTargetPoint, float stateX, float st
   CONSOLE.println(dist_state_to_dst);
 
   float distToPath = distanceLine(stateX, stateY, src.x(), src.y(), dst.x(), dst.y());
+  if (distancetodst == 0) {
+    // this is max path length
+    distancetodst = dist_src_to_state + dist_state_to_dst;
+  }
 
   // get first obstacle in front of state_pos
   Point bestsec;
@@ -1299,7 +1303,7 @@ bool Map::findObstacleSafeMowPoint(Point &newTargetPoint, float stateX, float st
           (
 	    ((dist_obst - dist_src_to_state) >= TARGET_REACHED_TOLERANCE) || 
             (distToPath >= TARGET_REACHED_TOLERANCE && (fabs(dist_obst - dist_src_to_state) < 1))
-	  ) && dist_obst < best_dist && safe) {
+	  ) && dist_obst < best_dist && distance(sect, dst) < distancetodst && safe) {
 	bestsec.assign(sect);
 	best_dist = dist_obst;
       } else {
@@ -1325,7 +1329,7 @@ bool Map::findObstacleSafeMowPoint(Point &newTargetPoint, float stateX, float st
               (
     	        ((dist_obst - dist_src_to_state) >= TARGET_REACHED_TOLERANCE) || 
                 (distToPath >= TARGET_REACHED_TOLERANCE && (fabs(dist_obst - dist_src_to_state) < 1))
-    	      ) && dist_obst < best_dist && safe) {
+    	      ) && dist_obst < best_dist && distance(sect_back, dst) < distancetodst && safe) {
             bestsec.assign(sect_back);
             best_dist = dist_obst;
           }
@@ -1338,6 +1342,7 @@ bool Map::findObstacleSafeMowPoint(Point &newTargetPoint, float stateX, float st
   if (best_dist == 99999) {
     bool safe = (isPointInsideObstacle(dst, -1, 0) == -1);
     if (!safe) {
+      distancetodst = 0;
       CONSOLE.println("findObstacleSafeMowPoint: WARN: no further obstacle on mowline but mowpoint is inside obstacle.");
       return false;
     }
@@ -1350,6 +1355,7 @@ bool Map::findObstacleSafeMowPoint(Point &newTargetPoint, float stateX, float st
     CONSOLE.print(",");
     CONSOLE.println(dst.y());
 
+    distancetodst = distance(src, dst);
     newTargetPoint.assign(dst);
     return true;
   }
@@ -1362,6 +1368,7 @@ bool Map::findObstacleSafeMowPoint(Point &newTargetPoint, float stateX, float st
   CONSOLE.print(",");
   CONSOLE.println(bestsec.y());
 
+  distancetodst = distance(bestsec, dst);
   newTargetPoint.assign(bestsec);
   return true;
 }
@@ -1471,6 +1478,10 @@ bool Map::nextPoint(bool sim,float stateX, float stateY, bool nextmowpoint){
 
     // only skip to next mowpoint if nextmowpoint is set true
     // this should normaly only happen by linetracker in WAY_FREE mode
+    if (nextmowpoint) {
+      // reset curmowpointdistancetodst
+      curmowpointdistancetodst = 0;
+    }
     if (!nextMowPoint(false, nextmowpoint)){
       CONSOLE.println("Map::nextPoint: ERROR: no more mowing points!");
       return false;
@@ -1479,17 +1490,9 @@ bool Map::nextPoint(bool sim,float stateX, float stateY, bool nextmowpoint){
     // this loop has currently no sense - we might want to implement
     // some special logic if findPath fails - like skip to next point...
     while (true) {
-      if (!findObstacleSafeMowPoint(dst, src.x(), src.y())) {
+      if (!findObstacleSafeMowPoint(dst, src.x(), src.y(), curmowpointdistancetodst)) {
         CONSOLE.println("Map::nextPoint: WARN: findObstacleSafeMowPoint: failed - skip to next real mowpoint!");
         return nextPoint(sim, stateX, stateY, true);
-      }
-      if (dst.x() == lastTargetPoint.x() && dst.y() == lastTargetPoint.y()) {
-        CONSOLE.println("Map::nextPoint: WARN: rerun findObstacleSafeMowPoint with lastTargetPoint");
-        // new target is identical to last target - skip to next one by setting current position to target
-        if (!findObstacleSafeMowPoint(dst, lastTargetPoint.x(), lastTargetPoint.y())) {
-          CONSOLE.println("Map::nextPoint: WARN: findObstacleSafeMowPoint: failed - skip to next real mowpoint!");
-          return nextPoint(sim, stateX, stateY, true);
-        }
       }
       if (findPath(src, dst)) {
         // path found
