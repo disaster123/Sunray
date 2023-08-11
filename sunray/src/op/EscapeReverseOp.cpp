@@ -93,8 +93,8 @@ void EscapeReverseOp::run(){
       // bumper is released after obstacle was detected
       bumperReleased = true;
       // overwrite
-      orig_stateX = stateX;
-      orig_stateY = stateY;
+      // orig_stateX = stateX;
+      // orig_stateY = stateY;
 
       driveReverseStopTime = millis() + 250;
     }
