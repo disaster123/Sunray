@@ -1149,7 +1149,7 @@ bool Map::addObstacle(float stateX, float stateY, float stateDelta, MotType moti
   obstacles.polygons[idx].points[ci].setXY(center_x + cos(scalePI( deg2rad(160) + circle_rot ) ) * r, center_y + sin(scalePI( deg2rad(160) + circle_rot ) ) * r);
   ci += 1;
 
-  obstacles.polygons[idx].points[ci].setXY(center_x + cos(scalePI( deg2rad(180) + circle_rot ) ) * r, center_y + sin(scalePI( deg2rad(160) + circle_rot ) ) * r);
+  obstacles.polygons[idx].points[ci].setXY(center_x + cos(scalePI( deg2rad(180) + circle_rot ) ) * r, center_y + sin(scalePI( deg2rad(180) + circle_rot ) ) * r);
   ci += 1;
 
   obstacles.polygons[idx].points[ci].setXY(center_x + cos(scalePI( deg2rad(200) + circle_rot ) ) * r, center_y + sin(scalePI( deg2rad(200) + circle_rot ) ) * r);
