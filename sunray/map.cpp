@@ -1220,12 +1220,12 @@ int Map::isPointInsideObstacle(Point pt, int skipidx, float offset){
 
   for (int obst_ins=0; obst_ins < pathFinderObstacles.numPolygons; obst_ins++){
     if (skipidx != obst_ins && pointIsInsidePolygon( pathFinderObstacles.polygons[obst_ins], pt)){
-      CONSOLE.print("point conflicts with idx: ");
-      CONSOLE.print(obst_ins);
-      CONSOLE.print(": ");
-      CONSOLE.print(pt.x());
-      CONSOLE.print(" / ");
-      CONSOLE.println(pt.y());
+      // CONSOLE.print("point conflicts with idx: ");
+      // CONSOLE.print(obst_ins);
+      // CONSOLE.print(": ");
+      // CONSOLE.print(pt.x());
+      // CONSOLE.print(" / ");
+      // CONSOLE.println(pt.y());
       return obst_ins;
     }
   }
