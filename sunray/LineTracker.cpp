@@ -251,18 +251,8 @@ void trackLine(bool runControl){
 
     // target not already reached and near target - check only for non Docking and Undocking as those might happen outside of perimeter
     if (!targetReached && targetDist < (MOWER_SIZE*1.5/100.0) && !maps.isDocking() && !maps.isUndocking()) {
-      bool infrontof = !maps.checkpoint( stateX_infrontof, stateY_infrontof, -0.04 );
-      bool mower = !maps.checkpoint( stateX, stateY, 0 );
       // check if front has reached target
       float targetDist_mowerfront = maps.distanceToTargetPoint(stateX_mowerfront, stateY_mowerfront);
-
-      CONSOLE.print("LineTracker: DEBUG front: infrontof: ");
-      CONSOLE.print(infrontof);
-      CONSOLE.print(" mowerself: ");
-      CONSOLE.print(mower);
-      CONSOLE.print(" dist mowerfront target: ");
-      CONSOLE.println(targetDist_mowerfront);
-
       // mowerfront has reached target and infrontof is outside perimeter
       if ((targetDist_mowerfront < TARGET_REACHED_TOLERANCE) && (maps.checkpoint( stateX_infrontof, stateY_infrontof, -0.04 )) && 
            // verify that current position is OK
