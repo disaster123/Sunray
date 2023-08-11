@@ -859,10 +859,12 @@ void processCmd(bool checkCrc, bool decrypt){
     if ((simFaultyConn) && (simFaultConnCounter % 10 == 0)) crcErr = true;
     if ((expectedCrc != crc) && (checkCrc)) crcErr = true;      
     if (crcErr) {
-      CONSOLE.print("CRC ERROR");
+      CONSOLE.print("CRC ERROR: got crc: ");
       CONSOLE.print(crc,HEX);
-      CONSOLE.print(",");
+      CONSOLE.print(" expected crc: ");
       CONSOLE.print(expectedCrc,HEX);
+      CONSOLE.print(" cmd: ");
+      CONSOLE.print(cmd);
       CONSOLE.println();
       return;        
     } else {
