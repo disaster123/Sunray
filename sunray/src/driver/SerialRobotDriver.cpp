@@ -308,6 +308,10 @@ void SerialRobotDriver::motorResponse(){
       } else if (counter == 4){
         chargeVoltage = floatValue;
       } else if (counter == 5){
+        if ((!triggeredLeftBumper) && (triggeredLeftBumper != (intValue != 0))) {
+          CONSOLE.println("SerialRobotDriver: triggeredBumper");
+          pitchcheck = true;
+        }
         triggeredLeftBumper = (intValue != 0);
       } else if (counter == 6){
         if ((!triggeredLift) && (triggeredLift != (intValue != 0))) {
