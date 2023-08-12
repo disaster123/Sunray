@@ -364,6 +364,12 @@ void SerialRobotDriver::motorResponse(){
       CONSOLE.print(pic);
       CONSOLE.println("");
       triggeredLift = false;
+    } else {
+      // do not reevaluate
+      pitchcheck = false;
+      CONSOLE.print("SerialRobotDriver: lift OK: ");
+      CONSOLE.print(pic);
+      CONSOLE.println("");
     }
   }
 
