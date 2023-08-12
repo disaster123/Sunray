@@ -1102,16 +1102,16 @@ bool Map::addObstacle(float stateX, float stateY, float stateDelta, MotType moti
     case MOT_RIGHT:
       move_angle = -40; // do not use 90 degress only fron wheels turn / move
       r = r * 2/3;
-      move_dist = MOWER_GPS_TO_SIDE / 2;
+      move_dist = MOWER_GPS_TO_SIDE / 100 / 2;
       break;
     case MOT_LEFT:
       move_angle = 40; // do not use 90 degress only fron wheels turn / move
       r = r * 2/3;
-      move_dist = MOWER_GPS_TO_SIDE / 2;
+      move_dist = MOWER_GPS_TO_SIDE / 100 / 2;
       break;
     case MOT_FORWARD:
       move_angle = 0;
-      move_dist = MOWER_GPS_TO_FRONT / 2;
+      move_dist = MOWER_GPS_TO_FRONT / 100 / 2;
       break;
   }
 
