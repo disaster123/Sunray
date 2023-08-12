@@ -280,7 +280,15 @@ void SerialRobotDriver::requestMotorPwm(int leftPwm, int rightPwm, int mowPwm){
 }
 
 void SerialRobotDriver::motorResponse(){
-  if (cmd.length()<6) return;  
+  if (cmd.length()<6) return;
+
+  rollChange += (imuDriver.roll-stateRoll);
+  pitchChange += (imuDriver.pitch-statePitch);
+  rollChange = 0.95 * rollChange;
+  pitchChange = 0.95 * pitchChange;
+  statePitch = imuDriver.pitch;
+  stateRoll = imuDriver.roll;
+
   int counter = 0;
   int lastCommaIdx = 0;
   for (int idx=0; idx < cmd.length(); idx++){
@@ -305,6 +313,18 @@ void SerialRobotDriver::motorResponse(){
           CONSOLE.println("SerialRobotDriver: triggeredLift");
         }
         triggeredLift = (intValue != 0);
+
+        if (triggeredLift) {
+          float pic = pitchChange/PI*180.0;
+          if (fabs(pic) < 4) {
+            CONSOLE.print("SerialRobotDriver: reset lift - because pitchChange too low: ");
+            CONSOLE.print(pic);
+            CONSOLE.println("");
+            triggeredLift = false;
+          }
+        }
+
+
       } else if (counter == 7){
         triggeredStopButton = (intValue != 0);
       } else if (counter == 8){
@@ -326,24 +346,18 @@ void SerialRobotDriver::motorResponse(){
     liftleft_o = liftleft;
     liftright_o = liftright;
 
-    rollChange += (imuDriver.roll-stateRoll);
-    pitchChange += (imuDriver.pitch-statePitch);
-    rollChange = 0.95 * rollChange;
-    pitchChange = 0.95 * pitchChange;
-    statePitch = imuDriver.pitch;
-    stateRoll = imuDriver.roll;
 
-    CONSOLE.print("IMU tilt: ");
-    CONSOLE.print("ypr=");
-    CONSOLE.print(imuDriver.yaw/PI*180.0);
-    CONSOLE.print(",");
-    CONSOLE.print(imuDriver.pitch/PI*180.0);
-    CONSOLE.print(",");
-    CONSOLE.print(imuDriver.roll/PI*180.0);
-    CONSOLE.print(" rollChange=");
-    CONSOLE.print(rollChange/PI*180.0);
-    CONSOLE.print(" pitchChange=");
-    CONSOLE.println(pitchChange/PI*180.0);
+    // CONSOLE.print("IMU tilt: ");
+    // CONSOLE.print("ypr=");
+    // CONSOLE.print(imuDriver.yaw/PI*180.0);
+    // CONSOLE.print(",");
+    // CONSOLE.print(imuDriver.pitch/PI*180.0);
+    // CONSOLE.print(",");
+    // CONSOLE.print(imuDriver.roll/PI*180.0);
+    // CONSOLE.print(" rollChange=");
+    // CONSOLE.print(rollChange/PI*180.0);
+    // CONSOLE.print(" pitchChange=");
+    // CONSOLE.println(pitchChange/PI*180.0);
   }
 
   if (triggeredStopButton){
