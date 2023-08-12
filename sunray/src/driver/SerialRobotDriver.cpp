@@ -289,6 +289,7 @@ void SerialRobotDriver::motorResponse(){
   statePitch = imuDriver.pitch;
   stateRoll = imuDriver.roll;
 
+  bool pitchcheck = false;
   int counter = 0;
   int lastCommaIdx = 0;
   for (int idx=0; idx < cmd.length(); idx++){
@@ -311,8 +312,12 @@ void SerialRobotDriver::motorResponse(){
       } else if (counter == 6){
         if ((!triggeredLift) && (triggeredLift != (intValue != 0))) {
           CONSOLE.println("SerialRobotDriver: triggeredLift");
+          pitchcheck = true;
         }
         triggeredLift = (intValue != 0);
+        if (!triggeredLift) {
+          pitchcheck = false;
+        }
       } else if (counter == 7){
         triggeredStopButton = (intValue != 0);
       } else if (counter == 8){
@@ -348,7 +353,7 @@ void SerialRobotDriver::motorResponse(){
     // CONSOLE.println(pitchChange/PI*180.0);
   }
 
-  if (triggeredLift) {
+  if (triggeredLift && pitchcheck) {
     float pic = pitchChange/PI*180.0;
     if (fabs(pic) < 2.5) {
       CONSOLE.print("SerialRobotDriver: reset lift - because pitchChange too low: ");
