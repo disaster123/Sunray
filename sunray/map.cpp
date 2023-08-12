@@ -1291,25 +1291,28 @@ bool Map::findObstacleSafeMowPoint(Point &newTargetPoint, float stateX, float st
       float dist_obst = distance(src, sect);
       bool safe = (isPointInsideObstacle(sect, idx, 0) == -1);
 
-      CONSOLE.print("findObstacleSafeMowPoint: ");
-      CONSOLE.print(idx);
-      CONSOLE.print(" found obstacle front - sect: ");
-      CONSOLE.print(sect.x());
-      CONSOLE.print(",");
-      CONSOLE.print(sect.y());
-      CONSOLE.print(" safe: ");
-      CONSOLE.print(safe);
-      CONSOLE.print(" dist src: ");
-      CONSOLE.println(dist_obst);
-
       // distance of sect point has to be > distance than state_pos to dst / target
       if (
           (
 	    ((dist_obst - dist_src_to_state) >= TARGET_REACHED_TOLERANCE) || 
             (distToPath >= TARGET_REACHED_TOLERANCE && (fabs(dist_obst - dist_src_to_state) < 1))
 	  ) && dist_obst < best_dist && distance(sect, dst) < distancetodst && safe) {
-	bestsec.assign(sect);
-	best_dist = dist_obst;
+          bestsec.assign(sect);
+          best_dist = dist_obst;
+    
+          CONSOLE.print("findObstacleSafeMowPoint: Id: ");
+          CONSOLE.print(idx);
+          CONSOLE.print(" found obstacle front - sect: ");
+          CONSOLE.print(sect.x());
+          CONSOLE.print(",");
+          CONSOLE.print(sect.y());
+          CONSOLE.print(" safe: ");
+          CONSOLE.print(safe);
+          CONSOLE.print(" dist dst: ");
+          CONSOLE.print(distance(sect, dst));
+          CONSOLE.print(" old dst: ");
+          CONSOLE.println(distancetodst);
+
       } else {
         // backside of obstacle
 	// dist_obst is not > dist_src_to_state - check other side of obstacle - because obstacle is on mowline
@@ -1317,18 +1320,6 @@ bool Map::findObstacleSafeMowPoint(Point &newTargetPoint, float stateX, float st
         if (linePolygonIntersectPoint( dst, src, obstacles.polygons[idx], sect_back)) {
           float dist_obst = distance(src, sect_back);
           bool safe = (isPointInsideObstacle(sect_back, idx, 0) == -1);
-
-          CONSOLE.print("findObstacleSafeMowPoint:");
-          CONSOLE.print(idx);
-          CONSOLE.print(" found obstacle back - sect: ");
-          CONSOLE.print(sect_back.x());
-          CONSOLE.print(",");
-          CONSOLE.print(sect_back.y());
-          CONSOLE.print(" safe: ");
-          CONSOLE.print(safe);
-          CONSOLE.print(" dist src: ");
-          CONSOLE.println(dist_obst);
-
           if (
               (
     	        ((dist_obst - dist_src_to_state) >= TARGET_REACHED_TOLERANCE) || 
@@ -1336,6 +1327,19 @@ bool Map::findObstacleSafeMowPoint(Point &newTargetPoint, float stateX, float st
     	      ) && dist_obst < best_dist && distance(sect_back, dst) < distancetodst && safe) {
             bestsec.assign(sect_back);
             best_dist = dist_obst;
+
+            CONSOLE.print("findObstacleSafeMowPoint: Id: ");
+            CONSOLE.print(idx);
+            CONSOLE.print(" found obstacle back - sect: ");
+            CONSOLE.print(sect_back.x());
+            CONSOLE.print(",");
+            CONSOLE.print(sect_back.y());
+            CONSOLE.print(" safe: ");
+            CONSOLE.print(safe);
+            CONSOLE.print(" dist dst: ");
+            CONSOLE.print(distance(sect_back, dst));
+            CONSOLE.print(" old dst: ");
+            CONSOLE.println(distancetodst);
           }
 	}
       }
