@@ -89,6 +89,7 @@ class SerialRobotDriver: public RobotDriver {
     float pitchChange;
     float statePitch;
     float stateRoll;
+    bool pitchcheck;
 };
 
 class SerialMotorDriver: public MotorDriver {

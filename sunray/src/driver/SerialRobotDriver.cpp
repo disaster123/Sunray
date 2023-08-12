@@ -61,6 +61,7 @@ void SerialRobotDriver::begin(){
   pitchChange = 0;
   statePitch = 0;
   stateRoll = 0;
+  pitchcheck = false;
 
   #ifdef __linux__
     CONSOLE.println("reading robot ID...");
@@ -289,7 +290,6 @@ void SerialRobotDriver::motorResponse(){
   statePitch = imuDriver.pitch;
   stateRoll = imuDriver.roll;
 
-  bool pitchcheck = false;
   int counter = 0;
   int lastCommaIdx = 0;
   for (int idx=0; idx < cmd.length(); idx++){
