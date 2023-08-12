@@ -191,7 +191,11 @@ void trackLine(bool runControl){
 
     angular = angularspeed / 180.0 * PI; //  40,6 degree/s (0.7 rad/s);              
     if ((!rotateLeft) && (!rotateRight)){ // decide for one rotation direction (and keep it)
-      int r = get_turn_direction_preference();
+      int r = 0;
+      // no idea but don't work in reverse mode...
+      if (!maps.trackReverse) {
+        r = get_turn_direction_preference();
+      }
       // store last_rotation_target point
       last_rotation_target.setXY(target.x(), target.y());
 
