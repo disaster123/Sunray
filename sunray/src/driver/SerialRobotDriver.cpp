@@ -12,10 +12,6 @@
 #define COMM  ROBOT
 
 //#define DEBUG_SERIAL_ROBOT 1
-float rollChange;
-float pitchChange;
-float statePitch;
-float stateRoll;
 
 void SerialRobotDriver::begin(){
   CONSOLE.println("using robot driver: SerialRobotDriver");
@@ -61,6 +57,10 @@ void SerialRobotDriver::begin(){
   ledStateShutdown = false;  
   ledStateError = false;
   ledStateShutdown = false;
+  rollChange = 0;
+  pitchChange = 0;
+  statePitch = 0;
+  stateRoll = 0;
 
   #ifdef __linux__
     CONSOLE.println("reading robot ID...");

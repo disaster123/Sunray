@@ -85,6 +85,10 @@ class SerialRobotDriver: public RobotDriver {
     void motorResponse();
     void summaryResponse();
     void versionResponse();
+    float rollChange;
+    float pitchChange;
+    float statePitch;
+    float stateRoll;
 };
 
 class SerialMotorDriver: public MotorDriver {
