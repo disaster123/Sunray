@@ -7,6 +7,7 @@
 #include "SerialRobotDriver.h"
 #include "../../config.h"
 #include "../../ioboard.h"
+#include "../../robot.h"
 
 #define COMM  ROBOT
 
@@ -321,7 +322,17 @@ void SerialRobotDriver::motorResponse(){
     liftleft_o = liftleft;
     liftright_o = liftright;
 
-    dumpImuTilt();
+    CONSOLE.print("IMU tilt: ");
+    CONSOLE.print("ypr=");
+    CONSOLE.print(imuDriver.yaw/PI*180.0);
+    CONSOLE.print(",");
+    CONSOLE.print(imuDriver.pitch/PI*180.0);
+    CONSOLE.print(",");
+    CONSOLE.print(imuDriver.roll/PI*180.0);
+    CONSOLE.print(" rollChange=");
+    CONSOLE.print(rollChange/PI*180.0);
+    CONSOLE.print(" pitchChange=");
+    CONSOLE.println(pitchChange/PI*180.0);
   }
 
   if (triggeredStopButton){
