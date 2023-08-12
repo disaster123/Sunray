@@ -42,6 +42,8 @@ class SerialRobotDriver: public RobotDriver {
     bool triggeredLift;
     int liftleft;
     int liftright;
+    int liftleft_o;
+    int liftright_o;
     bool triggeredRain;
     bool triggeredStopButton;
     void begin() override;

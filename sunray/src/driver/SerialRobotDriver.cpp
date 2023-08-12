@@ -303,14 +303,25 @@ void SerialRobotDriver::motorResponse(){
       } else if (counter == 7){
         triggeredStopButton = (intValue != 0);
       } else if (counter == 8){
-        liftleft = intValue;
+        liftleft = intValue - 530;
       } else if (counter == 9){
-        liftright = intValue;
+        liftright = intValue - 530;
       } 
       counter++;
       lastCommaIdx = idx;
     }    
   }
+
+  if (abs(liftleft_o - liftleft) > 20 || abs(liftright_o - liftright) > 20)  {
+    CONSOLE.print("SerialRobotDriver: DEBUG: liftleft: ");
+    CONSOLE.print(liftleft);
+    CONSOLE.print(" liftright: ");
+    CONSOLE.print(liftright);
+    CONSOLE.println("");
+    liftleft_o = liftleft;
+    liftright_o = liftright;
+  }
+
   if (triggeredStopButton){
     //CONSOLE.println("STOPBUTTON");
   }
