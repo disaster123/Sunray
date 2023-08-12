@@ -61,7 +61,7 @@ void SerialRobotDriver::begin(){
   pitchChange = 0;
   statePitch = 0;
   stateRoll = 0;
-  pitchcheck = false;
+  pitchcheck = true;
 
   #ifdef __linux__
     CONSOLE.println("reading robot ID...");
@@ -310,17 +310,16 @@ void SerialRobotDriver::motorResponse(){
       } else if (counter == 5){
         if ((!triggeredLeftBumper) && (triggeredLeftBumper != (intValue != 0))) {
           CONSOLE.println("SerialRobotDriver: triggeredBumper");
-          pitchcheck = true;
         }
         triggeredLeftBumper = (intValue != 0);
       } else if (counter == 6){
         if ((!triggeredLift) && (triggeredLift != (intValue != 0))) {
           CONSOLE.println("SerialRobotDriver: triggeredLift");
-          pitchcheck = true;
         }
         triggeredLift = (intValue != 0);
+        // if trigger is false - enable pitcheck for next time
         if (!triggeredLift) {
-          pitchcheck = false;
+          pitchcheck = true;
         }
       } else if (counter == 7){
         triggeredStopButton = (intValue != 0);
@@ -363,6 +362,7 @@ void SerialRobotDriver::motorResponse(){
       CONSOLE.print("SerialRobotDriver: reset lift - because pitchChange too low: ");
       CONSOLE.print(pic);
       CONSOLE.println("");
+      // overwrite triggeredLift
       triggeredLift = false;
     } else {
       // do not reevaluate
