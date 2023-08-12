@@ -12,6 +12,10 @@
 #define COMM  ROBOT
 
 //#define DEBUG_SERIAL_ROBOT 1
+float rollChange;
+float pitchChange;
+float statePitch;
+float stateRoll;
 
 void SerialRobotDriver::begin(){
   CONSOLE.println("using robot driver: SerialRobotDriver");
@@ -321,6 +325,13 @@ void SerialRobotDriver::motorResponse(){
     CONSOLE.println("");
     liftleft_o = liftleft;
     liftright_o = liftright;
+
+    rollChange += (imuDriver.roll-stateRoll);
+    pitchChange += (imuDriver.pitch-statePitch);
+    rollChange = 0.95 * rollChange;
+    pitchChange = 0.95 * pitchChange;
+    statePitch = imuDriver.pitch;
+    stateRoll = imuDriver.roll;
 
     CONSOLE.print("IMU tilt: ");
     CONSOLE.print("ypr=");
