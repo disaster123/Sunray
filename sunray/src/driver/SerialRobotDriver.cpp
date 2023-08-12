@@ -320,6 +320,8 @@ void SerialRobotDriver::motorResponse(){
     CONSOLE.println("");
     liftleft_o = liftleft;
     liftright_o = liftright;
+
+    dumpImuTilt();
   }
 
   if (triggeredStopButton){
