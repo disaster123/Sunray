@@ -457,8 +457,7 @@ void readSensors(){
     liftLeftLP = liftLeft;   // reset LP if lift is not triggered
     liftRightLP = liftRight;
   }
-  lift = ((abs(liftLeftLP-530) > 200) && (abs(liftRightLP-530) > 200)); // calibrated on grey/orange mower
-  
+  lift = ((abs(liftLeft-530) + abs(liftRight-530)) > 300); // calibrated on grey/orange mower
   
 #ifdef DEBUG
   if (stopButton){
