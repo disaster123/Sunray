@@ -672,6 +672,10 @@ void cmdMotor(){
   s += int(lift);
   s += ",";
   s += int(stopButton);
+  s += ",";
+  s += liftLeft;
+  s += ",";
+  s += liftRight;
   cmdAnswer(s);
 }
 
