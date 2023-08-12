@@ -313,18 +313,6 @@ void SerialRobotDriver::motorResponse(){
           CONSOLE.println("SerialRobotDriver: triggeredLift");
         }
         triggeredLift = (intValue != 0);
-
-        if (triggeredLift) {
-          float pic = pitchChange/PI*180.0;
-          if (fabs(pic) < 4) {
-            CONSOLE.print("SerialRobotDriver: reset lift - because pitchChange too low: ");
-            CONSOLE.print(pic);
-            CONSOLE.println("");
-            triggeredLift = false;
-          }
-        }
-
-
       } else if (counter == 7){
         triggeredStopButton = (intValue != 0);
       } else if (counter == 8){
@@ -337,7 +325,7 @@ void SerialRobotDriver::motorResponse(){
     }    
   }
 
-  if (abs(liftleft_o - liftleft) > 20 || abs(liftright_o - liftright) > 20)  {
+  if (abs(liftleft_o - liftleft) > 20 || abs(liftright_o - liftright) > 20 || triggeredLift)  {
     CONSOLE.print("SerialRobotDriver: DEBUG: liftleft: ");
     CONSOLE.print(liftleft);
     CONSOLE.print(" liftright: ");
@@ -358,6 +346,16 @@ void SerialRobotDriver::motorResponse(){
     // CONSOLE.print(rollChange/PI*180.0);
     // CONSOLE.print(" pitchChange=");
     // CONSOLE.println(pitchChange/PI*180.0);
+  }
+
+  if (triggeredLift) {
+    float pic = pitchChange/PI*180.0;
+    if (fabs(pic) < 2.5) {
+      CONSOLE.print("SerialRobotDriver: reset lift - because pitchChange too low: ");
+      CONSOLE.print(pic);
+      CONSOLE.println("");
+      triggeredLift = false;
+    }
   }
 
   if (triggeredStopButton){
