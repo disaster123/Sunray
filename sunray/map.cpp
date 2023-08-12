@@ -1092,6 +1092,7 @@ void Map::clearObstacles(){
 // add dynamic octagon obstacle in front of robot on line going from robot to target point
 bool Map::addObstacle(float stateX, float stateY, float stateDelta, MotType motion){
   float r = OBSTACLE_DIAMETER / 2.0; // radius
+  float move_dist = 0;
   float move_angle;
 
   switch (motion){
@@ -1101,25 +1102,28 @@ bool Map::addObstacle(float stateX, float stateY, float stateDelta, MotType moti
     case MOT_RIGHT:
       move_angle = -40; // do not use 90 degress only fron wheels turn / move
       r = r * 2/3;
+      move_dist = MOWER_GPS_TO_SIDE / 2;
       break;
     case MOT_LEFT:
       move_angle = 40; // do not use 90 degress only fron wheels turn / move
       r = r * 2/3;
+      move_dist = MOWER_GPS_TO_SIDE / 2;
       break;
     case MOT_FORWARD:
       move_angle = 0;
+      move_dist = MOWER_GPS_TO_FRONT / 2;
       break;
   }
 
   float circle_rot = scalePI( scalePI(stateDelta) + scalePI(deg2rad(move_angle)) );
 
   // move center of octagon in the right position of mower
-  float center_x = stateX + cos( circle_rot ) * r;
-  float center_y = stateY + sin( circle_rot ) * r;
+  float center_x = stateX + cos( circle_rot ) * (r + move_dist);
+  float center_y = stateY + sin( circle_rot ) * (r + move_dist);
 
   // move center of octagon in the right position of mower
-  float center_2x = stateX + cos( circle_rot ) * ( ( r ) * 2 );
-  float center_2y = stateY + sin( circle_rot ) * ( ( r ) * 2 );
+  float center_2x = stateX + cos( circle_rot ) * ( r*2 + move_dist );
+  float center_2y = stateY + sin( circle_rot ) * ( r*2 + move_dist );
 
   CONSOLE.print("addObstacle: state: ");
   CONSOLE.print(stateX);
