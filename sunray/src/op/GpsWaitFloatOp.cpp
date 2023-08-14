@@ -18,10 +18,10 @@ void GpsWaitFloatOp::begin(){
       // f.e. gpsrebootrecovery
       return;
     }      
-    // no gps solution
-    CONSOLE.println("WARN: no gps solution!");
     stateSensor = SENS_GPS_INVALID;
-    gps.reboot();   // try to recover from false GPS fix
+    // do not reboot GPS here - as this will result in GPS jumps and than we start to drive again
+    // the position will be not correct...
+    // gps.reboot();   // try to recover from false GPS fix
     //setOperation(OP_ERROR);
     //buzzer.sound(SND_STUCK, true);          
     
