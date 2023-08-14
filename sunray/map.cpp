@@ -1491,6 +1491,11 @@ bool Map::nextPoint(bool sim,float stateX, float stateY, bool nextmowpoint){
           // path found
           break;
         }
+        // ERROR OUT!!
+        // no path found - abort with error
+        stateSensor = SENS_MAP_NO_ROUTE;
+        setOperation(OP_ERROR, false);
+        return true;
       }
 
       // if we're searching for next point try again?
@@ -1500,7 +1505,7 @@ bool Map::nextPoint(bool sim,float stateX, float stateY, bool nextmowpoint){
       }
 
       // no path found - abort with error
-      stateSensor = SENS_MOTOR_ERROR;
+      stateSensor = SENS_MAP_NO_ROUTE;
       setOperation(OP_ERROR, false);
       return true;
     }
