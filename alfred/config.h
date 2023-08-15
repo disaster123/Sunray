@@ -335,6 +335,10 @@ Also, you may choose the serial port below for serial monitor output (CONSOLE).
 #define CPG_CONFIG_FILTER_NCNOTHRS 0   // C/N0 Threshold #SVs: 10 (robust), 6 (less robust)
 #define CPG_CONFIG_FILTER_CNOTHRS  0   // 30 dbHz (robust), 13 dbHz (less robust)
 
+#define GPS_POSITION_OFFSET_ENABLED true // enable gps antenna position correction offset?
+#define GPS_POSITION_OFFSET_FORWARD 0.0 // offset to add fordwards (cm)
+#define GPS_POSITION_OFFSET_RIGHT 0.0 // offset to add to the right (cm)
+#define GPS_POSITION_OFFSET_UP 24.0 // offse to add upwards (cm), set to ground level for tilt compensation (-24 cm for standard ardumower) 
 
 // ------ obstacle detection and avoidance  -------------------------
 
