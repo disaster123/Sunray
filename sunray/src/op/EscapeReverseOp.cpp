@@ -99,9 +99,8 @@ void EscapeReverseOp::run(){
       driveReverseStopTime = millis() + 250;
     }
 
-    // this code does not work - as it should only work for bumper not for lift
-    // we always need to 
-    if (bumper_mode && bumperReleased && (bumper.obstacle() || detectLift())) {
+    if ((bumper_mode && bumperReleased && (bumper.obstacle() || detectLift())) ||
+       (lift_mode && !detectLift() && bumper.obstacle())) {
       CONSOLE.println("BUMPER: was released but now new obstacle - reset direction and driveReverseStopTime");
       // bumper was released but is pressed now again
       // move again in the other direction - until bumper is released
