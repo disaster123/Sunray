@@ -24,7 +24,7 @@ String EscapeReverseOp::name(){
 }
 
 void EscapeReverseOp::begin(){
-    driveReverseStopTime = millis() + 3000;                           
+    driveReverseStopTime = millis() + 1000;
     bumperReleased = false;
     orig_stateX = stateX;
     orig_stateY = stateY;
