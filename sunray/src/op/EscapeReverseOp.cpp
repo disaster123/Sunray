@@ -15,7 +15,7 @@ float orig_stateY2;
 float orig_stateX;
 float orig_stateY;
 MotType orig_motion;
-bool bumperReleased;
+bool bumperAndLiftReleased;
 bool lift_mode;
 bool bumper_mode;
 
@@ -25,7 +25,7 @@ String EscapeReverseOp::name(){
 
 void EscapeReverseOp::begin(){
     driveReverseStopTime = millis() + 3000;                           
-    bumperReleased = false;
+    bumperAndLiftReleased = false;
     orig_stateX = stateX;
     orig_stateY = stateY;
     orig_stateX2 = stateX;
@@ -68,6 +68,7 @@ void EscapeReverseOp::end(){
 
 void EscapeReverseOp::run(){
     battery.resetIdle();
+    float linear = 0;
 
     // disable mow only for LIFT
     if (lift_mode || DISABLE_MOW_MOTOR_AT_OBSTACLE) {
@@ -76,22 +77,22 @@ void EscapeReverseOp::run(){
 
     // drive away in bumper mode as long as bumper was not released and bumper is still triggered
     // or lift_mode
-    if ((bumper_mode && !bumperReleased && (bumper.obstacle() || detectLift())) ||
-        (lift_mode)) {
+    if ((bumper_mode && !bumperAndLiftReleased && (bumper.obstacle() || detectLift())) ||
+        (lift_mode && !bumperAndLiftReleased)) {
       // bumper was not released yet and is still active
       if (orig_motion == MOT_BACKWARD) {
-        motor.setLinearAngularSpeed(0.25,0);
+        linear = 0.25;
       }
       else {
-        motor.setLinearAngularSpeed(-0.25,0);
+        linear = -0.25;
       }
     }
 
     // if bumper_mode and bumper was not released yet and bumper is released now
-    if (bumper_mode && !bumperReleased && !bumper.obstacle() && !detectLift()) {
+    if (bumper_mode && !bumperAndLiftReleased && !bumper.obstacle() && !detectLift()) {
       CONSOLE.println("BUMPER: now released - set new obstacle position and drive 1s back");
       // bumper is released after obstacle was detected
-      bumperReleased = true;
+      bumperAndLiftReleased = true;
       // overwrite
       // orig_stateX = stateX;
       // orig_stateY = stateY;
@@ -99,21 +100,26 @@ void EscapeReverseOp::run(){
       driveReverseStopTime = millis() + 250;
     }
 
-    if ((bumper_mode && bumperReleased && (bumper.obstacle() || detectLift())) ||
+    if ((bumper_mode && bumperAndLiftReleased && (bumper.obstacle() || detectLift())) ||
        (lift_mode && !detectLift() && bumper.obstacle())) {
-      CONSOLE.println("BUMPER: was released but now new obstacle - reset direction and driveReverseStopTime");
+      CONSOLE.println("BUMPERi/LIFT: was released but now new obstacle - reset direction and driveReverseStopTime");
+      if (lift_mode) {
+        bumperAndLiftReleased = true;
+      }
       // bumper was released but is pressed now again
       // move again in the other direction - until bumper is released
       // again
       if (orig_motion == MOT_BACKWARD) {
-        motor.setLinearAngularSpeed(-0.15,0);
+        linear = -0.15;
       }
       else {
-        motor.setLinearAngularSpeed(0.15,0);
+        linear = 0.15;
       }
       // this one is updated in every call as long as obstacle is true / triggered
       driveReverseStopTime = millis() + 100;
     }
+   
+    if (linear != 0.0) motor.setLinearAngularSpeed(linear,0);
 
     // drive back until bumper is no longer triggered or max StopTime
     if (millis() > driveReverseStopTime){
