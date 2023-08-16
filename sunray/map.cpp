@@ -1378,7 +1378,7 @@ bool Map::checkpoint(float x, float y, float obstacleoffset){
     }
   }
 
-  if (isPointInsideObstacle(src, -1, obstacleoffset)) {
+  if (isPointInsideObstacle(src, -1, obstacleoffset) != -1) {
     return true;
   }
 
