@@ -383,7 +383,7 @@ Also, you may choose the serial port below for serial monitor output (CONSOLE).
 
 #define DOCK_UNDOCK_TRACKSLOW_DISTANCE 3 // set distance (m) from dock for trackslow (speed limit)
 
-#define UNDOCK_IGNORE_GPS_DISTANCE 2 // set distance (m) from dock to ignore gps while undocking
+#define UNDOCK_IGNORE_GPS_DISTANCE 3 // set distance (m) from dock to ignore gps while undocking
 
 // ---- path tracking -----------------------------------
 
