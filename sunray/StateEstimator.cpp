@@ -217,7 +217,7 @@ void computeRobotState(){
   float distLeft = ((float)leftDelta) / ((float)motor.ticksPerCm);
   float distRight = ((float)rightDelta) / ((float)motor.ticksPerCm);  
   float distOdometry = (distLeft + distRight) / 2.0;
-  float deltaOdometry = -(distLeft - distRight) / motor.wheelBaseCm; 
+  float deltaOdometry = -(distLeft - distRight) / motor.wheelBaseCm;  
 
   if ((imuDriver.imuFound) && (maps.useIMU)) {
     // IMU available and should be used by planner
@@ -227,6 +227,39 @@ void computeRobotState(){
     stateDelta = scalePI(stateDelta + deltaOdometry);  
   }
 
+  quat_t x; x.setRotation({1,0,0}, imuDriver.roll, false);  
+  quat_t y; y.setRotation({0,1,0}, imuDriver.pitch, false);  
+  quat_t z; z.setRotation({0,0,1}, stateDelta, false);
+  quat_t rot = (z*y*x).norm();
+
+  //rot = euler_to_quaternion(vec3_t(imuDriver.roll, imuDriver.pitch, stateDelta));
+
+  vec3_t forward = rot.rotate({1,0,0}, GLOBAL_FRAME).norm(); 
+  vec3_t right = rot.rotate({0,-1,0}, GLOBAL_FRAME).norm();
+  vec3_t up = rot.rotate({0,0,1}, GLOBAL_FRAME).norm();
+
+  /*vec3_t linearAcceleration = vec3_t(imuDriver.ax, imuDriver.ay, imuDriver.az); // m/s2
+  vec3_t angularAcceleration = vec3_t(imuDriver.gx, imuDriver.gy, imuDriver.gz); // rad/s2 ??
+  vec3_t angularVelocity = vec3_t(imuDriver.gx, imuDriver.gy, imuDriver.gz) * 0.02;
+  vec3_t gravity = rot.rotate({0,0,1}, LOCAL_FRAME).norm();
+  vec3_t zeroAcceleration = (linearAcceleration - gravity) * 9.8; // m/s2
+  vec3_t imuOffset = vec3_t(0, 0 ,0); // m
+  vec3_t correctedAcceleration = zeroAcceleration
+                                - angularAcceleration.cross(imuOffset)
+                                //+ angularVelocity.cross(angularVelocity).cross(imuOffset); //
+                                + angularVelocity.cross(angularVelocity.cross(imuOffset)); //*/
+
+
+
+    //CONSOLE.println("x , y , z, yaw");
+    /*CONSOLE.print(linearAcceleration.x, 3);
+    CONSOLE.print("\t");
+    CONSOLE.print(linearAcceleration.y, 3);
+    CONSOLE.print("\t");
+    CONSOLE.print(linearAcceleration.z, 3);
+    CONSOLE.print("\t");
+    CONSOLE.println(stateDelta);*/
+  
   float posN = 0;
   float posE = 0;
   if (absolutePosSource){
@@ -234,36 +267,23 @@ void computeRobotState(){
   } else {
     posN = gps.relPosN;  
     posE = gps.relPosE;     
-  }  
+  }   
 
-  if (GPS_POSITION_OFFSET_ENABLED && imuDriver.imuFound)
-  {
-    quat_t x; x.setRotation({1,0,0}, imuDriver.roll, false);  
-    quat_t y; y.setRotation({0,1,0}, imuDriver.pitch, false);  
-    quat_t z; z.setRotation({0,0,1}, stateDelta, false);
-    quat_t rot = (z*y*x).norm();
+  /*vec3_t gpsOffset = up * (-24.0 / 100.0)
+                  + right * (0.0 / 100.0)
+                  + forward * (0.0 / 100.0);
+  posN += gpsOffset.y;
+  posE += gpsOffset.x;*/
+
   
-    vec3_t forward = rot.rotate({1,0,0}, GLOBAL_FRAME).norm(); 
-    vec3_t right = rot.rotate({0,-1,0}, GLOBAL_FRAME).norm();
-    vec3_t up = rot.rotate({0,0,1}, GLOBAL_FRAME).norm(); 
-  
-    vec3_t gpsOffset = forward * (GPS_POSITION_OFFSET_FORWARD / 100.0)
-                    + right * (GPS_POSITION_OFFSET_RIGHT / 100.0)
-                    + up * (GPS_POSITION_OFFSET_UP / 100.0);
-    posN += gpsOffset.y;
-    posE += gpsOffset.x;
-  }
-  
-  if (fabs(motor.linearSpeedSet) < 0.001){       
+  if (fabs(motor.linearSpeedSet) < 0.001)  
     resetLastPos = true;
-  }
-  
-  if ((gps.solutionAvail) 
-      && ((gps.solution == SOL_FIXED) || (gps.solution == SOL_FLOAT))  )
+
+  if ((gps.solutionAvail) && ((gps.solution == SOL_FIXED) || (gps.solution == SOL_FLOAT))  )
   {
-    gps.solutionAvail = false;        
+    gps.solutionAvail = false;
     stateGroundSpeed = 0.9 * stateGroundSpeed + 0.1 * abs(gps.groundSpeed);    
-    //CONSOLE.println(stateGroundSpeed);
+
     float distGPS = sqrt( sq(posN-lastPosN)+sq(posE-lastPosE) );
     if ((distGPS > 0.3) || (resetLastPos)){
       if (distGPS > 0.3) {
@@ -276,52 +296,64 @@ void computeRobotState(){
       lastPosN = posN;
       lastPosE = posE;
       lastPosDelta = stateDelta;
-    } else if (distGPS > 0.1) {       
+    }
+    else if (distGPS > 0.1) // gps heading fusion
+    {       
       float diffLastPosDelta = distancePI(stateDelta, lastPosDelta);                 
-      if (fabs(diffLastPosDelta) /PI * 180.0 < 10){  // robot sensors indicate it is not turning
-        if ( (fabs(motor.linearSpeedSet) > 0) && (fabs(motor.angularSpeedSet) /PI *180.0 < 45) ) {  
-          stateDeltaGPS = scalePI(atan2(posN-lastPosN, posE-lastPosE));    
-          if (motor.linearSpeedSet < 0) stateDeltaGPS = scalePI(stateDeltaGPS + PI); // consider if driving reverse
-          //stateDeltaGPS = scalePI(2*PI-gps.heading+PI/2);
+      if (fabs(diffLastPosDelta) /PI * 180.0 < 10
+      && (fabs(motor.linearSpeedSet) > 0)
+      && (fabs(motor.angularSpeedSet) /PI *180.0 < 45) ) // make sure robot is not turningz
+      {
+        stateDeltaGPS = scalePI(atan2(posN-lastPosN, posE-lastPosE));    
+        if (motor.linearSpeedSet < 0)
+          stateDeltaGPS = scalePI(stateDeltaGPS + PI); // consider if driving reverse
+
+        if (((gps.solution == SOL_FIXED) && (maps.useGPSfixForDeltaEstimation ))
+        || ((gps.solution == SOL_FLOAT) && false) ) // allows planner to use float solution?     
+        {    
           float diffDelta = distancePI(stateDelta, stateDeltaGPS);                 
-          if (    ((gps.solution == SOL_FIXED) && (maps.useGPSfixForDeltaEstimation ))
-              || ((gps.solution == SOL_FLOAT) && (maps.useGPSfloatForDeltaEstimation)) )
-          {   // allows planner to use float solution?         
-            if (fabs(diffDelta/PI*180) > 45){ // IMU-based heading too far away => use GPS heading
-              stateDelta = stateDeltaGPS;
-              stateDeltaIMU = 0;
-            } else {
-              // delta fusion (complementary filter, see above comment)
-              stateDeltaGPS = scalePIangles(stateDeltaGPS, stateDelta);
-              stateDelta = scalePI(fusionPI(0.9, stateDelta, stateDeltaGPS));               
-            }            
-          }
+          if (fabs(diffDelta/PI*180) > 45){ // IMU-based heading too far away => use GPS heading
+            stateDelta = stateDeltaGPS;
+            stateDeltaIMU = 0;
+          } else {
+            // delta fusion (complementary filter, see above comment)
+            stateDeltaGPS = scalePIangles(stateDeltaGPS, stateDelta);
+            stateDelta = fusionPI(0.9, stateDelta, stateDeltaGPS);               
+          }            
         }
       }
       lastPosN = posN;
       lastPosE = posE;
       lastPosDelta = stateDelta;
     } 
-    if (gps.solution == SOL_FIXED) {
-      // fix
-      lastFixTime = millis();
-      if (maps.useGPSfixForPosEstimation) {
-        stateX = posE;
-        stateY = posN;
-      }        
-    } else {
-      // float
-      if (maps.useGPSfloatForPosEstimation){ // allows planner to use float solution?
-        stateX = posE;
-        stateY = posN;              
-      }
-    }
-  } 
-  
-  // odometry
-  stateX += distOdometry/100.0 * cos(stateDelta);
-  stateY += distOdometry/100.0 * sin(stateDelta);        
 
+    // set lat fix time
+    if (gps.solution == SOL_FIXED)
+      lastFixTime = millis();
+    
+    // update state for fix and float
+    if (gps.solution == SOL_FIXED && maps.useGPSfixForPosEstimation){ // fix
+      stateX = posE;
+      stateY = posN;
+    }
+    else if (maps.useGPSfloatForPosEstimation){ // allows planner to use float solution?
+      vec3_t pos = (vec3_t(stateX, stateY, 0.0) + forward * (distOdometry/100.0)) * 0.99
+                  + vec3_t(posE, posN, 0.0) * 0.01;
+      stateX = pos.x;
+      stateY = pos.y;           
+    }
+  }
+  else // no GPS data available
+  {
+    // odometry
+    //stateX += distOdometry/100.0 * cos(stateDelta);
+    //stateY += distOdometry/100.0 * sin(stateDelta);        
+
+    vec3_t pos = forward * (distOdometry/100.0);
+    stateX += pos.x;
+    stateY += pos.y;
+  }
+  
   if (stateOp == OP_MOW) statMowDistanceTraveled += distOdometry/100.0;
   
   if (imuDriver.imuFound){
@@ -354,5 +386,7 @@ void computeRobotState(){
     //CONSOLE.println(stateDeltaSpeedWheels/PI*180.0);
   }
 }
+
+
 
 
