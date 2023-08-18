@@ -333,35 +333,12 @@ void SerialRobotDriver::motorResponse(){
     }    
   }
 
-  if (abs(liftleft_o - liftleft) > 20 || abs(liftright_o - liftright) > 20 || triggeredLift)  {
-    CONSOLE.print("SerialRobotDriver: DEBUG: liftleft: ");
-    CONSOLE.print(liftleft);
-    CONSOLE.print(" liftright: ");
-    CONSOLE.print(liftright);
-    CONSOLE.println("");
-    liftleft_o = liftleft;
-    liftright_o = liftright;
-
-
-    // CONSOLE.print("IMU tilt: ");
-    // CONSOLE.print("ypr=");
-    // CONSOLE.print(imuDriver.yaw/PI*180.0);
-    // CONSOLE.print(",");
-    // CONSOLE.print(imuDriver.pitch/PI*180.0);
-    // CONSOLE.print(",");
-    // CONSOLE.print(imuDriver.roll/PI*180.0);
-    // CONSOLE.print(" rollChange=");
-    // CONSOLE.print(rollChange/PI*180.0);
-    // CONSOLE.print(" pitchChange=");
-    // CONSOLE.println(pitchChange/PI*180.0);
-  }
-
   if (triggeredLift && pitchcheck) {
     float pic = pitchChange/PI*180.0;
     if (fabs(pic) < 2.5) {
-      CONSOLE.print("SerialRobotDriver: reset lift - because pitchChange too low: ");
-      CONSOLE.print(pic);
-      CONSOLE.println("");
+      // CONSOLE.print("SerialRobotDriver: reset lift - because pitchChange too low: ");
+      // CONSOLE.print(pic);
+      // CONSOLE.println("");
       // overwrite triggeredLift
       triggeredLift = false;
     } else {
