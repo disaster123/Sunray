@@ -403,9 +403,9 @@ void SerialRobotDriver::summaryResponse(){
       } else if (counter == 3){
         chargeCurrent = floatValue;
       } else if (counter == 4){
-        triggeredLift = (intValue != 0);
+        // triggeredLift = (intValue != 0);
       } else if (counter == 5){
-        triggeredLeftBumper = (intValue != 0);
+        // triggeredLeftBumper = (intValue != 0);
       } else if (counter == 6){
         triggeredRain = (intValue != 0);
       } else if (counter == 7){
