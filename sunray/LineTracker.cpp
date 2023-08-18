@@ -305,7 +305,7 @@ void trackLine(bool runControl){
       k = stanleyTrackingSlowK; //STANLEY_CONTROL_K_SLOW;   
       p = stanleyTrackingSlowP; //STANLEY_CONTROL_P_SLOW;          
     }
-    angular =  p * trackerDiffDelta + atan2(k * lateralError, (0.001 + fabs(linear)));       // correct for path errors           
+    angular = p * trackerDiffDelta + atan(k * lateralError);       // correct for path errors           
     // switched from turn motion to linear - we now need to correct last motion front wheels to 
     // opposite angle
     if (angleToTargetFits == true && langleToTargetFits == false) {
