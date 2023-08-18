@@ -346,7 +346,7 @@ void trackLine(bool runControl){
     }  
   } else {
     // no gps solution
-    if (REQUIRE_VALID_GPS){
+    if (REQUIRE_VALID_GPS && millis() > lastFixTime + 10 * 1000.0){
       CONSOLE.println("WARN: no gps solution!");
       activeOp->onGpsNoSignal();
     }
