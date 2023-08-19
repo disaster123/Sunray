@@ -129,6 +129,7 @@ class Map
     // the line defined by (lastTargetPoint, targetPoint) is the current line to drive
     Point targetPoint; // target point
     Point lastTargetPoint; // last target point
+    Point lastMowPoint; // last mow point
     //int targetPointIdx; // index of target point    
     bool trackReverse; // get to target in reverse?
     bool trackSlow;    // get to target slowly?
@@ -143,7 +144,7 @@ class Map
     int dockPointsIdx;   // next dock point in docking point polygon
     int freePointsIdx;   // next free point in free point polygon
     int percentCompleted;
-    float curmowpointdistancetodst;
+    float mowlineprogress;
     
     Polygon points;
     Polygon perimeterPoints;
@@ -187,7 +188,7 @@ class Map
     // has mowing completed?
     bool mowingCompleted();    
     // given some point, check and modify it to get obstacle-safe mowing point
-    bool findObstacleSafeMowPoint(Point &newTargetPoint, float stateX, float stateY, float &distancetodst);
+    bool findObstacleSafeMowPoint(Point &newTargetPoint, float stateX, float stateY, float &mowlineprogress);
     int isPointInsideObstacle(Point pt, int skipidx, float offset);
     // choose progress (0..100%) in mowing point list    
     void setMowingPointPercent(float perc);
