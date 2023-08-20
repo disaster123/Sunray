@@ -1121,7 +1121,9 @@ bool Map::addObstacle(float stateX, float stateY, float stateDelta, MotType moti
   float center_x = stateX + cos( circle_rot ) * (r + move_dist);
   float center_y = stateY + sin( circle_rot ) * (r + move_dist);
 
-  CONSOLE.print("addObstacle: state: ");
+  CONSOLE.print("addObstacle: new idx: ");
+  CONSOLE.print(obstacles.numPolygons);
+  CONSOLE.print(" state: ");
   CONSOLE.print(stateX);
   CONSOLE.print("/");
   CONSOLE.print(stateY);
@@ -1440,7 +1442,8 @@ bool Map::nextPoint(bool sim,float stateX, float stateY, bool nextmowpoint){
     int ob_idx = isPointInsideObstacle(curmowerpos, -1, -0.04);
     // curmowerpos is inside obstacle - this might be problematic for finding a path
     if ( ob_idx != -1 ) {
-      CONSOLE.println("Map::nextPoint: WARN: curmowerpos is inside obstacle - remove obstacle!");
+      CONSOLE.println("Map::nextPoint: WARN: curmowerpos is inside obstacle - remove obstacle with id: ");
+      CONSOLE.println(ob_idx);
       obstacles.removePolygon(ob_idx);
     }
 
