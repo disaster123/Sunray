@@ -8,10 +8,14 @@
 #include "../../config.h"
 #include "../../ioboard.h"
 #include "../../robot.h"
+#include "../../motor.h"
 
 #define COMM  ROBOT
 
 //#define DEBUG_SERIAL_ROBOT 1
+float robotPitchChange;
+float LastRobotPitch;
+unsigned long LastCalc;
 
 void SerialRobotDriver::begin(){
   CONSOLE.println("using robot driver: SerialRobotDriver");
@@ -62,6 +66,9 @@ void SerialRobotDriver::begin(){
   statePitch = 0;
   stateRoll = 0;
   pitchcheck = true;
+  robotPitchChange = 0;
+  LastRobotPitch = 0;
+  LastCalc = millis();
 
   #ifdef __linux__
     CONSOLE.println("reading robot ID...");
@@ -290,6 +297,11 @@ void SerialRobotDriver::motorResponse(){
   statePitch = imuDriver.pitch;
   stateRoll = imuDriver.roll;
 
+  robotPitchChange = motor.robotPitch - LastRobotPitch;
+  robotPitchChange = (robotPitchChange / (millis() - LastCalc));
+  LastCalc = millis();
+  LastRobotPitch = motor.robotPitch;
+
   int counter = 0;
   int lastCommaIdx = 0;
   for (int idx=0; idx < cmd.length(); idx++){
@@ -314,7 +326,10 @@ void SerialRobotDriver::motorResponse(){
         triggeredLeftBumper = (intValue != 0);
       } else if (counter == 6){
         if ((!triggeredLift) && (triggeredLift != (intValue != 0))) {
-          CONSOLE.println("SerialRobotDriver: triggeredLift");
+          CONSOLE.print("SerialRobotDriver: triggeredLift motor.robotPitch: ");
+          CONSOLE.print(motor.robotPitch);
+          CONSOLE.print(" robotPitchChange: ");
+          CONSOLE.println(robotPitchChange);
         }
         triggeredLift = (intValue != 0);
         // if trigger is false - enable pitcheck for next time
