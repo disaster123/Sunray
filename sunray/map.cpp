@@ -1443,7 +1443,7 @@ bool Map::nextPoint(bool sim,float stateX, float stateY, bool nextmowpoint){
     int ob_idx = isPointInsideObstacle(curmowerpos, -1, -0.05);
     // curmowerpos is inside obstacle - this might be problematic for finding a path
     if ( ob_idx != -1 ) {
-      CONSOLE.println("Map::nextPoint: WARN: curmowerpos is inside obstacle - remove obstacle with id: ");
+      CONSOLE.print("Map::nextPoint: WARN: curmowerpos is inside obstacle - remove obstacle with id: ");
       CONSOLE.println(ob_idx);
       obstacles.removePolygon(ob_idx);
     }
