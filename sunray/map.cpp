@@ -1093,7 +1093,7 @@ void Map::clearObstacles(){
 bool Map::addObstacle(float stateX, float stateY, float stateDelta, MotType motion){
   float r = OBSTACLE_DIAMETER / 2.0; // radius
   float move_dist = 0;
-  float move_angle;
+  int move_angle = 0;
 
   switch (motion){
     case MOT_BACKWARD:
@@ -1102,24 +1102,26 @@ bool Map::addObstacle(float stateX, float stateY, float stateDelta, MotType moti
     case MOT_RIGHT:
       move_angle = -40; // do not use 90 degress only fron wheels turn / move
       r = r * 2/3;
-      move_dist = MOWER_GPS_TO_SIDE / 100 / 2;
+      move_dist = MOWER_GPS_TO_SIDE / 100;
       break;
     case MOT_LEFT:
       move_angle = 40; // do not use 90 degress only fron wheels turn / move
       r = r * 2/3;
-      move_dist = MOWER_GPS_TO_SIDE / 100 / 2;
+      move_dist = MOWER_GPS_TO_SIDE / 100;
       break;
     case MOT_FORWARD:
-      move_angle = 0;
-      move_dist = MOWER_GPS_TO_FRONT / 100 / 2;
+      move_dist = MOWER_GPS_TO_FRONT / 100;
       break;
   }
 
-  float circle_rot = scalePI( stateDelta + deg2rad(move_angle) );
+  float stateX_moved = stateX + move_dist * cos(stateDelta);
+  float stateY_moved = stateY + move_dist * sin(stateDelta);
+
+  float circle_rot = stateDelta + deg2rad(move_angle);
 
   // move center of octagon in the right position of mower
-  float center_x = stateX + cos( circle_rot ) * (r + move_dist + 0.05);
-  float center_y = stateY + sin( circle_rot ) * (r + move_dist + 0.05);
+  float center_x = stateX_moved + cos( circle_rot ) * r;
+  float center_y = stateY_moved + sin( circle_rot ) * r;
 
   CONSOLE.print("addObstacle: new idx: ");
   CONSOLE.print(obstacles.numPolygons);
