@@ -297,10 +297,11 @@ void SerialRobotDriver::motorResponse(){
   statePitch = imuDriver.pitch;
   stateRoll = imuDriver.roll;
 
-  robotPitchChange = motor.robotPitch - LastRobotPitch;
-  robotPitchChange = (robotPitchChange / (millis() - LastCalc));
-  LastCalc = millis();
-  LastRobotPitch = motor.robotPitch;
+  float pitch_deg = motor.robotPitch * (180.0 / PI);
+  robotPitchChange = pitch_deg - LastRobotPitch;
+  robotPitchChange = (robotPitchChange / (millis()/1000.0 - LastCalc));
+  LastCalc = millis()/1000.0;
+  LastRobotPitch = pitch_deg;
 
   int counter = 0;
   int lastCommaIdx = 0;
