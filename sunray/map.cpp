@@ -1115,11 +1115,11 @@ bool Map::addObstacle(float stateX, float stateY, float stateDelta, MotType moti
       break;
   }
 
-  float circle_rot = scalePI( scalePI(stateDelta) + scalePI(deg2rad(move_angle)) );
+  float circle_rot = scalePI( stateDelta + deg2rad(move_angle) );
 
   // move center of octagon in the right position of mower
-  float center_x = stateX + cos( circle_rot ) * (r + move_dist);
-  float center_y = stateY + sin( circle_rot ) * (r + move_dist);
+  float center_x = stateX + cos( circle_rot ) * (r + move_dist + 0.05);
+  float center_y = stateY + sin( circle_rot ) * (r + move_dist + 0.05);
 
   CONSOLE.print("addObstacle: new idx: ");
   CONSOLE.print(obstacles.numPolygons);
@@ -1173,7 +1173,6 @@ bool Map::addObstacle(float stateX, float stateY, float stateDelta, MotType moti
   ci += 1;
   obstacles.polygons[idx].points[ci].setXY(center_x + cos(scalePI( deg2rad(315) + circle_rot ) ) * r, center_y + sin(scalePI( deg2rad(315) + circle_rot ) ) * r);
   ci += 1;
-
 
   return true;
 }
