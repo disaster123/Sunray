@@ -1262,6 +1262,10 @@ bool Map::findObstacleSafeMowPoint(Point &newTargetPoint, float stateX, float st
   if (distToPath < 0.1) {
     mowlineprogress = dist_src_to_state;
   }
+  if (mowlineprogress == -1) {
+    // we want a new mowpoint as nextmowpoint is true
+    mowlineprogress = distance(src, lastTargetPoint);
+  }
 
   // get first obstacle in front of state_pos
   Point bestsec;
@@ -1448,19 +1452,29 @@ bool Map::nextPoint(bool sim,float stateX, float stateY, bool nextmowpoint){
       obstacles.removePolygon(ob_idx);
     }
 
-    // only skip to next mowpoint if nextmowpoint is set true
-    // this should normaly only happen by linetracker in WAY_FREE mode
-    if (!nextMowPoint(false, nextmowpoint)){
-      CONSOLE.println("Map::nextPoint: ERROR: no more mowing points!");
-      return false;
+
+    if (nextmowpoint && mowPoints.points[mowPointsIdx].x() == lastTargetPoint.x() &&
+        mowPoints.points[mowPointsIdx].y() == lastTargetPoint.y() ) {
+      // lastTarget was current mowPoint from WAY_FREE - go to next mowpoint
+      if (!nextMowPoint(false, nextmowpoint)){
+        CONSOLE.println("Map::nextPoint: ERROR: no more mowing points!");
+        return false;
+      }
+    } else if (nextmowpoint) {
+      // magic to set current progress to current lastTargetPoint
+      mowlineprogress = -1;
     }
 
-    // this loop has currently no sense - we might want to implement
-    // some special logic if findPath fails - like skip to next point...
+    // only skip to next mowpoint if nextmowpoint is set true
+    // this should normaly only happen by linetracker in WAY_FREE mode
     while (true) {
       if (!findObstacleSafeMowPoint(dst, curmowerpos.x(), curmowerpos.y(), mowlineprogress)) {
         CONSOLE.println("Map::nextPoint: WARN: findObstacleSafeMowPoint: failed - skip to next real mowpoint!");
-        return nextPoint(sim, stateX, stateY, true);
+        if (!nextMowPoint(false, true)){
+          CONSOLE.println("Map::nextPoint: ERROR: no more mowing points!");
+          return false;
+        }
+        continue;
       }
       if (findPath(curmowerpos, dst)) {
         // path found
@@ -1517,13 +1531,6 @@ bool Map::nextPoint(bool sim,float stateX, float stateY, bool nextmowpoint){
       CONSOLE.print("/");
       CONSOLE.print(mowPoints.points[mowPointsIdx].y());
       CONSOLE.print(" real next mowpoint allowed: ");
-
-      nextmowpoint = false;
-      if (mowPoints.points[mowPointsIdx].x() == lastTargetPoint.x() &&
-          mowPoints.points[mowPointsIdx].y() == lastTargetPoint.y() ) {
-          // target was real mow target - otherwise recalc from current situation
-          nextmowpoint = true;
-      }
       CONSOLE.println(nextmowpoint);
 
       return nextPoint(sim, stateX, stateY, nextmowpoint);
