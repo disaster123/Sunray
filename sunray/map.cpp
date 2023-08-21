@@ -1259,9 +1259,9 @@ bool Map::findObstacleSafeMowPoint(Point &newTargetPoint, float stateX, float st
   float distToPath = distanceLine(stateX, stateY, src.x(), src.y(), dst.x(), dst.y());
 
   // we are near or on mowline - set mowlineprogress to cur pos
-  if (distToPath < 0.1) {
-    mowlineprogress = dist_src_to_state;
-  }
+  //if (distToPath < 0.1) {
+  //  mowlineprogress = dist_src_to_state;
+  //}
   if (mowlineprogress == -1) {
     // we want a new mowpoint as nextmowpoint is true
     mowlineprogress = distance(src, lastTargetPoint);
