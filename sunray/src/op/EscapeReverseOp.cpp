@@ -90,7 +90,7 @@ void EscapeReverseOp::run(){
 
     // if bumper_mode and bumper was not released yet and bumper is released now
     if (bumper_mode && !bumperAndLiftReleased && !bumper.obstacle() && !detectLift()) {
-      CONSOLE.println("BUMPER: now released - set new obstacle position and drive 1s back");
+      CONSOLE.println("BUMPER: released now");
       // bumper is released after obstacle was detected
       bumperAndLiftReleased = true;
       // overwrite
@@ -102,7 +102,7 @@ void EscapeReverseOp::run(){
 
     if ((bumper_mode && bumperAndLiftReleased && (bumper.obstacle() || detectLift())) ||
        (lift_mode && !detectLift() && bumper.obstacle())) {
-      CONSOLE.println("BUMPERi/LIFT: was released but now new obstacle - reset direction and driveReverseStopTime");
+      CONSOLE.println("BUMPER/LIFT: was released but now new obstacle - reset direction and driveReverseStopTime");
       if (lift_mode) {
         bumperAndLiftReleased = true;
       }
@@ -116,7 +116,7 @@ void EscapeReverseOp::run(){
         linear = 0.15;
       }
       // this one is updated in every call as long as obstacle is true / triggered
-      driveReverseStopTime = millis() + 100;
+      driveReverseStopTime = millis() + 250;
     }
    
     if (linear != 0.0) motor.setLinearAngularSpeed(linear,0);
