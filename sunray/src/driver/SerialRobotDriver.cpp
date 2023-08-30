@@ -349,7 +349,7 @@ void SerialRobotDriver::motorResponse(){
     }    
   }
 
-  if ((triggeredLift && pitchcheck) || (fabs(robotPitchChange) > 5.0)) {
+  if (triggeredLift && pitchcheck) {
     float pic = pitchChange/PI*180.0;
     if (fabs(pic) < 2.5 && fabs(robotPitchChange) < 3.0) {
       // CONSOLE.print("SerialRobotDriver: reset lift - because pitchChange too low: ");
@@ -359,7 +359,6 @@ void SerialRobotDriver::motorResponse(){
       triggeredLift = false;
     } else {
       // do not reevaluate
-      triggeredLift = true;
       pitchcheck = false;
       CONSOLE.print("SerialRobotDriver: lift OK: ");
       CONSOLE.print(pic);
