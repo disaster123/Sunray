@@ -287,6 +287,7 @@ void SerialRobotDriver::requestMotorPwm(int leftPwm, int rightPwm, int mowPwm){
   cmdMotorCounter++;
 }
 
+unsigned long lastprinter = 0;
 void SerialRobotDriver::motorResponse(){
   if (cmd.length()<6) return;
 
@@ -329,12 +330,7 @@ void SerialRobotDriver::motorResponse(){
         triggeredLeftBumper = (intValue != 0);
       } else if (counter == 6){
         if ((!triggeredLift) && (triggeredLift != (intValue != 0))) {
-          CONSOLE.print("SerialRobotDriver: triggeredLift motor.robotPitch: ");
-          CONSOLE.print(motor.robotPitch);
-          CONSOLE.print(" robotPitchChange: ");
-          CONSOLE.println(fabs(robotPitchChange));
-          CONSOLE.print(" pitchChange: ");
-          CONSOLE.println(fabs(pitchChange/PI*180.0));
+          CONSOLE.println("SerialRobotDriver: triggeredLift");
         }
         triggeredLift = (intValue != 0);
         // if trigger is false - enable pitcheck for next time
@@ -351,6 +347,20 @@ void SerialRobotDriver::motorResponse(){
       counter++;
       lastCommaIdx = idx;
     }    
+  }
+
+  if ((millis()-lastprinter) > 500) {
+    lastprinter = millis();
+    CONSOLE.print("SerialRobotDriver: DEBUG: motor.robotPitch: ");
+    CONSOLE.print(motor.robotPitch);
+    CONSOLE.print(" robotPitchChange: ");
+    CONSOLE.print(fabs(robotPitchChange));
+    CONSOLE.print(" pitchChange: ");
+    CONSOLE.print(fabs(pitchChange/PI*180.0));
+    CONSOLE.print(" liftleft: ");
+    CONSOLE.print(liftright);
+    CONSOLE.print(" liftright: ");
+    CONSOLE.println(liftright);
   }
 
   if (triggeredLift && pitchcheck) {
