@@ -60,9 +60,9 @@ void KidnapWaitOp::run(){
       changeOp(errorOp);
       return;
     }   
-    if (GPS_REBOOT_RECOVERY and gps.solution != SOL_FIXED){           
+    if (GPS_REBOOT_RECOVERY){           
       CONSOLE.println("KidnapWaitOp: reboot GPS");
-      gps.reboot();   // try to recover from false GPS fix     
+      gps.reboot();   // try to recover - even GPS FIX might be wrong position
     }
   }
 }
