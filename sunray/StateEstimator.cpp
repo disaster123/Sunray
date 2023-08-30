@@ -367,8 +367,8 @@ void computeRobotState(){
   // we need to remove MOWER_GPS_TO_SIDE - as perimeter and exclusions are bigger due to GPS to side
   stateX_mowerfront = stateX + ((MOWER_GPS_TO_FRONT-MOWER_GPS_TO_SIDE)/100.0) * cos(stateDelta);
   stateY_mowerfront = stateY + ((MOWER_GPS_TO_FRONT-MOWER_GPS_TO_SIDE)/100.0) * sin(stateDelta);
-  stateX_infrontof = stateX + ((MOWER_GPS_TO_FRONT-MOWER_GPS_TO_SIDE)/100.0+0.05) * cos(stateDelta);
-  stateY_infrontof = stateY + ((MOWER_GPS_TO_FRONT-MOWER_GPS_TO_SIDE)/100.0+0.05) * sin(stateDelta);
+  stateX_infrontof = stateX + ((MOWER_GPS_TO_FRONT-MOWER_GPS_TO_SIDE)/100.0+0.1) * cos(stateDelta);
+  stateY_infrontof = stateY + ((MOWER_GPS_TO_FRONT-MOWER_GPS_TO_SIDE)/100.0+0.1) * sin(stateDelta);
 
   // compute yaw rotation speed (delta speed)
   stateDeltaSpeed = (stateDelta - stateDeltaLast) / 0.02;  // 20ms timestep
