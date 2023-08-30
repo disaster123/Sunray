@@ -1028,6 +1028,7 @@ bool Map::startDocking(float stateX, float stateY){
   if (dockPoints.numPoints > 0){
     if (wayMode == WAY_DOCK) {
       CONSOLE.println("skipping path planning to first docking point: already docking");    
+      clearObstacles();
       return true;
     }
     // find valid path from robot to first docking point      
