@@ -297,9 +297,11 @@ void SerialRobotDriver::motorResponse(){
   statePitch = imuDriver.pitch;
   stateRoll = imuDriver.roll;
 
-  float pitch_deg = motor.robotPitch * (180.0 / PI);
-  robotPitchChange = pitch_deg - LastRobotPitch;
-  robotPitchChange = (robotPitchChange / (millis()/1000.0 - LastCalc));
+  float pitch_deg = fabs(motor.robotPitch * (180.0 / PI));
+  if (LastRobotPitch > 0) {
+    robotPitchChange = pitch_deg - LastRobotPitch;
+    robotPitchChange = (robotPitchChange / (millis()/1000.0 - LastCalc));
+  }
   LastCalc = millis()/1000.0;
   LastRobotPitch = pitch_deg;
 
@@ -330,7 +332,9 @@ void SerialRobotDriver::motorResponse(){
           CONSOLE.print("SerialRobotDriver: triggeredLift motor.robotPitch: ");
           CONSOLE.print(motor.robotPitch);
           CONSOLE.print(" robotPitchChange: ");
-          CONSOLE.println(robotPitchChange);
+          CONSOLE.println(fabs(robotPitchChange));
+          CONSOLE.print(" pitchChange: ");
+          CONSOLE.println(fabs(pitchChange/PI*180.0));
         }
         triggeredLift = (intValue != 0);
         // if trigger is false - enable pitcheck for next time
