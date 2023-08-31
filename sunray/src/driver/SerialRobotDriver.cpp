@@ -288,6 +288,10 @@ void SerialRobotDriver::requestMotorPwm(int leftPwm, int rightPwm, int mowPwm){
 }
 
 unsigned long lastprinter = 0;
+float time_last_pitch = 0;
+float time_last_robotPitch = 0;
+int time_last_liftleft = 0;
+int time_last_liftright = 0;
 void SerialRobotDriver::motorResponse(){
   if (cmd.length()<6) return;
 
@@ -357,17 +361,40 @@ void SerialRobotDriver::motorResponse(){
   }
 
   if ((millis()-lastprinter) > 500) {
+
+    if (lastprinter > 0) {
+      float last_pitch = time_last_pitch / imuDriver.pitch;
+      float last_robotPitch = time_last_robotPitch / (motor.robotPitch * (180.0 / PI));
+      float last_liftleft = time_last_liftleft / liftleft;
+      float last_liftright = time_last_liftright / liftright;
+
+      CONSOLE.print("SerialRobotDriver: DEBUG2: last_pitch: ");
+      CONSOLE.print(last_pitch);
+      CONSOLE.print(" last_robotPitch: ");
+      CONSOLE.print(last_robotPitch);
+      CONSOLE.print(" last_liftleft: ");
+      CONSOLE.print(last_liftleft);
+      CONSOLE.print(" last_liftright: ");
+      CONSOLE.println(last_liftright);
+
+      // CONSOLE.print("SerialRobotDriver: DEBUG: motor.robotPitch: ");
+      // CONSOLE.print(motor.robotPitch);
+      // CONSOLE.print(" robotPitchChange: ");
+      // CONSOLE.print(fabs(robotPitchChange));
+      // CONSOLE.print(" LastRobotPitch: ");
+      // CONSOLE.print(LastRobotPitch);
+      // CONSOLE.print(" liftleft: ");
+      // CONSOLE.print(liftright);
+      // CONSOLE.print(" liftright: ");
+      // CONSOLE.println(liftright);
+
+    }
+
+    time_last_pitch = imuDriver.pitch;
+    time_last_robotPitch =  motor.robotPitch * (180.0 / PI);
+    time_last_liftleft = liftleft;
+    time_last_liftright = liftright;
     lastprinter = millis();
-    CONSOLE.print("SerialRobotDriver: DEBUG: motor.robotPitch: ");
-    CONSOLE.print(motor.robotPitch);
-    CONSOLE.print(" robotPitchChange: ");
-    CONSOLE.print(fabs(robotPitchChange));
-    CONSOLE.print(" LastRobotPitch: ");
-    CONSOLE.print(LastRobotPitch);
-    CONSOLE.print(" liftleft: ");
-    CONSOLE.print(liftright);
-    CONSOLE.print(" liftright: ");
-    CONSOLE.println(liftright);
   }
 
   if (triggeredLift && pitchcheck) {
