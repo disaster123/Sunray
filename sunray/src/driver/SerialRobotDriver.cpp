@@ -363,10 +363,10 @@ void SerialRobotDriver::motorResponse(){
   if ((millis()-lastprinter) > 500) {
 
     if (lastprinter > 0) {
-      float last_pitch = time_last_pitch / imuDriver.pitch;
-      float last_robotPitch = time_last_robotPitch / (motor.robotPitch * (180.0 / PI));
-      float last_liftleft = time_last_liftleft / liftleft;
-      float last_liftright = time_last_liftright / liftright;
+      float last_pitch = time_last_pitch / (imuDriver.pitch + 0.0001);
+      float last_robotPitch = time_last_robotPitch / (motor.robotPitch * (180.0 / PI) + 0.0001);
+      float last_liftleft = time_last_liftleft / (liftleft + 0.0001);
+      float last_liftright = time_last_liftright / (liftright + 0.0001);
 
       CONSOLE.print("SerialRobotDriver: DEBUG2: last_pitch: ");
       CONSOLE.print(last_pitch);
