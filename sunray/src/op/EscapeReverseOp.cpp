@@ -24,7 +24,7 @@ String EscapeReverseOp::name(){
 }
 
 void EscapeReverseOp::begin(){
-    driveReverseStopTime = millis() + 3000;                           
+    driveReverseStopTime = millis() + 1500;                           
     bumperAndLiftReleased = false;
     orig_stateX = stateX;
     orig_stateY = stateY;
@@ -97,7 +97,7 @@ void EscapeReverseOp::run(){
       // orig_stateX = stateX;
       // orig_stateY = stateY;
 
-      driveReverseStopTime = millis() + 250;
+      driveReverseStopTime = millis() + 750;
     }
 
     if ((bumper_mode && bumperAndLiftReleased && (bumper.obstacle() || detectLift())) ||
@@ -116,7 +116,7 @@ void EscapeReverseOp::run(){
         linear = 0.15;
       }
       // this one is updated in every call as long as obstacle is true / triggered
-      driveReverseStopTime = millis() + 250;
+      driveReverseStopTime = millis() + 500;
     }
    
     if (linear != 0.0) motor.setLinearAngularSpeed(linear,0);
