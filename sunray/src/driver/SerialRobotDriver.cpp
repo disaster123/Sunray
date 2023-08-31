@@ -349,14 +349,21 @@ void SerialRobotDriver::motorResponse(){
     }    
   }
 
+  if (LastRobotPitch > 3.0 && liftleft < -200 && liftright < -200) {
+    CONSOLE.println("SerialRobotDriver: FORCE lift!");
+    // force trigger
+    triggeredLift = true;
+    pitchcheck = false;
+  }
+
   if ((millis()-lastprinter) > 500) {
     lastprinter = millis();
     CONSOLE.print("SerialRobotDriver: DEBUG: motor.robotPitch: ");
     CONSOLE.print(motor.robotPitch);
     CONSOLE.print(" robotPitchChange: ");
     CONSOLE.print(fabs(robotPitchChange));
-    CONSOLE.print(" pitchChange: ");
-    CONSOLE.print(fabs(pitchChange/PI*180.0));
+    CONSOLE.print(" LastRobotPitch: ");
+    CONSOLE.print(LastRobotPitch);
     CONSOLE.print(" liftleft: ");
     CONSOLE.print(liftright);
     CONSOLE.print(" liftright: ");
