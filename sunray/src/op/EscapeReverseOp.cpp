@@ -86,6 +86,9 @@ void EscapeReverseOp::run(){
       else {
         linear = -0.25;
       }
+      if (lift_mode) {
+        linear *= 2;
+      }
     }
 
     // if bumper_mode and bumper was not released yet and bumper is released now
