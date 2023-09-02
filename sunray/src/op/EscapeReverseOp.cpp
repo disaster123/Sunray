@@ -18,6 +18,7 @@ MotType orig_motion;
 bool bumperAndLiftReleased;
 bool lift_mode;
 bool bumper_mode;
+float linear;
 
 String EscapeReverseOp::name(){
     return "EscapeReverse";
@@ -32,6 +33,7 @@ void EscapeReverseOp::begin(){
     orig_stateY2 = stateY;
     bumper_mode = false;
     lift_mode = false;
+    linear = 0;
 
     if (detectLift()) {
         lift_mode = true;
@@ -68,7 +70,6 @@ void EscapeReverseOp::end(){
 
 void EscapeReverseOp::run(){
     battery.resetIdle();
-    float linear = 0;
 
     // disable mow only for LIFT
     if (lift_mode || DISABLE_MOW_MOTOR_AT_OBSTACLE) {
