@@ -1981,12 +1981,12 @@ int Map::findNextNeighbor(NodeList &nodes, PolygonList &obstacles, Node &node, i
     if (nodes.nodes[idx].point == node.point) continue;     
     Point *pt = nodes.nodes[idx].point;            
     
-    if (verbose){
-      float dbgDstDist = distance(*pt, dbgDstPt);
-      if (dbgDstDist < 0.2){
-        CONSOLE.println("findNextNeighbor trigger debug");        
-      } else verbose = false;
-    }
+    // if (verbose){
+    //   float dbgDstDist = distance(*pt, dbgDstPt);
+    //   if (dbgDstDist < 0.2){
+    //     CONSOLE.println("findNextNeighbor trigger debug");        
+    //   } else verbose = false;
+    // }
     //if (pt.visited) continue;
     //if (this.distance(pt, node.pos) > 10) continue;
     bool safe = true;            
