@@ -1475,35 +1475,15 @@ bool Map::nextPoint(bool sim,float stateX, float stateY, bool nextmowpoint){
           CONSOLE.println("Map::nextPoint: ERROR: no more mowing points!");
           return false;
         }
+        // next round
         continue;
       }
       if (findPath(curmowerpos, dst)) {
         // path found
         break;
-      } else {
-        CONSOLE.println("Map::nextPoint: WARN: findPath failed - try again without obstacles!");
-        clearObstacles();
-        if (findPath(curmowerpos, dst)) {
-          // path found
-          break;
-        }
-        // ERROR OUT!!
-        // no path found - abort with error
-        stateSensor = SENS_MAP_NO_ROUTE;
-        setOperation(OP_ERROR, false);
-        return true;
       }
-
-      // if we're searching for next point try again?
-      if (nextmowpoint) {
-        CONSOLE.println("Map::nextPoint: WARN: needed to skip point!");
-        return nextPoint(sim, stateX, stateY, true);
-      }
-
-      // no path found - abort with error
-      stateSensor = SENS_MAP_NO_ROUTE;
-      setOperation(OP_ERROR, false);
-      return true;
+      // set new position on line and try again
+      mowlineprogress = -1;
     }
 
     // move to WAY_FREE list
