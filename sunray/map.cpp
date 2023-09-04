@@ -1484,6 +1484,7 @@ bool Map::nextPoint(bool sim,float stateX, float stateY, bool nextmowpoint){
       }
       // set new position on line and try again
       mowlineprogress = -1;
+      CONSOLE.println("Map::nextPoint: WARN: STEFAN: set mowlineprogress = -1 and try again!");
     }
 
     // move to WAY_FREE list
