@@ -1984,13 +1984,13 @@ float Map::calcHeuristic(Point &pos0, Point &pos1) {
 // 3. otherwise: line between start node and next node node must not intersect any obstacle  
   
 int Map::findNextNeighbor(NodeList &nodes, PolygonList &obstacles, Node &node, int startIdx) {
-  Point dbgSrcPt(4.2, 6.2);
-  Point dbgDstPt(3.6, 6.8);  
-  float dbgSrcDist = distance(*node.point, dbgSrcPt);
+  // Point dbgSrcPt(4.2, 6.2);
+  // Point dbgDstPt(3.6, 6.8);  
+  // float dbgSrcDist = distance(*node.point, dbgSrcPt);
   bool verbose = false; 
-  if (dbgSrcDist < 0.2){
-    verbose = true;
-  }
+  // if (dbgSrcDist < 0.2){
+  //   verbose = true;
+  // }
   //CONSOLE.print("start=");
   //CONSOLE.print((*node.point).x());
   //CONSOLE.print(",");
