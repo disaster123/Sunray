@@ -1280,7 +1280,7 @@ bool Map::findObstacleSafeMowPoint(Point &newTargetPoint, float stateX, float st
       bool safe = (isPointInsideObstacle(sect, idx, -0.02) == -1);
 
       // mowlineprogress
-      if ( dist_obst > mowlineprogress && safe && dist_obst < best_dist && distance(state, sect) > TARGET_REACHED_TOLERANCE ) {
+      if ( dist_obst > (mowlineprogress+TARGET_REACHED_TOLERANCE) && safe && dist_obst < best_dist && distance(state, sect) > TARGET_REACHED_TOLERANCE ) {
           bestsec.assign(sect);
           best_dist = dist_obst;
     
@@ -1303,7 +1303,7 @@ bool Map::findObstacleSafeMowPoint(Point &newTargetPoint, float stateX, float st
           float dist_obst = distance(src, sect_back);
           bool safe = (isPointInsideObstacle(sect_back, idx, -0.02) == -1);
 
-          if ( dist_obst > mowlineprogress && safe && dist_obst < best_dist && distance(state, sect_back) > TARGET_REACHED_TOLERANCE ) {
+          if ( dist_obst > (mowlineprogress+TARGET_REACHED_TOLERANCE) && safe && dist_obst < best_dist && distance(state, sect_back) > TARGET_REACHED_TOLERANCE ) {
             bestsec.assign(sect_back);
             best_dist = dist_obst;
 
