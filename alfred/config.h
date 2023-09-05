@@ -335,6 +335,7 @@ Also, you may choose the serial port below for serial monitor output (CONSOLE).
 #define CPG_CONFIG_FILTER_NCNOTHRS 0   // C/N0 Threshold #SVs: 10 (robust), 6 (less robust)
 #define CPG_CONFIG_FILTER_CNOTHRS  0   // 30 dbHz (robust), 13 dbHz (less robust)
 
+#define INVALID_GPS_TIMEOUT 0 // time in seconds to navigate with invalid GPS
 
 // ------ obstacle detection and avoidance  -------------------------
 
