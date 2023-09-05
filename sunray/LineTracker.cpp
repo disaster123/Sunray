@@ -42,7 +42,7 @@ int get_turn_direction_preference() {
   float targetDelta = pointsAngle(stateX, stateY, target.x(), target.y());
   float center_x = stateX;
   float center_y = stateY;
-  float r = (MOWER_SIZE / 100 + 0.1);
+  float r = (MOWER_SIZE / 100 + 0.15);
   float cur_angle = stateDelta;
 
   if (FREEWHEEL_IS_AT_BACKSIDE) {
