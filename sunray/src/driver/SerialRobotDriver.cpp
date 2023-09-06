@@ -353,14 +353,14 @@ void SerialRobotDriver::motorResponse(){
     }    
   }
 
-  if (LastRobotPitch > 3.0 && liftleft < -200 && liftright < -200) {
-    CONSOLE.println("SerialRobotDriver: FORCE lift!");
-    // force trigger
-    triggeredLift = true;
-    pitchcheck = false;
-  }
+  // if (LastRobotPitch > 3.0 && liftleft < -200 && liftright < -200) {
+  //   CONSOLE.println("SerialRobotDriver: FORCE lift!");
+  //   // force trigger
+  //   triggeredLift = true;
+  //   pitchcheck = false;
+  // }
 
-  if ((millis()-lastprinter) > 500) {
+  if ((millis()-lastprinter) > 250) {
 
     if (lastprinter > 0) {
       float last_pitch = time_last_pitch / (imuDriver.pitch + 0.0001);
