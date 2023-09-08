@@ -182,7 +182,6 @@ bool Polygon::merge_polygon(Polygon &mergepolygon) {
     for (int idx = 0; idx < other_p.numPoints; idx++) {
       Point p3 = other_p.points[idx];
       Point p4 = other_p.points[(idx + 1) % other_p.numPoints];
-      if (maps.lineIntersects(p1, p2, p3, p4)) {        
         if (maps.lineLineIntersection(p1, p2, p3, p4, sect)) {
 
           CONSOLE.print("Map: Polygon: merge_polygon: intersects: ");
@@ -208,7 +207,6 @@ bool Polygon::merge_polygon(Polygon &mergepolygon) {
           }
           intersected = true;
           break;
-        }
       }
     }
 
