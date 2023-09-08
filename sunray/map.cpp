@@ -1611,6 +1611,15 @@ bool Map::nextPoint(bool sim,float stateX, float stateY, bool nextmowpoint){
         break;
       }
       // set new position on line and try again
+      if (dst.x() == mowPoints.points[mowPointsIdx].x() && dst.y() ==  mowPoints.points[mowPointsIdx].y()) {
+        // current dst was already target skip to next one
+        if (!nextMowPoint(false, true)){
+          CONSOLE.println("Map::nextPoint: ERROR: no more mowing points!");
+          return false;
+        }
+        // next round
+        continue;
+      }
       CONSOLE.print("Map::nextPoint: WARN: STEFAN: set mowlineprogress = -1 and try again! old mowlineprogress: ");
       CONSOLE.println(mowlineprogress);
       mowlineprogress = -1;
