@@ -232,6 +232,7 @@ class Map
     // check if given point is inside perimeter (and outside exclusions) of current map 
     bool isInsidePerimeterOutsideExclusions(Point &pt);
     bool lineLineIntersection(Point &A, Point &B, Point &C, Point &D, Point &pt);
+    bool lineIntersects (Point &p0, Point &p1, Point &p2, Point &p3);        
   private:
     void finishedUploadingMap();
     void checkMemoryErrors();
@@ -245,7 +246,6 @@ class Map
     float distanceManhattan(Point &pos0, Point &pos1);
     float calcHeuristic(Point &pos0, Point &pos1);
     float scalePIangles(float setAngle, float currAngle);
-    bool lineIntersects (Point &p0, Point &p1, Point &p2, Point &p3);        
     bool linePolygonIntersection( Point &src, Point &dst, Polygon &poly);
     bool polygonOverlap(Polygon &polygon1, Polygon &polygon2);
     float polygonArea(Polygon &poly);
