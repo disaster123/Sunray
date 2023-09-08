@@ -151,7 +151,13 @@ bool Polygon::merge_polygon(Polygon &mergepolygon) {
   while (true) {
 
     CONSOLE.print("Map: Polygon: merge_polygon: round: ");
-    CONSOLE.println(mergedPolygoncounter);
+    CONSOLE.print(mergedPolygoncounter);
+    CONSOLE.print(" this_i: ");
+    CONSOLE.print(this_i);
+    CONSOLE.print(" mergepolygon_i: ");
+    CONSOLE.print(mergepolygon_i);
+    CONSOLE.print(" cur_is_src: ");
+    CONSOLE.println(cur_is_src);
 
     if (cur_is_src) {
       if (this_i >= numPoints) {
@@ -177,6 +183,8 @@ bool Polygon::merge_polygon(Polygon &mergepolygon) {
       Point p3 = other_p.points[idx];
       Point p4 = other_p.points[(idx + 1) % other_p.numPoints];
       if (maps.lineLineIntersection(p1, p2, p3, p4, sect)) {
+
+        CONSOLE.println("Map: Polygon: merge_polygon: intersect");
         mergedPolygon.points[mergedPolygoncounter].assign(sect);
         mergedPolygoncounter++;
 
@@ -194,6 +202,7 @@ bool Polygon::merge_polygon(Polygon &mergepolygon) {
     }
 
     if (!intersected) {
+      CONSOLE.println("Map: Polygon: merge_polygon: NO intersect");
       // line p1 to p2 does not intersect and p1 is inside the other one?
       if (maps.pointIsInsidePolygon(other_p, p1)) {
         // skip this point
@@ -203,6 +212,8 @@ bool Polygon::merge_polygon(Polygon &mergepolygon) {
         mergedPolygoncounter++;
       }
     }
+
+    CONSOLE.println("Map: Polygon: merge_polygon: loop end");
   }
 
     
