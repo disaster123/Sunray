@@ -84,23 +84,29 @@ int get_turn_direction_preference() {
     // CONSOLE.print("/");
     // CONSOLE.println(circle.points[i].y());
     if (maps.checkpoint(circle.points[i].x(), circle.points[i].y(), -0.04)) {
+            int points = 2;
 
             // skip points in front of us
             if (fabs(angle-cur_angle) < 0.05) {
                     continue;
             }
 
+            // check if it is an obstacle
+            if (maps.isPointInsideObstacle(circle.points[i], -1, -0.04) != -1) {
+              points = 1;
+            }
+
             if (cur_angle < targetDelta) {
                 if (angle >= cur_angle && angle <= targetDelta) {
-                    left++;
+                    left += points;
                 } else {
-                    right++;
+                    right += points;
                 }
             } else {
                    if (angle <= cur_angle && angle >= targetDelta) {
-                    right++;
+                    right += points;
                 } else {
-                    left++;
+                    left += points;
                 }
             }
     }
