@@ -944,6 +944,8 @@ void SerialLiftSensorDriver::run(){
 }
 
 bool SerialLiftSensorDriver::triggered(){
+  // we have consumed this one reset pitchcheck
+  serialRobot.pitchcheck = true;
   return (serialRobot.triggeredLift);
 }
 
