@@ -1291,15 +1291,16 @@ bool Map::addObstacle(float stateX, float stateY, float stateDelta, MotType moti
   for (int idx2=0; idx2 < (maps.obstacles.numPolygons-1); idx2++) {
     if (maps.polygonOverlap(obstacles.polygons[idx2], obstacles.polygons[idx])) {
       // idx overlaps with idx2
-      CONSOLE.println("Map:addObstacle: overlapping obstacles found.");
+      CONSOLE.print("Map:addObstacle: overlapping obstacles found. idx2: ");
+      CONSOLE.println(idx2);
 
-      // merge nr two into one
-      obstacles.polygons[idx2].merge_polygon(obstacles.polygons[idx2]);
+      // // merge nr two into one
+      // obstacles.polygons[idx2].merge_polygon(obstacles.polygons[idx2]);
 
-      CONSOLE.println("Map:addObstacle: merge done.");
+      // CONSOLE.println("Map:addObstacle: merge done.");
 
-      // remove newly created one...
-      obstacles.removePolygon(idx);
+      // // remove newly created one...
+      // obstacles.removePolygon(idx);
     }
   }
 
