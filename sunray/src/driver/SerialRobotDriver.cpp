@@ -65,7 +65,6 @@ void SerialRobotDriver::begin(){
   pitchChange = 0;
   statePitch = 0;
   stateRoll = 0;
-  pitchcheck = true;
   robotPitchChange = 0;
   LastRobotPitch = 0;
   LastCalc = millis();
@@ -287,28 +286,12 @@ void SerialRobotDriver::requestMotorPwm(int leftPwm, int rightPwm, int mowPwm){
   cmdMotorCounter++;
 }
 
-unsigned long lastprinter = 0;
-float time_last_pitch = 0;
-float time_last_robotPitch = 0;
-int time_last_liftleft = 0;
-int time_last_liftright = 0;
+unsigned long last_check = 0;
+float last_robotPitch = 0;
+int last_liftleft = 0;
+int last_liftright = 0;
 void SerialRobotDriver::motorResponse(){
   if (cmd.length()<6) return;
-
-  rollChange += (imuDriver.roll-stateRoll);
-  pitchChange += (imuDriver.pitch-statePitch);
-  rollChange = 0.95 * rollChange;
-  pitchChange = 0.95 * pitchChange;
-  statePitch = imuDriver.pitch;
-  stateRoll = imuDriver.roll;
-
-  float pitch_deg = fabs(motor.robotPitch * (180.0 / PI));
-  if (LastRobotPitch > 0) {
-    robotPitchChange = pitch_deg - LastRobotPitch;
-    robotPitchChange = (robotPitchChange / (millis()/1000.0 - LastCalc));
-  }
-  LastCalc = millis()/1000.0;
-  LastRobotPitch = pitch_deg;
 
   int counter = 0;
   int lastCommaIdx = 0;
@@ -333,14 +316,14 @@ void SerialRobotDriver::motorResponse(){
         }
         triggeredLeftBumper = (intValue != 0);
       } else if (counter == 6){
-        if ((!triggeredLift) && (triggeredLift != (intValue != 0))) {
-          CONSOLE.println("SerialRobotDriver: triggeredLift");
-        }
-        triggeredLift = (intValue != 0);
-        // if trigger is false - enable pitcheck for next time
-        if (!triggeredLift) {
-          pitchcheck = true;
-        }
+        // if ((!triggeredLift) && (triggeredLift != (intValue != 0))) {
+        //   CONSOLE.println("SerialRobotDriver: triggeredLift");
+        // }
+        // triggeredLift = (intValue != 0);
+        // // if trigger is false - enable pitcheck for next time
+        // if (!triggeredLift) {
+        //   pitchcheck = true;
+        // }
       } else if (counter == 7){
         triggeredStopButton = (intValue != 0);
       } else if (counter == 8){
@@ -353,29 +336,27 @@ void SerialRobotDriver::motorResponse(){
     }    
   }
 
-  // if (LastRobotPitch > 3.0 && liftleft < -200 && liftright < -200) {
-  //   CONSOLE.println("SerialRobotDriver: FORCE lift!");
-  //   // force trigger
-  //   triggeredLift = true;
-  //   pitchcheck = false;
-  // }
+  // check only every 250ms
+  if ((millis()-last_check) > 250) {
+    if (last_check > 0) {
+      float diff_robotPitch = last_robotPitch - (motor.robotPitch * (180.0 / PI));
+      float diff_liftleft = last_liftleft - liftleft;
+      float diff_liftright = last_liftright - liftright;
 
-  if ((millis()-lastprinter) > 250) {
+      if ((fabs(diff_liftleft) > 100 || fabs(diff_liftright) > 100 ) && fabs(diff_robotPitch) > 2.5) {
+         triggeredLift = true;
+      } else {
+         triggeredLift = false;
+      }
 
-    if (lastprinter > 0) {
-      float last_pitch = time_last_pitch - imuDriver.pitch;
-      float last_robotPitch = time_last_robotPitch - (motor.robotPitch * (180.0 / PI));
-      float last_liftleft = time_last_liftleft - liftleft;
-      float last_liftright = time_last_liftright - liftright;
-
-      CONSOLE.print("SerialRobotDriver: DEBUG2: last_pitch: ");
-      CONSOLE.print(last_pitch);
-      CONSOLE.print(" last_robotPitch: ");
-      CONSOLE.print(last_robotPitch);
+      CONSOLE.print("SerialRobotDriver: DEBUG2: diff_robotPitch: ");
+      CONSOLE.print(diff_robotPitch);
       CONSOLE.print(" last_liftleft: ");
-      CONSOLE.print(last_liftleft);
+      CONSOLE.print(diff_liftleft);
       CONSOLE.print(" last_liftright: ");
-      CONSOLE.println(last_liftright);
+      CONSOLE.print(diff_liftright);
+      CONSOLE.print(" triggeredLift: ");
+      CONSOLE.println(triggeredLift);
 
       // CONSOLE.print("SerialRobotDriver: DEBUG: motor.robotPitch: ");
       // CONSOLE.print(motor.robotPitch);
@@ -390,31 +371,30 @@ void SerialRobotDriver::motorResponse(){
 
     }
 
-    time_last_pitch = imuDriver.pitch;
-    time_last_robotPitch =  motor.robotPitch * (180.0 / PI);
-    time_last_liftleft = liftleft;
-    time_last_liftright = liftright;
-    lastprinter = millis();
+    last_robotPitch =  motor.robotPitch * (180.0 / PI);
+    last_liftleft = liftleft;
+    last_liftright = liftright;
+    last_check = millis();
   }
 
-  if (triggeredLift && pitchcheck) {
-    float pic = pitchChange/PI*180.0;
-    if (fabs(pic) < 2.5 && fabs(robotPitchChange) < 3.0) {
-      // CONSOLE.print("SerialRobotDriver: reset lift - because pitchChange too low: ");
-      // CONSOLE.print(pic);
-      // CONSOLE.println("");
-      // overwrite triggeredLift
-      triggeredLift = false;
-    } else {
-      // do not reevaluate
-      pitchcheck = false;
-      CONSOLE.print("SerialRobotDriver: lift OK: ");
-      CONSOLE.print(pic);
-      CONSOLE.print(" robotPitchChange: ");
-      CONSOLE.print(robotPitchChange);
-      CONSOLE.println("");
-    }
-  }
+  // if (triggeredLift && pitchcheck) {
+  //   float pic = pitchChange/PI*180.0;
+  //   if (fabs(pic) < 2.5 && fabs(robotPitchChange) < 3.0) {
+  //     // CONSOLE.print("SerialRobotDriver: reset lift - because pitchChange too low: ");
+  //     // CONSOLE.print(pic);
+  //     // CONSOLE.println("");
+  //     // overwrite triggeredLift
+  //     triggeredLift = false;
+  //   } else {
+  //     // do not reevaluate
+  //     pitchcheck = false;
+  //     CONSOLE.print("SerialRobotDriver: lift OK: ");
+  //     CONSOLE.print(pic);
+  //     CONSOLE.print(" robotPitchChange: ");
+  //     CONSOLE.print(robotPitchChange);
+  //     CONSOLE.println("");
+  //   }
+  // }
 
   if (triggeredStopButton){
     //CONSOLE.println("STOPBUTTON");
@@ -944,8 +924,6 @@ void SerialLiftSensorDriver::run(){
 }
 
 bool SerialLiftSensorDriver::triggered(){
-  // we have consumed this one reset pitchcheck
-  serialRobot.pitchcheck = true;
   return (serialRobot.triggeredLift);
 }
 
