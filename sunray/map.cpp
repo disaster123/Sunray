@@ -133,6 +133,81 @@ bool Polygon::alloc(short aNumPoints){
   return true;
 }
 
+bool Polygon::merge_polygon(Polygon &mergepolygon) {
+  Polygon mergedPolygon;
+
+  int mergedPolygoncounter = 0;
+  // this is a max possible point count
+  mergedPolygon.alloc(numPoints + mergepolygon.numPoints);
+
+  bool cur_is_src = true;
+  Point p1;
+  Point p2;
+  Point sect;
+  int this_i = 0;
+  int mergepolygon_i = 0;
+  while (true) {
+
+    if (cur_is_src) {
+      if (this_i >= numPoints) {
+        // finish / done
+        break;
+      }
+      p1 = points[this_i];
+      p2 = points[(this_i + 1) % numPoints];
+      this_i++;
+    } else {
+      if (mergepolygon_i >= mergepolygon.numPoints) {
+        // finish / done
+        break;
+      }
+      p1 = mergepolygon.points[mergepolygon_i];
+      p2 = mergepolygon.points[(mergepolygon_i + 1) % mergepolygon.numPoints];
+      mergepolygon_i++;
+    }
+
+    Polygon other_p = (cur_is_src ? mergepolygon : *this);
+    bool intersected = false;
+    for (int idx = 0; idx < other_p.numPoints; idx++) {
+      Point p3 = other_p.points[idx];
+      Point p4 = other_p.points[(idx + 1) % other_p.numPoints];
+      if (maps.lineLineIntersection(p1, p2, p3, p4, sect)) {
+        mergedPolygon.points[mergedPolygoncounter].assign(sect);
+        mergedPolygoncounter++;
+
+        // we need to switch to the other one
+        if (cur_is_src) {
+          cur_is_src = false;
+          mergepolygon_i = idx;
+        } else {
+          cur_is_src = true;
+          this_i = idx;
+        }
+        intersected = true;
+        break;
+      }
+    }
+
+    if (!intersected) {
+      // line p1 to p2 does not intersect and p1 is inside the other one?
+      if (maps.pointIsInsidePolygon(other_p, p1)) {
+        // skip this point
+      } else {
+        // point is outside of the other polygon
+        mergedPolygon.points[mergedPolygoncounter].assign(p1);
+        mergedPolygoncounter++;
+      }
+    }
+  }
+
+  // fix alloc
+  mergedPolygon.alloc(mergedPolygoncounter);
+
+  *this = mergedPolygon;
+
+  return (this_i > 0 && mergepolygon_i > 0);
+}
+
 void Polygon::dealloc(){
   if (points == NULL) return;  
   if (points[numPoints].px != CHECK_ID) memoryCorruptions++;
@@ -1176,6 +1251,16 @@ bool Map::addObstacle(float stateX, float stateY, float stateDelta, MotType moti
   ci += 1;
   obstacles.polygons[idx].points[ci].setXY(center_x + cos(scalePI( deg2rad(315) + circle_rot ) ) * r, center_y + sin(scalePI( deg2rad(315) + circle_rot ) ) * r);
   ci += 1;
+
+  // check if it overlaps any other obstacle
+  for (int idx2=0; idx2 < (maps.obstacles.numPolygons-1); idx2++) {
+    if (maps.polygonOverlap(obstacles.polygons[idx2], obstacles.polygons[idx])) {
+      // idx overlaps with idx2
+      CONSOLE.println("Map:addObstacle: overlapping obstacles found.");
+      // STEFAN 
+    }
+  }
+
 
   return true;
 }
