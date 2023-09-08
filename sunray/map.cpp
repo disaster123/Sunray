@@ -203,10 +203,10 @@ bool Polygon::merge_polygon(Polygon &mergepolygon) {
           // we need to switch to the other one
           if (cur_is_src) {
             cur_is_src = false;
-            mergepolygon_i = ((idx + 1) % other_p.numPoints);
+            mergepolygon_i = idx + 1;
           } else {
             cur_is_src = true;
-            this_i = ((idx + 1) % other_p.numPoints);
+            this_i = idx + 1;
           }
           intersected = true;
           break;
