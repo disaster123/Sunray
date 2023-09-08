@@ -1257,7 +1257,12 @@ bool Map::addObstacle(float stateX, float stateY, float stateDelta, MotType moti
     if (maps.polygonOverlap(obstacles.polygons[idx2], obstacles.polygons[idx])) {
       // idx overlaps with idx2
       CONSOLE.println("Map:addObstacle: overlapping obstacles found.");
-      // STEFAN 
+
+      // merge nr two into one
+      obstacles.polygons[idx2].merge_polygon(obstacles.polygons[idx2]);
+
+      // remove newly created one...
+      obstacles.removePolygon(idx);
     }
   }
 
