@@ -343,7 +343,7 @@ void SerialRobotDriver::motorResponse(){
       float diff_liftleft = last_liftleft - liftleft;
       float diff_liftright = last_liftright - liftright;
 
-      if ((fabs(diff_liftleft) > 100 || fabs(diff_liftright) > 100 ) && fabs(diff_robotPitch) > 2.5) {
+      if ((fabs(diff_liftleft) > 180 || fabs(diff_liftright) > 180 ) && fabs(diff_robotPitch) > 4) {
          triggeredLift = true;
       } else {
          triggeredLift = false;
