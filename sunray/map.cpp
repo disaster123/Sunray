@@ -182,8 +182,11 @@ bool Polygon::merge_polygon(Polygon &mergepolygon) {
     for (int idx = 0; idx < other_p.numPoints; idx++) {
       Point p3 = other_p.points[idx];
       Point p4 = other_p.points[(idx + 1) % other_p.numPoints];
-        if (maps.lineLineIntersection(p1, p2, p3, p4, sect)) {
 
+      // this one does not use infinite lines...
+      if (maps.lineIntersects(p1, p2, p3, p4)) {
+        // this one checks for section but always endless lines
+        if (maps.lineLineIntersection(p1, p2, p3, p4, sect)) {
           CONSOLE.print("Map: Polygon: merge_polygon: intersects: ");
           CONSOLE.print("x/y: ");
           CONSOLE.print(sect.x());
@@ -200,13 +203,14 @@ bool Polygon::merge_polygon(Polygon &mergepolygon) {
           // we need to switch to the other one
           if (cur_is_src) {
             cur_is_src = false;
-            mergepolygon_i = ((idx + 1) % other_p.numPoints) + 1;
+            mergepolygon_i = ((idx + 1) % other_p.numPoints);
           } else {
             cur_is_src = true;
-            this_i = ((idx + 1) % other_p.numPoints) + 1;
+            this_i = ((idx + 1) % other_p.numPoints);
           }
           intersected = true;
           break;
+        }
       }
     }
 
