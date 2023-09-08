@@ -54,6 +54,7 @@ class Polygon
     void getCenter(Point &pt);
     bool read(File &file);
     bool write(File &file);
+    bool merge_polygon(Polygon &mergepolygon);
 };
 
 // a list of polygons
@@ -230,6 +231,7 @@ class Map
     void generateRandomMap();    
     // check if given point is inside perimeter (and outside exclusions) of current map 
     bool isInsidePerimeterOutsideExclusions(Point &pt);
+    bool lineLineIntersection(Point &A, Point &B, Point &C, Point &D, Point &pt);
   private:
     void finishedUploadingMap();
     void checkMemoryErrors();
@@ -251,7 +253,6 @@ class Map
     int findNextNeighbor(NodeList &nodes, PolygonList &obstacles, Node &node, int startIdx);
     void findPathFinderSafeStartPoint(Point &src, Point &dst);
     bool linePolygonIntersectPoint( Point &src, Point &dst, Polygon &poly, Point &sect);
-    bool lineLineIntersection(Point &A, Point &B, Point &C, Point &D, Point &pt);
     bool isPointInBoundingBox(Point &pt, Point &A, Point &B);
     int linePolygonIntersectionCount(Point &src, Point &dst, Polygon &poly);
     void testIntegerCalcs();
