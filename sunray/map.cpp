@@ -140,6 +140,8 @@ bool Polygon::merge_polygon(Polygon &mergepolygon) {
   // this is a max possible point count
   mergedPolygon.alloc(numPoints + mergepolygon.numPoints);
 
+  CONSOLE.println("Map: Polygon: merge_polygon: alloc done!");
+
   bool cur_is_src = true;
   Point p1;
   Point p2;
@@ -147,6 +149,9 @@ bool Polygon::merge_polygon(Polygon &mergepolygon) {
   int this_i = 0;
   int mergepolygon_i = 0;
   while (true) {
+
+    CONSOLE.print("Map: Polygon: merge_polygon: round: ");
+    CONSOLE.println(mergepolygon_i);
 
     if (cur_is_src) {
       if (this_i >= numPoints) {
@@ -200,8 +205,14 @@ bool Polygon::merge_polygon(Polygon &mergepolygon) {
     }
   }
 
+    
+  CONSOLE.print("Map: Polygon: merge_polygon: do realloc: ");
+  CONSOLE.println(mergepolygon_i);
+
   // fix alloc
   mergedPolygon.alloc(mergedPolygoncounter);
+
+  CONSOLE.println("Map: Polygon: replace this with mergedPolygon");
 
   *this = mergedPolygon;
 
@@ -1260,6 +1271,8 @@ bool Map::addObstacle(float stateX, float stateY, float stateDelta, MotType moti
 
       // merge nr two into one
       obstacles.polygons[idx2].merge_polygon(obstacles.polygons[idx2]);
+
+      CONSOLE.println("Map:addObstacle: merge done.");
 
       // remove newly created one...
       obstacles.removePolygon(idx);
