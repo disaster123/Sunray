@@ -182,22 +182,33 @@ bool Polygon::merge_polygon(Polygon &mergepolygon) {
     for (int idx = 0; idx < other_p.numPoints; idx++) {
       Point p3 = other_p.points[idx];
       Point p4 = other_p.points[(idx + 1) % other_p.numPoints];
-      if (maps.lineLineIntersection(p1, p2, p3, p4, sect)) {
+      if (maps.lineIntersects(p1, p2, p3, p4)) {        
+        if (maps.lineLineIntersection(p1, p2, p3, p4, sect)) {
 
-        CONSOLE.println("Map: Polygon: merge_polygon: intersect");
-        mergedPolygon.points[mergedPolygoncounter].assign(sect);
-        mergedPolygoncounter++;
+          CONSOLE.print("Map: Polygon: merge_polygon: intersects: ");
+          CONSOLE.print("x/y: ");
+          CONSOLE.print(sect.x());
+          CONSOLE.print("/");
+          CONSOLE.print(sect.y());
+          CONSOLE.println(" ");
 
-        // we need to switch to the other one
-        if (cur_is_src) {
-          cur_is_src = false;
-          mergepolygon_i = idx + 1;
-        } else {
-          cur_is_src = true;
-          this_i = idx + 1;
+          mergedPolygon.points[mergedPolygoncounter].assign(p1);
+          mergedPolygoncounter++;
+
+          mergedPolygon.points[mergedPolygoncounter].assign(sect);
+          mergedPolygoncounter++;
+
+          // we need to switch to the other one
+          if (cur_is_src) {
+            cur_is_src = false;
+            mergepolygon_i = (idx + 1) % other_p.numPoints;
+          } else {
+            cur_is_src = true;
+            this_i = (idx + 1) % other_p.numPoints;
+          }
+          intersected = true;
+          break;
         }
-        intersected = true;
-        break;
       }
     }
 
