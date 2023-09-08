@@ -1266,6 +1266,8 @@ bool Map::findObstacleSafeMowPoint(Point &newTargetPoint, float stateX, float st
   if (mowlineprogress == -1) {
     // we want a new mowpoint as nextmowpoint is true
     mowlineprogress = distance(src, lastTargetPoint);
+    CONSOLE.print("Map::findObstacleSafeMowPoint: WARN: STEFAN: new mowlineprogress is now: ");
+    CONSOLE.println(mowlineprogress);
   }
 
   // get first obstacle in front of state_pos
@@ -1486,9 +1488,10 @@ bool Map::nextPoint(bool sim,float stateX, float stateY, bool nextmowpoint){
         break;
       }
       // set new position on line and try again
+      CONSOLE.print("Map::nextPoint: WARN: STEFAN: set mowlineprogress = -1 and try again! old mowlineprogress: ");
+      CONSOLE.println(mowlineprogress);
       mowlineprogress = -1;
       lastTargetPoint.assign(dst);
-      CONSOLE.println("Map::nextPoint: WARN: STEFAN: set mowlineprogress = -1 and try again!");
     }
 
     // move to WAY_FREE list
