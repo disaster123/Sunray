@@ -245,6 +245,7 @@ class Map
     float scalePIangles(float setAngle, float currAngle);
     bool lineIntersects (Point &p0, Point &p1, Point &p2, Point &p3);        
     bool linePolygonIntersection( Point &src, Point &dst, Polygon &poly);
+    bool polygonOverlap(Polygon &polygon1, Polygon &polygon2);
     float polygonArea(Polygon &poly);
     bool polygonOffset(Polygon &srcPoly, Polygon &dstPoly, float dist);
     int findNextNeighbor(NodeList &nodes, PolygonList &obstacles, Node &node, int startIdx);

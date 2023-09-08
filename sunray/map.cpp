@@ -1887,7 +1887,24 @@ int Map::linePolygonIntersectionCount(Point &src, Point &dst, Polygon &poly){
   }       
   return count;
 }
-    
+
+bool Map::polygonOverlap(Polygon &polygon1, Polygon &polygon2) {
+    Point* points1 = polygon1.points;
+    int numPoints1 = polygon1.numPoints;
+
+    // Überprüfen Sie alle Kanten von polygon1 auf Schnittpunkte mit polygon2
+    for (int i = 0; i < numPoints1; i++) {
+        Point &p1 = points1[i];
+        Point &p2 = points1[(i + 1) % numPoints1]; // Nächster Punkt
+
+        // Überprüfen Sie, ob die Kante (p1, p2) sich mit polygon2 schneidet
+        if (linePolygonIntersection(p1, p2, polygon2)) {
+            return true; // Überlappung gefunden
+        }
+    }
+
+    return false; // Keine Überlappung gefunden
+}
   
 // determines if a line intersects (or touches) a polygon
 bool Map::linePolygonIntersection( Point &src, Point &dst, Polygon &poly) {      
