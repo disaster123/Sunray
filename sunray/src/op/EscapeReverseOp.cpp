@@ -20,6 +20,7 @@ bool bumper_mode;
 float linear;
 float distance_to_drive;
 bool position_out_of_map;
+bool position_out_of_map_onbegin;
 
 String EscapeReverseOp::name(){
     return "EscapeReverse";
@@ -34,6 +35,7 @@ void EscapeReverseOp::begin(){
     bumper_mode = false;
     lift_mode = false;
     position_out_of_map = false;
+    position_out_of_map_onbegin = false;
     linear = 0;
     distance_to_drive = 0.1; // 10cm
 
@@ -65,6 +67,12 @@ void EscapeReverseOp::begin(){
 
     // this has to run AFTER motion detection above
     motor.stopImmediately(false);
+
+    // initial check if we're may be on an exclusion line or on perimeter - so in this case we need to ignore this check until
+    // we were valid once
+    if (maps.checkpoint(stateX, stateY, 0, true)) {
+      position_out_of_map_onbegin = true;
+    }
 }
 
 
@@ -124,10 +132,14 @@ void EscapeReverseOp::run(){
     // }
    
     // check point but ignore obstacle
-    if (maps.checkpoint(stateX, stateY, 0, true)) {
+    if (!position_out_of_map_onbegin && maps.checkpoint(stateX, stateY, 0, true)) {
       position_out_of_map = true;
       motor.stopImmediately(false);
     } else {
+      if (position_out_of_map_onbegin && !maps.checkpoint(stateX, stateY, 0, true)) {
+        // point now OK
+        position_out_of_map_onbegin = false;
+      }
       motor.setLinearAngularSpeed(linear,0);
     }
 
