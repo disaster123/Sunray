@@ -1485,7 +1485,7 @@ bool Map::mowingCompleted(){
 
 // find start point for path finder on line from src to dst
 // that is insider perimeter and outside exclusions
-bool Map::checkpoint(float x, float y, float obstacleoffset){
+bool Map::checkpoint(float x, float y, float obstacleoffset, bool ignore_obstacles){
   Point src;
   src.setXY(x, y);
   if (!maps.pointIsInsidePolygon( maps.perimeterPoints, src)){
@@ -1497,8 +1497,10 @@ bool Map::checkpoint(float x, float y, float obstacleoffset){
     }
   }
 
-  if (isPointInsideObstacle(src, -1, obstacleoffset) != -1) {
-    return true;
+  if (!ignore_obstacles) {
+    if (isPointInsideObstacle(src, -1, obstacleoffset) != -1) {
+      return true;
+    }
   }
 
   return false;
