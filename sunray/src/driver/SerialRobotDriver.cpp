@@ -4,6 +4,7 @@
 // or Grau GmbH Commercial License for commercial use (http://grauonline.de/cms2/?page_id=153)
 
 
+#include <algorithm> // for std::min and std::max
 #include "SerialRobotDriver.h"
 #include "../../config.h"
 #include "../../ioboard.h"
@@ -290,6 +291,34 @@ unsigned long last_check = 0;
 float last_robotPitch = 0;
 int last_liftleft = 0;
 int last_liftright = 0;
+
+// Define an enumeration for variable names
+enum StoreType { LIFTLEFT, LIFTRIGHT, PITCH, NUM_VARIABLES };
+float lastValues[NUM_VARIABLES][3] = {{0.0f, 0.0f, 0.0f},
+                                     {0.0f, 0.0f, 0.0f},
+                                     {0.0f, 0.0f, 0.0f}};
+
+// Function to update the last values for a variable
+void updateLastValues(StoreType variable, float newValue) {
+    int variableIndex = static_cast<int>(variable);
+    for (int j = 2; j > 0; j--) {
+        lastValues[variableIndex][j] = lastValues[variableIndex][j - 1];
+    }
+    lastValues[variableIndex][0] = newValue;
+}
+
+// Function to get the maximum value for a variable
+float getMaxValue(StoreType variable) {
+    int variableIndex = static_cast<int>(variable);
+    return *std::max_element(lastValues[variableIndex], lastValues[variableIndex] + 3);
+}
+
+// Function to get the minimum value for a variable
+float getMinValue(StoreType variable) {
+    int variableIndex = static_cast<int>(variable);
+    return *std::min_element(lastValues[variableIndex], lastValues[variableIndex] + 3);
+}
+
 void SerialRobotDriver::motorResponse(){
   if (cmd.length()<6) return;
 
@@ -343,10 +372,29 @@ void SerialRobotDriver::motorResponse(){
       float diff_liftleft = last_liftleft - liftleft;
       float diff_liftright = last_liftright - liftright;
 
-      if ((fabs(diff_liftleft) > 180 || fabs(diff_liftright) > 180 ) && fabs(diff_robotPitch) > 4) {
-         triggeredLift = true;
-      } else {
-         triggeredLift = false;
+      updateLastValues(LIFTRIGHT, diff_liftright);
+      updateLastValues(LIFTLEFT, diff_liftleft);
+      updateLastValues(PITCH, diff_robotPitch);
+
+      // diff_robotPitch
+      //
+      // negative value mower front goes up - positive value mower front goes down
+      // 5cm wood - pitch up is about -3.1 + left or right > 150
+      //
+      // pitch values above 10 are generally suspicous and should trigger lift
+
+      // sum of fabs(diff_liftright) + fabs(diff_liftleft) > 350 - trigger lift?
+
+      triggeredLift = false;
+
+      if (fabs(diff_robotPitch) > 10) {
+        triggeredLift = true;
+      }
+      else if (((diff_liftleft + diff_liftright) < -350) || ((diff_liftleft + diff_liftright) > 350)) {
+        triggeredLift = true;
+      }
+      else if ((getMaxValue(LIFTLEFT) > 150 || getMaxValue(LIFTRIGHT) > 150) && getMinValue(PITCH) < -3.1) {
+        triggeredLift = true;
       }
 
       CONSOLE.print("SerialRobotDriver: DEBUG2: diff_robotPitch: ");
