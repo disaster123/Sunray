@@ -110,7 +110,12 @@ void EscapeReverseOp::run(){
       CONSOLE.println("BUMPER: released now");
       // bumper is released after obstacle was detected
       bumperAndLiftReleased = true;
+    } else if (bumper_mode && !bumperAndLiftReleased && distance_driven >= distance_to_drive) {
+      // we're OK but now inside obstacle - try to drive 5cm more
+      CONSOLE.println("EscapeReverseOp: bumper still not released after driving distance_to_drive - add 0.05");
+      distance_to_drive += 0.05;
     }
+
 
     // if ((bumper_mode && bumperAndLiftReleased && (bumper.obstacle() || detectLift())) ||
     //    (lift_mode && !detectLift() && bumper.obstacle())) {
@@ -161,7 +166,7 @@ void EscapeReverseOp::run(){
           src.setXY(stateX, stateY);
           if (maps.isPointInsideObstacle(src, -1, -0.04) != -1) {
             // we're OK but now inside obstacle - try to drive 5cm more
-            CONSOLE.println("EscapeReverseOp: ut now inside obstacle - try to drive 5cm more");
+            CONSOLE.println("EscapeReverseOp: but now inside obstacle - try to drive 5cm more");
             distance_to_drive += 0.05;
             return;
           }
