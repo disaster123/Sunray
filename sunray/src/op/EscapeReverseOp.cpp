@@ -106,7 +106,7 @@ void EscapeReverseOp::run(){
         linear = -0.25;
       }
       if (lift_mode) {
-        linear *= 2;
+        linear *= 1.5;
       }
     }
 
