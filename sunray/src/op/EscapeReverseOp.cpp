@@ -122,24 +122,24 @@ void EscapeReverseOp::run(){
     }
 
 
-    // if ((bumper_mode && bumperAndLiftReleased && (bumper.obstacle() || detectLift())) ||
-    //    (lift_mode && !detectLift() && bumper.obstacle())) {
-    //   CONSOLE.println("BUMPER/LIFT: was released but now new obstacle - reset direction and driveReverseStopTime");
-    //   if (lift_mode) {
-    //     bumperAndLiftReleased = true;
-    //   }
-    //   // bumper was released but is pressed now again
-    //   // move again in the other direction - until bumper is released
-    //   // again
-    //   if (orig_motion == MOT_BACKWARD) {
-    //     linear = -0.15;
-    //   }
-    //   else {
-    //     linear = 0.15;
-    //   }
-    //   // this one is updated in every call as long as obstacle is true / triggered
-    //   driveReverseStopTime = millis() + 500;
-    // }
+    if ((bumper_mode && bumperAndLiftReleased && (bumper.obstacle() || detectLift())) ||
+        (lift_mode && !detectLift() && bumper.obstacle())) {
+       CONSOLE.println("BUMPER/LIFT: was released but now new obstacle - reset direction and driveReverseStopTime");
+       if (lift_mode) {
+         bumperAndLiftReleased = true;
+       }
+       // bumper was released but is pressed now again
+       // move again in the other direction - until bumper is released
+       // again
+       if (orig_motion == MOT_BACKWARD) {
+         linear = -0.15;
+       }
+       else {
+         linear = 0.15;
+       }
+       // this one is updated in every call as long as obstacle is true / triggered
+       driveReverseStopTime = millis() + 500;
+    }
    
     // check point but ignore obstacle
     if (!position_out_of_map_onbegin && maps.checkpoint(stateX, stateY, 0, true)) {
