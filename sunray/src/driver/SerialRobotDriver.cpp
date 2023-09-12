@@ -365,8 +365,8 @@ void SerialRobotDriver::motorResponse(){
     }    
   }
 
-  // check only every 250ms
-  if ((millis()-last_check) > 250) {
+  // check only every 100ms
+  if ((millis()-last_check) > 100) {
     if (last_check > 0) {
       float diff_robotPitch = last_robotPitch - (motor.robotPitch * (180.0 / PI));
       float diff_liftleft = last_liftleft - liftleft;
@@ -397,14 +397,16 @@ void SerialRobotDriver::motorResponse(){
         triggeredLift = true;
       }
 
-      CONSOLE.print("SerialRobotDriver: DEBUG2: diff_robotPitch: ");
-      CONSOLE.print(diff_robotPitch);
-      CONSOLE.print(" last_liftleft: ");
-      CONSOLE.print(diff_liftleft);
-      CONSOLE.print(" last_liftright: ");
-      CONSOLE.print(diff_liftright);
-      CONSOLE.print(" triggeredLift: ");
-      CONSOLE.println(triggeredLift);
+      if (triggeredLift) {
+        CONSOLE.print("SerialRobotDriver: DEBUG2: diff_robotPitch: ");
+        CONSOLE.print(diff_robotPitch);
+        CONSOLE.print(" last_liftleft: ");
+        CONSOLE.print(diff_liftleft);
+        CONSOLE.print(" last_liftright: ");
+        CONSOLE.print(diff_liftright);
+        CONSOLE.print(" triggeredLift: ");
+        CONSOLE.println(triggeredLift);
+      }
 
       // CONSOLE.print("SerialRobotDriver: DEBUG: motor.robotPitch: ");
       // CONSOLE.print(motor.robotPitch);
