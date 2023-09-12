@@ -38,12 +38,12 @@ void EscapeReverseOp::begin(){
     position_out_of_map = false;
     position_out_of_map_onbegin = false;
     linear = 0;
-    distance_to_drive = 0.2; // 10cm
+    distance_to_drive = 0.07; // 7cm
     lift_timeout = 0;
 
     if (detectLift()) {
         lift_mode = true;
-        distance_to_drive = 0.3; // 20cm in lift mode
+        distance_to_drive = 0.2; // 20cm in lift mode
         motor.setMowState(false);
     }
     if (bumper.obstacle()) {
