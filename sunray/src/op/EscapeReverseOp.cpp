@@ -21,6 +21,7 @@ float linear;
 float distance_to_drive;
 bool position_out_of_map;
 bool position_out_of_map_onbegin;
+unsigned long lift_timeout;
 
 String EscapeReverseOp::name(){
     return "EscapeReverse";
@@ -37,11 +38,12 @@ void EscapeReverseOp::begin(){
     position_out_of_map = false;
     position_out_of_map_onbegin = false;
     linear = 0;
-    distance_to_drive = 0.1; // 10cm
+    distance_to_drive = 0.2; // 10cm
+    lift_timeout = 0;
 
     if (detectLift()) {
         lift_mode = true;
-        distance_to_drive = 0.2; // 20cm in lift mode
+        distance_to_drive = 0.3; // 20cm in lift mode
         motor.setMowState(false);
     }
     if (bumper.obstacle()) {
@@ -56,13 +58,16 @@ void EscapeReverseOp::begin(){
 
     if (robotShouldRotateLeft()) {
       orig_motion = MOT_LEFT;
+      CONSOLE.println("EscapeReverseOp: motion left");
     } else if (robotShouldRotateRight()) {
       orig_motion = MOT_RIGHT;
+      CONSOLE.println("EscapeReverseOp: motion right");
     } else if (robotShouldMoveBackward()) {
       orig_motion = MOT_BACKWARD;
-      CONSOLE.println("EscapeReverseOp: BUMPER: motion backward");
+      CONSOLE.println("EscapeReverseOp: motion backward");
     } else {
       orig_motion = MOT_FORWARD;
+      CONSOLE.println("EscapeReverseOp: motion forward");
     }
 
     // this has to run AFTER motion detection above
@@ -173,8 +178,17 @@ void EscapeReverseOp::run(){
 
         }
         motor.stopImmediately(false);
- 
+
+        // we might need to wait until lift sensor detection queue goes out of line
+        // currently 3 values with 250ms diff - so 1s would be enough
         if (detectLift()) {
+            if (lift_timeout == 0) {
+                lift_timeout = millis();
+                return;
+            }
+            if ((lift_timeout+1000) > millis()) {
+                return;
+            }
             CONSOLE.println("error: after driving reverse lift sensor still active!");
             stateSensor = SENS_LIFT;
             changeOp(errorOp);
