@@ -112,12 +112,14 @@ void EscapeReverseOp::run(){
       }
     }
 
-    if (bumperAndLiftReleased && !bumper.obstacle()) {
+    if (bumper_mode && !bumperAndLiftReleased && !bumper.obstacle() && !detectLift()) {
       bumper_released_rounds = bumper_released_rounds + 1;
+    } else if (bumper_mode && !bumperAndLiftReleased && (bumper.obstacle() || detectLift())) {
+      bumper_released_rounds = 0;
     }
 
     // if bumper_mode and bumper was not released yet and bumper is released now
-    if (bumper_mode && !bumperAndLiftReleased && !bumper.obstacle() && !detectLift()) {
+    if (bumper_mode && !bumperAndLiftReleased && !bumper.obstacle() && !detectLift() && bumper_released_rounds > 3) {
       CONSOLE.println("BUMPER: released now");
       // bumper is released after obstacle was detected
       bumperAndLiftReleased = true;
@@ -129,8 +131,8 @@ void EscapeReverseOp::run(){
       distance_to_drive += 0.05;
     }
 
-    if ((bumper_mode && bumperAndLiftReleased && (bumper.obstacle() || detectLift()) && bumper_released_rounds > 3) ||
-        (lift_mode && !detectLift() && bumper.obstacle() && bumper_released_rounds > 3)) {
+    if ((bumper_mode && bumperAndLiftReleased && (bumper.obstacle() || detectLift())) ||
+        (lift_mode && !detectLift() && bumper.obstacle())) {
        CONSOLE.println("BUMPER/LIFT: was released but now new obstacle - reset direction and driveReverseStopTime");
        if (lift_mode) {
          bumperAndLiftReleased = true;
