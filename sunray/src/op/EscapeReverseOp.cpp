@@ -115,6 +115,8 @@ void EscapeReverseOp::run(){
       CONSOLE.println("BUMPER: released now");
       // bumper is released after obstacle was detected
       bumperAndLiftReleased = true;
+      distance_to_drive = distance_driven + 0.1; // drive 10cm more
+      driveReverseStopTime = millis() + 3000; // alow 3s to drive those 10cm
     } else if (bumper_mode && !bumperAndLiftReleased && distance_driven >= distance_to_drive) {
       // we're OK but now inside obstacle - try to drive 5cm more
       CONSOLE.println("EscapeReverseOp: bumper still not released after driving distance_to_drive - add 0.05");
