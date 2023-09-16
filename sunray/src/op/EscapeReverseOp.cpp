@@ -88,7 +88,7 @@ void EscapeReverseOp::run(){
         linear = -0.25;
       }
       if (lift_mode) {
-        linear *= 2;
+        linear *= 1.5;
       }
     }
 
@@ -121,6 +121,15 @@ void EscapeReverseOp::run(){
       }
       // this one is updated in every call as long as obstacle is true / triggered
       driveReverseStopTime = millis() + 500;
+    }
+
+    if (linear == 0) {
+      if (orig_motion == MOT_BACKWARD) {
+        linear = 0.25;
+      }
+      else {
+        linear = -0.25;
+      }
     }
    
     if (linear != 0.0) motor.setLinearAngularSpeed(linear,0);
