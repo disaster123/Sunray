@@ -22,6 +22,7 @@ float distance_to_drive;
 bool position_out_of_map;
 bool position_out_of_map_onbegin;
 unsigned long lift_timeout;
+unsigned int bumper_released_rounds;
 
 String EscapeReverseOp::name(){
     return "EscapeReverse";
@@ -40,6 +41,7 @@ void EscapeReverseOp::begin(){
     linear = 0;
     distance_to_drive = 0.07; // 7cm
     lift_timeout = 0;
+    bumper_released_rounds = 0;
 
     if (detectLift()) {
         lift_mode = true;
@@ -110,6 +112,10 @@ void EscapeReverseOp::run(){
       }
     }
 
+    if (bumperAndLiftReleased && !bumper.obstacle()) {
+      bumper_released_rounds = bumper_released_rounds + 1;
+    }
+
     // if bumper_mode and bumper was not released yet and bumper is released now
     if (bumper_mode && !bumperAndLiftReleased && !bumper.obstacle() && !detectLift()) {
       CONSOLE.println("BUMPER: released now");
@@ -123,9 +129,8 @@ void EscapeReverseOp::run(){
       distance_to_drive += 0.05;
     }
 
-
-    if ((bumper_mode && bumperAndLiftReleased && (bumper.obstacle() || detectLift())) ||
-        (lift_mode && !detectLift() && bumper.obstacle())) {
+    if ((bumper_mode && bumperAndLiftReleased && (bumper.obstacle() || detectLift()) && bumper_released_rounds > 3) ||
+        (lift_mode && !detectLift() && bumper.obstacle() && bumper_released_rounds > 3)) {
        CONSOLE.println("BUMPER/LIFT: was released but now new obstacle - reset direction and driveReverseStopTime");
        if (lift_mode) {
          bumperAndLiftReleased = true;
