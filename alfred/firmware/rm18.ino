@@ -447,7 +447,7 @@ void readSensors(){
   // bumper (low-pass filtering)
   bumperX = analogRead(pinBumperX);
   bumperY = analogRead(pinBumperY);  
-  bumper = ((abs(bumperX-300) > 175) || (abs(bumperY-300) > 175));
+  bumper = ((abs(bumperX-300) > 40) || (abs(bumperY-300) > 40));
 
   // lift low-pass filtering
   w = 0.2;
