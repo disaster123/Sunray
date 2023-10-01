@@ -332,15 +332,15 @@ Also, you may choose the serial port below for serial monitor output (CONSOLE).
 #define GPS_CONFIG_FILTER   true     // use signal strength filter? (recommended to get rid of 'FIX jumps') - adjust filter settings below
 //#define GPS_CONFIG_FILTER   false     // use this if you have difficulties to get a FIX solution (uses ublox default filter settings)
 #define CPG_CONFIG_FILTER_MINELEV  10   // Min SV elevation degree: 14 (high elevation, less robust), 10 (low elevation, robust) 
-#define CPG_CONFIG_FILTER_NCNOTHRS 10   // C/N0 Threshold #SVs: 10 (robust), 6 (less robust)
-#define CPG_CONFIG_FILTER_CNOTHRS 30   // 30 dbHz (robust), 13 dbHz (less robust)
+#define CPG_CONFIG_FILTER_NCNOTHRS 0   // C/N0 Threshold #SVs: 10 (robust), 6 (less robust)
+#define CPG_CONFIG_FILTER_CNOTHRS  0   // 30 dbHz (robust), 13 dbHz (less robust)
 
 #define GPS_POSITION_OFFSET_ENABLED true // enable gps antenna position correction offset?
 #define GPS_POSITION_OFFSET_FORWARD 0.0 // offset to add fordwards (cm)
 #define GPS_POSITION_OFFSET_RIGHT 0.0 // offset to add to the right (cm)
 #define GPS_POSITION_OFFSET_UP 24.0 // offse to add upwards (cm), set to ground level for tilt compensation (-24 cm for standard ardumower)
 
-#define INVALID_GPS_TIMEOUT 30 // time in seconds to navigate with invalid GPS
+#define INVALID_GPS_TIMEOUT 0 // time in seconds to navigate with invalid GPS
 
 // ------ obstacle detection and avoidance  -------------------------
 
