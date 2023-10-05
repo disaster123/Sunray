@@ -258,7 +258,7 @@ void trackLine(bool runControl){
       // check if front has reached target
       float targetDist_mowerfront = maps.distanceToTargetPoint(stateX_mowerfront, stateY_mowerfront);
       // mowerfront has reached target and infrontof is outside perimeter
-      if ((targetDist_mowerfront < TARGET_REACHED_TOLERANCE) && (maps.checkpoint( stateX_infrontof, stateY_infrontof, -0.04, false )) && 
+      if ((targetDist_mowerfront < (TARGET_REACHED_TOLERANCE+0.1)) && (maps.checkpoint( stateX_infrontof, stateY_infrontof, -0.04, false )) && 
            // verify that current position is OK
            (!maps.checkpoint( stateX, stateY, 0, true))) {
         CONSOLE.print("LineTracker: front is not inside perimeter or inside exclusion or inside obstacle! state: ");
