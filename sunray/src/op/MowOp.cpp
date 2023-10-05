@@ -42,7 +42,8 @@ void MowOp::begin(){
       CONSOLE.println("MOW_OP: lastMapRoutingFailed");
 
     if (CLEAR_OBSTACLES_MOWSTART) {
-      if (((initiatedByOperator) && (previousOp == &idleOp)) || (lastMapRoutingFailed))  maps.clearObstacles();
+      if (lastMapRoutingFailed)  maps.clearObstacles();
+      // if (((initiatedByOperator) && (previousOp == &idleOp)) || (lastMapRoutingFailed))  maps.clearObstacles();
     }
 
     if (maps.startMowing(stateX, stateY)){
