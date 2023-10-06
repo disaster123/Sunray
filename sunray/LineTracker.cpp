@@ -380,7 +380,7 @@ void trackLine(bool runControl){
             allowedPathTolerance = KIDNAP_DETECT_ALLOWED_PATH_TOLERANCE_DOCK_UNDOCK;
         }
     }
-    if (fabs(distToPath) > allowedPathTolerance){ // actually, this should not happen (except on false GPS fixes or robot being kidnapped...)
+    if (fabs(distToPath) > allowedPathTolerance && maps.checkpoint( stateX, stateY, 0, true)){ // actually, this should not happen (except on false GPS fixes or robot being kidnapped...)
       if (!stateKidnapped){
         stateKidnapped = true;
         activeOp->onKidnapped(stateKidnapped);
