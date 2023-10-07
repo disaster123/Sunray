@@ -105,7 +105,7 @@ Also, you may choose the serial port below for serial monitor output (CONSOLE).
 #define WHEEL_BASE_CM         39         // wheel-to-wheel distance (cm)        
 #define WHEEL_DIAMETER        205        // wheel diameter (mm)                 
 #define MOWER_SIZE            60         // mower / chassis size / length in cm
-#define MOWER_GPS_TO_FRONT    55         // mower / chassis size / length in cm
+#define MOWER_GPS_TO_FRONT    50         // mower / chassis size / length in cm
 #define MOWER_GPS_TO_SIDE     20
 
 //#define ENABLE_ODOMETRY_ERROR_DETECTION  true    // use this to detect odometry erros
