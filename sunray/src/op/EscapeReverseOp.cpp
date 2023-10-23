@@ -104,8 +104,8 @@ void EscapeReverseOp::run(){
       driveReverseStopTime = millis() + 750;
     }
 
-    if ((bumper_mode && bumperAndLiftReleased && (bumper.obstacle() || detectLift())) ||
-       (lift_mode && !detectLift() && bumper.obstacle())) {
+    if ((bumper_mode && bumperAndLiftReleased && driveReverseStopTime < millis() && (bumper.obstacle() || detectLift())) ||
+       (lift_mode && !detectLift() && bumper.obstacle() && driveReverseStopTime < millis())) {
       CONSOLE.println("BUMPER/LIFT: was released but now new obstacle - reset direction and driveReverseStopTime");
       if (lift_mode) {
         bumperAndLiftReleased = true;
@@ -123,16 +123,7 @@ void EscapeReverseOp::run(){
       driveReverseStopTime = millis() + 500;
     }
 
-    if (linear == 0) {
-      if (orig_motion == MOT_BACKWARD) {
-        linear = 0.25;
-      }
-      else {
-        linear = -0.25;
-      }
-    }
-   
-    if (linear != 0.0) motor.setLinearAngularSpeed(linear,0);
+    motor.setLinearAngularSpeed(linear,0);
 
     // drive back until bumper is no longer triggered or max StopTime
     if (millis() > driveReverseStopTime){
