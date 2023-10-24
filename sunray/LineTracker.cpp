@@ -142,7 +142,7 @@ void trackLine(bool runControl){
   float angleFits_low = 10.0;
   float angleFits_high = 20.0;
  
-  if ( !(maps.isUndocking() || maps.isDocking()) && maps.checkpoint( target.x(), target.y(), -0.04, false )) {
+  if ( !(maps.isUndocking() || maps.isDocking()) && maps.checkpoint( target.x(), target.y(), -0.03, false )) {
     CONSOLE.println("target is inside obstacle or outside perimeter - error out!");
     stateSensor = SENS_MOTOR_ERROR;
     activeOp->changeOp(errorOp, true);

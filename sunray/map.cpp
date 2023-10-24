@@ -1488,17 +1488,33 @@ bool Map::mowingCompleted(){
 bool Map::checkpoint(float x, float y, float obstacleoffset, bool ignore_obstacles){
   Point src;
   src.setXY(x, y);
+  bool debug = false;
+  float tolerance = 1e-5;
+
+  if (obstacleoffset >= -0.03 - tolerance && obstacleoffset <= -0.03 + tolerance) {
+    debug = true;
+  }
+
   if (!maps.pointIsInsidePolygon( maps.perimeterPoints, src)){
+    if (debug) {
+       CONSOLE.println("checkpint: point is not inside perimeter");
+    }
     return true;
   }
   for (int i=0; i < maps.exclusions.numPolygons; i++){
     if (maps.pointIsInsidePolygon( maps.exclusions.polygons[i], src)){
+       if (debug) {
+          CONSOLE.println("checkpint: point is inside exclusion");
+       }
        return true;
     }
   }
 
   if (!ignore_obstacles) {
     if (isPointInsideObstacle(src, -1, obstacleoffset) != -1) {
+       if (debug) {
+          CONSOLE.println("checkpint: point is inside obstacle");
+       }
       return true;
     }
   }
