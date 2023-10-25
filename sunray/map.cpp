@@ -217,7 +217,7 @@ bool Polygon::merge_polygon(Polygon &mergepolygon) {
     if (!intersected) {
       CONSOLE.println("Map: Polygon: merge_polygon: NO intersect");
       // line p1 to p2 does not intersect and p1 is inside the other one?
-      if (maps.pointIsInsidePolygon(other_p, p1)) {
+      if (maps.pointIsInsidePolygon(other_p, p1, true)) {
         // skip this point
       } else {
         // point is outside of the other polygon
@@ -1310,14 +1310,14 @@ bool Map::addObstacle(float stateX, float stateY, float stateDelta, MotType moti
 
 // check if given point is inside perimeter (and outside exclusions) of current map 
 bool Map::isInsidePerimeterOutsideExclusions(Point &pt){
-  if (!maps.pointIsInsidePolygon( maps.perimeterPoints, pt)) return false;    
+  if (!maps.pointIsInsidePolygon( maps.perimeterPoints, pt, true)) return false;    
 
   for (int idx=0; idx < maps.obstacles.numPolygons; idx++){
-    if (!maps.pointIsInsidePolygon( maps.obstacles.polygons[idx], pt)) return false;
+    if (!maps.pointIsInsidePolygon( maps.obstacles.polygons[idx], pt, false)) return false;
   }
 
   for (int idx=0; idx < maps.exclusions.numPolygons; idx++){
-    if (maps.pointIsInsidePolygon( maps.exclusions.polygons[idx], pt)) return false;
+    if (maps.pointIsInsidePolygon( maps.exclusions.polygons[idx], pt, false)) return false;
   }    
   return true;
 }
@@ -1334,7 +1334,7 @@ int Map::isPointInsideObstacle(Point pt, int skipidx, float offset){
   }  
 
   for (int obst_ins=0; obst_ins < pathFinderObstacles.numPolygons; obst_ins++){
-    if (skipidx != obst_ins && pointIsInsidePolygon( pathFinderObstacles.polygons[obst_ins], pt)){
+    if (skipidx != obst_ins && pointIsInsidePolygon( pathFinderObstacles.polygons[obst_ins], pt, false)){
       // CONSOLE.print("point conflicts with idx: ");
       // CONSOLE.print(obst_ins);
       // CONSOLE.print(": ");
@@ -1495,14 +1495,14 @@ bool Map::checkpoint(float x, float y, float obstacleoffset, bool ignore_obstacl
     debug = true;
   }
 
-  if (!maps.pointIsInsidePolygon( maps.perimeterPoints, src)){
+  if (!maps.pointIsInsidePolygon( maps.perimeterPoints, src, true)){
     if (debug) {
        CONSOLE.println("checkpint: point is not inside perimeter");
     }
     return true;
   }
   for (int i=0; i < maps.exclusions.numPolygons; i++){
-    if (maps.pointIsInsidePolygon( maps.exclusions.polygons[i], src)){
+    if (maps.pointIsInsidePolygon( maps.exclusions.polygons[i], src, false)){
        if (debug) {
           CONSOLE.println("checkpint: point is inside exclusion");
        }
@@ -1535,7 +1535,7 @@ void Map::findPathFinderSafeStartPoint(Point &src, Point &dst){
   CONSOLE.print(dst.y());
   CONSOLE.println(")");  
   Point sect;
-  if (!pointIsInsidePolygon( perimeterPoints, src)){
+  if (!pointIsInsidePolygon( perimeterPoints, src, true)){
     if (linePolygonIntersectPoint( src, dst, perimeterPoints, sect)){
       src.assign(sect);
       CONSOLE.println("found safe point inside perimeter");
@@ -1543,7 +1543,7 @@ void Map::findPathFinderSafeStartPoint(Point &src, Point &dst){
     }    
   }
   for (int i=0; i < exclusions.numPolygons; i++){
-    if (pointIsInsidePolygon( exclusions.polygons[i], src)){
+    if (pointIsInsidePolygon( exclusions.polygons[i], src, false)){
       if (linePolygonIntersectionCount(src, dst, exclusions.polygons[i]) == 1){
         // source point is not reachable      
         if (linePolygonIntersectPoint( src, dst, exclusions.polygons[i], sect)){    
@@ -2185,7 +2185,7 @@ int Map::findNextNeighbor(NodeList &nodes, PolygonList &obstacles, Node &node, i
        bool isPeri = ((perimeterPoints.numPoints > 0) && (idx3 == 0));  // if first index, it's perimeter, otherwise exclusions                           
        if (isPeri){ // we check with the perimeter?         
          //CONSOLE.println("we check with perimeter");
-         bool insidePeri = pointIsInsidePolygon(obstacles.polygons[idx3], *node.point);
+         bool insidePeri = pointIsInsidePolygon(obstacles.polygons[idx3], *node.point, true);
          if (verbose){
            CONSOLE.print("insidePeri ");
            CONSOLE.println(insidePeri);
@@ -2208,7 +2208,7 @@ int Map::findNextNeighbor(NodeList &nodes, PolygonList &obstacles, Node &node, i
          }
        } else {
          //CONSOLE.println("we check with exclusion");
-         bool insideObstacle = pointIsInsidePolygon(obstacles.polygons[idx3], *node.point);
+         bool insideObstacle = pointIsInsidePolygon(obstacles.polygons[idx3], *node.point, false);
          if (insideObstacle) { // start point inside obstacle?                                                                         
              if (verbose) CONSOLE.println("inside exclusion");         
              //CONSOLE.println("start point inside exclusion");          
@@ -2580,7 +2580,7 @@ void Map::testIntegerCalcs(){
   float d = 30.0;
   for (int i=0 ; i < 5000; i++){
     pt.setXY( ((float)random(d*10))/10.0-d/2, ((float)random(d*10))/10.0-d/2 );
-    pointIsInsidePolygon( perimeterPoints, pt);    
+    pointIsInsidePolygon( perimeterPoints, pt, true);    
     CONSOLE.print(".");
   }
   
