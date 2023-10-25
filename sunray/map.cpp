@@ -1952,8 +1952,9 @@ bool Map::pointIsInsidePolygon( Polygon &polygon, Point &pt)
     ptj.assign(polygon.points[j]);    
     
     #ifdef FLOAT_CALC    
+    CONSOLE.println("STEFAN: FLOAT_CALC");
     if ( ((pti.y()>pt.y()) != (ptj.y()>pt.y())) &&
-     (pt.x() < (ptj.x()-pti.x()) * (pt.y()-pti.y()) / (ptj.y()-pti.y()) + pti.x()) )
+     (pt.x() <= (ptj.x()-pti.x()) * (pt.y()-pti.y()) / (ptj.y()-pti.y()) + pti.x()) )
        c = !c;             
     #else           
     if ( ((pti.py>y) != (ptj.py>y)) &&
