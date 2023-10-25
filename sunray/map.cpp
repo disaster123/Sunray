@@ -1941,7 +1941,7 @@ bool Map::linePolygonIntersectPoint( Point &src, Point &dst, Polygon &poly, Poin
 bool Map::pointIsInsidePolygon( Polygon &polygon, Point &pt, bool preferIsInside)
 {
   int i, j, c = 0;
-  float epsilon = 1e-5;
+  float epsilon = -0.01;
   int nvert = polygon.numPoints;
   if (nvert == 0) return false;
   Point pti;
@@ -1949,7 +1949,7 @@ bool Map::pointIsInsidePolygon( Polygon &polygon, Point &pt, bool preferIsInside
   int x = pt.px;
   int y = pt.py;
   if (!preferIsInside) {
-    epsilon = -1e-5;
+    epsilon = 0.01;
   }
   for (i = 0, j = nvert-1; i < nvert; j = i++) {
     pti.assign(polygon.points[i]);
