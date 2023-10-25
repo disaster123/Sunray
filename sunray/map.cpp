@@ -1938,23 +1938,26 @@ bool Map::linePolygonIntersectPoint( Point &src, Point &dst, Polygon &poly, Poin
 // If that is true the line drawn rightwards from the test point crosses that edge.
 // By repeatedly inverting the value of c, the algorithm counts how many times the rightward line crosses the
 // polygon. If it crosses an odd number of times, then the point is inside; if an even number, the point is outside.
-bool Map::pointIsInsidePolygon( Polygon &polygon, Point &pt)
+bool Map::pointIsInsidePolygon( Polygon &polygon, Point &pt, bool preferIsInside)
 {
   int i, j, c = 0;
+  float epsilon = 1e-5;
   int nvert = polygon.numPoints;
   if (nvert == 0) return false;
   Point pti;
   Point ptj;  
   int x = pt.px;
   int y = pt.py;
+  if (!preferIsInside) {
+    epsilon = -1e-5;
+  }
   for (i = 0, j = nvert-1; i < nvert; j = i++) {
     pti.assign(polygon.points[i]);
     ptj.assign(polygon.points[j]);    
     
     #ifdef FLOAT_CALC    
-    CONSOLE.println("STEFAN: FLOAT_CALC");
     if ( ((pti.y()>pt.y()) != (ptj.y()>pt.y())) &&
-     (pt.x() <= (ptj.x()-pti.x()) * (pt.y()-pti.y()) / (ptj.y()-pti.y()) + pti.x()) )
+     (pt.x() <= (ptj.x()-pti.x()) * (pt.y()-pti.y()) / (ptj.y()-pti.y()) + pti.x() + epsilon) )
        c = !c;             
     #else           
     if ( ((pti.py>y) != (ptj.py>y)) &&

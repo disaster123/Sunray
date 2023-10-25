@@ -226,7 +226,7 @@ class Map
     void clearObstacles();
     
     // -----misc-----------------------------------------------
-    bool pointIsInsidePolygon( Polygon &polygon, Point &pt);
+    bool pointIsInsidePolygon( Polygon &polygon, Point &pt, bool preferIsInside);
     bool findPath(Point &src, Point &dst);    
     void generateRandomMap();    
     // check if given point is inside perimeter (and outside exclusions) of current map 
