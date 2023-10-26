@@ -1937,9 +1937,9 @@ bool Map::pointIsInsidePolygon(Polygon &polygon, Point &pt, bool preferIsInside)
     float x = pt.x(); // Verwende Gleitkommazahlen
     float y = pt.y(); // Verwende Gleitkommazahlen
     bool inside = false;
-    float epsilon = 0.001;
+    float epsilon = 0.02;
     if (!preferIsInside) {
-        epsilon = -0.001;
+        epsilon = -0.02;
     }
 
     for (int i = 0, j = nvert - 1; i < nvert; j = i++) {
