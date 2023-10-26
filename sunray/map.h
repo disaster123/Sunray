@@ -155,6 +155,8 @@ class Map
     PolygonList exclusions;     
     PolygonList obstacles;     
     PolygonList pathFinderObstacles;
+    PolygonList CheckpointPerimeter;
+    PolygonList CheckpointExlcusions;
     NodeList pathFinderNodes;
     File mapFile;
     int exclusionPointsCount;        

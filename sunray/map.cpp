@@ -798,6 +798,8 @@ void Map::clearMap(){
   obstacles.dealloc();
   pathFinderObstacles.dealloc();
   pathFinderNodes.dealloc();
+  CheckpointPerimeter.dealloc();
+  CheckpointExlcusions.dealloc();
 }
 
  
