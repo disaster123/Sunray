@@ -1941,7 +1941,7 @@ bool Map::linePolygonIntersectPoint( Point &src, Point &dst, Polygon &poly, Poin
 bool Map::pointIsInsidePolygon( Polygon &polygon, Point &pt, bool preferIsInside)
 {
   int i, j, c = 0;
-  float epsilon = -0.05;
+  float epsilon = 0.01;
   int nvert = polygon.numPoints;
   if (nvert == 0) return false;
   Point pti;
@@ -1949,7 +1949,7 @@ bool Map::pointIsInsidePolygon( Polygon &polygon, Point &pt, bool preferIsInside
   int x = pt.px;
   int y = pt.py;
   if (!preferIsInside) {
-    epsilon = 0.05;
+    epsilon = -0.01;
   }
   for (i = 0, j = nvert-1; i < nvert; j = i++) {
     pti.assign(polygon.points[i]);
@@ -1957,7 +1957,7 @@ bool Map::pointIsInsidePolygon( Polygon &polygon, Point &pt, bool preferIsInside
     
     #ifdef FLOAT_CALC    
     if ( ((pti.y()>pt.y()) != (ptj.y()>pt.y())) &&
-     (pt.x() <= (ptj.x()-pti.x()) * (pt.y()-pti.y()) / (ptj.y()-pti.y()) + pti.x() + epsilon) )
+     (pt.x() < (ptj.x()-pti.x()) * (pt.y()-pti.y()) / (ptj.y()-pti.y()) + pti.x() + epsilon) )
        c = !c;             
     #else           
     if ( ((pti.py>y) != (ptj.py>y)) &&
