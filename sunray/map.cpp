@@ -1934,18 +1934,18 @@ bool Map::pointIsInsidePolygon(Polygon &polygon, Point &pt, bool preferIsInside)
 {
     int nvert = polygon.numPoints;
     if (nvert == 0) return false;
-    float x = pt.x(); // Verwende Gleitkommazahlen
-    float y = pt.y(); // Verwende Gleitkommazahlen
+    int x = pt.px; // Verwende Gleitkommazahlen
+    int y = pt.py; // Verwende Gleitkommazahlen
     bool inside = false;
     Polygon mypoly;
 
     if (!polygonOffset(polygon, mypoly, (preferIsInside ? 0.02 : -0.02))) return false;
 
     for (int i = 0, j = nvert - 1; i < nvert; j = i++) {
-        float xi = mypoly.points[i].x(); // Verwende Gleitkommazahlen
-        float yi = mypoly.points[i].y(); // Verwende Gleitkommazahlen
-        float xj = mypoly.points[j].x(); // Verwende Gleitkommazahlen
-        float yj = mypoly.points[j].y(); // Verwende Gleitkommazahlen
+        int xi = mypoly.points[i].px; // Verwende Gleitkommazahlen
+        int yi = mypoly.points[i].py; // Verwende Gleitkommazahlen
+        int xj = mypoly.points[j].px; // Verwende Gleitkommazahlen
+        int yj = mypoly.points[j].py; // Verwende Gleitkommazahlen
 
         if (((yi > y) != (yj > y)) &&
             (x < (xj - xi) * (y - yi) / (yj - yi) + xi)) {
