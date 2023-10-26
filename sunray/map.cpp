@@ -1953,6 +1953,8 @@ bool Map::pointIsInsidePolygon(Polygon &polygon, Point &pt, bool preferIsInside)
         }
     }
 
+    mypoly.dealloc();
+
     CONSOLE.print("STEFAN: pointIsInsidePolygon: ");
     CONSOLE.print(x);
     CONSOLE.print("/");
