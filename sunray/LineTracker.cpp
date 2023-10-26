@@ -141,6 +141,11 @@ void trackLine(bool runControl){
   float targetDist = maps.distanceToTargetPoint(stateX, stateY);
   float angleFits_low = 10.0;
   float angleFits_high = 20.0;
+
+  if (target.x() == 0 && target.y() == 0) {
+    CONSOLE.println("target is 0/0!");
+    return;
+  }
  
   if ( !(maps.isUndocking() || maps.isDocking()) && maps.checkpoint( target.x(), target.y(), -0.03, false )) {
     CONSOLE.println("target is inside obstacle or outside perimeter - error out!");
