@@ -1934,15 +1934,15 @@ bool Map::pointIsInsidePolygon(Polygon &polygon, Point &pt, bool preferIsInside)
 {
     int nvert = polygon.numPoints;
     if (nvert == 0) return false;
-    int x = pt.px;
-    int y = pt.py;
+    float x = pt.x(); // Verwende Gleitkommazahlen
+    float y = pt.y(); // Verwende Gleitkommazahlen
     bool inside = false;
 
     for (int i = 0, j = nvert - 1; i < nvert; j = i++) {
-        int xi = polygon.points[i].px;
-        int yi = polygon.points[i].py;
-        int xj = polygon.points[j].px;
-        int yj = polygon.points[j].py;
+        float xi = polygon.points[i].x(); // Verwende Gleitkommazahlen
+        float yi = polygon.points[i].y(); // Verwende Gleitkommazahlen
+        float xj = polygon.points[j].x(); // Verwende Gleitkommazahlen
+        float yj = polygon.points[j].y(); // Verwende Gleitkommazahlen
 
         if (((yi > y) != (yj > y)) &&
             (x < (xj - xi) * (y - yi) / (yj - yi) + xi)) {
@@ -1950,9 +1950,15 @@ bool Map::pointIsInsidePolygon(Polygon &polygon, Point &pt, bool preferIsInside)
         }
     }
 
+    CONSOLE.print("STEFAN: pointIsInsidePolygon: ");
+    CONSOLE.print(x);
+    CONSOLE.print("/");
+    CONSOLE.print(y);
+    CONSOLE.print(" r: ");
+    CONSOLE.println(inside);
+
     return inside;
 }
-
 
 // checks if two lines intersect (or if single line points touch with line or line points)
 // (p0,p1) 1st line
