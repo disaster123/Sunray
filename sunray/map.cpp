@@ -1930,47 +1930,28 @@ bool Map::linePolygonIntersectPoint( Point &src, Point &dst, Polygon &poly, Poin
 }
 
 
-
-// checks if point is inside obstacle polygon (or touching polygon line or points)
-// The algorithm is ray-casting to the right. Each iteration of the loop, the test point is checked against
-// one of the polygon's edges. The first line of the if-test succeeds if the point's y-coord is within the
-// edge's scope. The second line checks whether the test point is to the left of the line
-// If that is true the line drawn rightwards from the test point crosses that edge.
-// By repeatedly inverting the value of c, the algorithm counts how many times the rightward line crosses the
-// polygon. If it crosses an odd number of times, then the point is inside; if an even number, the point is outside.
-bool Map::pointIsInsidePolygon( Polygon &polygon, Point &pt, bool preferIsInside)
+bool Map::pointIsInsidePolygon(Polygon &polygon, Point &pt, bool preferIsInside)
 {
-  int i, j, c = 0;
-  float epsilon = 0.01;
-  int nvert = polygon.numPoints;
-  if (nvert == 0) return false;
-  Point pti;
-  Point ptj;  
-  int x = pt.px;
-  int y = pt.py;
-  if (!preferIsInside) {
-    epsilon = -0.01;
-  }
-  for (i = 0, j = nvert-1; i < nvert; j = i++) {
-    pti.assign(polygon.points[i]);
-    ptj.assign(polygon.points[j]);    
-    
-    #ifdef FLOAT_CALC    
-    if ( ((pti.y()>pt.y()) != (ptj.y()>pt.y())) &&
-     (pt.x() < (ptj.x()-pti.x()) * (pt.y()-pti.y()) / (ptj.y()-pti.y()) + pti.x() + epsilon) )
-       c = !c;             
-    #else           
-    if ( ((pti.py>y) != (ptj.py>y)) &&
-     (x < (ptj.px-pti.px) * (y-pti.py) * 10 / (ptj.py-pti.py) / 10 + pti.px) )
-       c = !c;
-    #endif       
-    
-  }
-  //if (c != d){
-  //  CONSOLE.println("pointIsInsidePolygon bogus");
-  //}
-  return (c % 2 != 0);
-}      
+    int nvert = polygon.numPoints;
+    if (nvert == 0) return false;
+    int x = pt.px;
+    int y = pt.py;
+    bool inside = false;
+
+    for (int i = 0, j = nvert - 1; i < nvert; j = i++) {
+        int xi = polygon.points[i].px;
+        int yi = polygon.points[i].py;
+        int xj = polygon.points[j].px;
+        int yj = polygon.points[j].py;
+
+        if (((yi > y) != (yj > y)) &&
+            (x < (xj - xi) * (y - yi) / (yj - yi) + xi)) {
+            inside = !inside;
+        }
+    }
+
+    return inside;
+}
 
 
 // checks if two lines intersect (or if single line points touch with line or line points)
